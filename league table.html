@@ -19,9 +19,6 @@
 		<script src="assets/js/util.js"></script>
 		<script src="assets/js/main.js"></script>
  	   
-		<!-- jQuery (required by DataTables) -->
-    	<!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
-
     	<!-- DataTables CSS -->
 		<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 
@@ -105,7 +102,7 @@
 											var table = $('#league-summary').DataTable();
 								
 											// Load CSV file using Papa Parse
-											Papa.parse('test csv.csv', {
+											Papa.parse('assets/data/league-table.csv', {
 												download: true,
 												header: true,
 												skipEmptyLines: true,
