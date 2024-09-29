@@ -104,7 +104,9 @@
 												skipEmptyLines: true,
 												complete: function(results) {
 													// Loop through the data and add rows to the DataTable
+													console.log("Parsing Complete:", results);
 													results.data.forEach(function(row) {
+														console.log(row);
 														table.row.add([
 															row["Player"],
 															row["Year"],
@@ -144,7 +146,9 @@
 														]);
 													});
 												table.draw();
-												console.log(results.data);
+												},
+												error: function(error) {
+													console.error("Error loading CSV file:", error);
 												}
 											});
 										});
