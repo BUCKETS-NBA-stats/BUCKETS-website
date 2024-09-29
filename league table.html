@@ -48,7 +48,7 @@
 									<h2>Regular Season BUCKETS</h1>
 								
 									<!-- Table for DataTables -->
-									<table id="league summary" class="display">
+									<table id="league-summary" class="display">
 										<thead>
 											<tr>
 												<th>Player</th>
@@ -95,7 +95,7 @@
 									<script>
 										$(document).ready(function() {
 											// Initialize the DataTable without data for now
-											var table = $('#myTable').DataTable();
+											var table = $('#league-summary').DataTable();
 								
 											// Load CSV file using Papa Parse
 											Papa.parse('data/Website flatsheet 1.csv', {
