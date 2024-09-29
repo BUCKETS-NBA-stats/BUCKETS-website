@@ -99,8 +99,13 @@
 									<script>
 										$(document).ready(function() {
 											// Initialize the DataTable without data for now
-											var table = $('#league-summary').DataTable();
-								
+											var table = $('#league-summary').DataTable({
+												columnDefs: [
+													{ targets: [2], visible: false }, // hide player-year
+													{ targets: Array.from({length: 31}, (v, k) => k+4), visible:false} //hide all data columns until selectively shown
+												]
+											});
+
 											// Load CSV file using Papa Parse
 											Papa.parse('assets/data/league-table.csv', {
 												download: true,
