@@ -51,6 +51,18 @@
 								<body>
 									<h2>Regular Season BUCKETS</h1>
 								
+									<!-- Drop down selector-->
+
+									<select id = "columnSelect">
+										<option value="">Role type</option>
+										<option value="Total">Total</option>
+										<option value="On-ball">On-ball</option>
+										<option value="Off-ball: Partner">Off-ball: Partner</option>
+										<option value="Off-ball: Space">Off-ball: Space</option>
+										<option value="Off-ball Crash">Off-ball: Crash</option>
+										<option value="Transition">Transition</option>
+									</select>
+
 									<!-- Table for DataTables -->
 									<table id="league-summary" class="display">
 										<thead>
@@ -99,6 +111,7 @@
 									<script>
 										$(document).ready(function() {
 											// Initialize the DataTable without data for now
+											// hide columns to start
 											var table = $('#league-summary').DataTable({
 												columnDefs: [
 													{ targets: [2], visible: false }, // hide player-year
@@ -153,12 +166,34 @@
 															row["Total PC/g"]
 														]);
 													});
-												table.draw();
+													$('#columnSelect').on('change', function() {
+        											var selectedValue = $(this).val();
+
+   											   		  // First, hide all target columns (adjust this range as needed)
+   													     table.columns([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]).visible(false);
+
+  												      // Based on selection, show the appropriate columns
+  													      if (selectedValue === 'Total') {
+   											    		     table.columns([30, 31, 32, 33, 34]).visible(true);
+													  	} else if (selectedValue === 'On-ball') {
+   													         table.columns([5, 6, 7, 8, 9]).visible(true);
+														} else if (selectedValue === 'Off-ball: Partner') {
+   													         table.columns([10, 11, 12, 13, 14]).visible(true);
+														} else if (selectedValue === 'Off-ball: Space') {
+   													         table.columns([15, 16, 17, 18, 19]).visible(true);
+														} else if (selectedValue === 'Off-ball: Crash') {
+   													         table.columns([20, 21, 22, 23, 24]).visible(true);
+														} else if (selectedValue === 'Transition') {
+   											        		 table.columns([25, 26, 27, 28, 29]).visible(true);
+														}
+													});	
+													table.draw();
 												},
 												error: function(error) {
 													console.error("Error loading CSV file:", error);
 												}
-											});
+
+											})	
 										});
 									</script>
 								</body>
