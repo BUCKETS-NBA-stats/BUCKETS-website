@@ -102,7 +102,7 @@
 											var table = $('#league-summary').DataTable({
 												columnDefs: [
 													{ targets: [2], visible: false }, // hide player-year
-													//{ targets: Array.from({length: 31}, (v, k) => k+4), visible: false}
+													{ targets: Array.from({length: 31}, (v, k) => k+4), visible: false} // hide all other columns until shown
 												]
 											});
 
