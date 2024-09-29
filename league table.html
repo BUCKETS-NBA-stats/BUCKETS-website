@@ -59,13 +59,25 @@
 										<option value="On-ball">On-ball</option>
 										<option value="Off-ball: Partner">Off-ball: Partner</option>
 										<option value="Off-ball: Space">Off-ball: Space</option>
-										<option value="Off-ball Crash">Off-ball: Crash</option>
+										<option value="Off-ball: Crash">Off-ball: Crash</option>
 										<option value="Transition">Transition</option>
 									</select>
+
+									<label> Minimum Plays: <input type="number" id="minPlays" placeholder="Enter minimum plays"></label>
+
 
 									<!-- Table for DataTables -->
 									<table id="league-summary" class="display">
 										<thead>
+											<tr>
+												<th colspan = "5"></th>
+												<th colspan = "5">On-ball</th>
+												<th colspan = "5">Off-ball: Partner</th>
+												<th colspan = "5">Off-ball: Space</th>
+												<th colspan = "5">Off-ball: Crash</th>
+												<th colspan = "5">Transition</th>
+												<th colspan = "5">Total</th>
+											</tr>
 											<tr>
 												<th>Player</th>
 												<th>Year</th>
@@ -174,17 +186,52 @@
 
   												      // Based on selection, show the appropriate columns
   													      if (selectedValue === 'Total') {
-   											    		     table.columns([30, 31, 32, 33, 34]).visible(true);
+   											    		    table.columns([30, 32, 33, 34]).visible(true);
+															table.order([34,'desc']);
+															table.column(30).header.innerText = 'PRF/g'
+															table.column(32).header.innerText = 'Plays/g'
+															table.column(33).header.innerText = 'rORTG/g'
+															table.column(34).header.innerText = 'PC/g'
+
 													  	} else if (selectedValue === 'On-ball') {
-   													         table.columns([5, 6, 7, 8, 9]).visible(true);
+   													        table.columns([5, 7, 8, 9]).visible(true);
+															table.order([9,'desc']);
+															table.column(5).header.innerText = 'PRF/g'
+															table.column(7).header.innerText = 'Plays/g'
+															table.column(8).header.innerText = 'rORTG/g'
+															table.column(9).header.innerText = 'PC/g'
+
 														} else if (selectedValue === 'Off-ball: Partner') {
-   													         table.columns([10, 11, 12, 13, 14]).visible(true);
+   													        table.columns([10, 12, 13, 14]).visible(true);
+															table.order([14,'desc']);
+															table.column(10).header.innerText = 'PRF/g'
+															table.column(12).header.innerText = 'Plays/g'
+															table.column(13).header.innerText = 'rORTG/g'
+															table.column(14).header.innerText = 'PC/g'
+
 														} else if (selectedValue === 'Off-ball: Space') {
-   													         table.columns([15, 16, 17, 18, 19]).visible(true);
+   													        table.columns([15, 17, 18, 19]).visible(true);
+															table.order([19,'desc']);
+															table.column(15).header.innerText = 'PRF/g'
+															table.column(17).header.innerText = 'Plays/g'
+															table.column(18).header.innerText = 'rORTG/g'
+															table.column(19).header.innerText = 'PC/g'
+
 														} else if (selectedValue === 'Off-ball: Crash') {
-   													         table.columns([20, 21, 22, 23, 24]).visible(true);
+   													        table.columns([20, 22, 23, 24]).visible(true);
+															table.order([24,'desc']);
+															table.column(20).header.innerText = 'PRF/g'
+															table.column(22).header.innerText = 'Plays/g'
+															table.column(23).header.innerText = 'rORTG/g'
+															table.column(24).header.innerText = 'PC/g'
+
 														} else if (selectedValue === 'Transition') {
-   											        		 table.columns([25, 26, 27, 28, 29]).visible(true);
+   											        		table.columns([25, 27, 28, 29]).visible(true);
+															table.order([29,'desc']);
+															table.column(25).header.innerText = 'PRF/g'
+															table.column(27).header.innerText = 'Plays/g'
+															table.column(28).header.innerText = 'rORTG/g'
+															table.column(29).header.innerText = 'PC/g'
 														}
 													});	
 													table.draw();
