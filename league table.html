@@ -146,13 +146,7 @@
 									<script>
 										$(document).ready(function() {
 											// Initialize the DataTable without data for now
-											// hide columns to start
-											var table = $('#league-summary').DataTable({
-												columnDefs: [
-													{ targets: [2], visible: false }, // hide player-year
-													{ targets: Array.from({length: 31}, (v, k) => k+4), visible: false} // hide all other columns until shown
-												]
-											});
+											var table = $('#league-summary').DataTable();
 
 											// Load CSV file using Papa Parse
 											Papa.parse('assets/data/league-table.csv', {
@@ -201,8 +195,9 @@
 															row["Total PC/g"],
 														]);
 													});
-													table.draw();
 
+													// Draw table after all rows have been added, then perform other operations
+													table.draw();
 
 													// Rename columns
 														table.column(5).header().innerText = 'PRF/g'; // On-ball starts here
@@ -230,11 +225,14 @@
 														table.column(33).header().innerText = 'rORTG/g';
 														table.column(34).header().innerText = 'PC/g';
 
-													// Column selector logic
+													// Hide columns
+													table.column([2,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34]).visible(false);
+													
+													// Select columns to unhide
 													$('#columnSelect').on('change', function() {
         											var selectedValue = $(this).val();
 
-   											   		  // First, hide all target columns (adjust this range as needed)
+   											   		  // First, hide all target columns
    													     table.columns([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]).visible(false);
 
   												      // Based on selection, show the appropriate columns and sort
@@ -265,11 +263,9 @@
 														table.draw();
 													});	
 													
-
-
 													// Min plays logic
 
-													var table = $('#myTable').DataTable();
+													var table = $('#league-summary').DataTable();
 
   													// Function to filter rows based on the slider value (for Salary column)
   													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
