@@ -146,38 +146,65 @@
 															row["Player Year"],
 															row["Games"],
 															row["Total plays"],
-															row["PRF/g"], // On-ball starts here
-															row["PRF baseline"],
-															row["Plays/g"],
-															row["rORTG"],
-															row["PC/g"],
-															row["PRF/g"], // Off-ball: Partner starts here
-															row["PRF baseline"],
-															row["Plays/g"],
-															row["rORTG"],
-															row["PC/g"],
-															row["PRF/g"], // Off-ball: Space starts here
-															row["PRF baseline"],
-															row["Plays/g"],
-															row["rORTG"],
-															row["PC/g"],
-															row["PRF/g"], // Off-ball: Crash starts here
-															row["PRF baseline"],
-															row["Plays/g"],
-															row["rORTG"],
-															row["PC/g"],
-															row["PRF/g"], // Transition starts here
-															row["PRF baseline"],
-															row["Plays/g"],
-															row["rORTG"],
-															row["PC/g"],
-															row["PRF/g"], // Total starts here
-															row["PRF baseline"],
-															row["Plays/g"],
-															row["rORTG"],
-															row["PC/g"],
+															row["On-ball PRF/g"], // On-ball starts here
+															row["On-ball PRF baseline"],
+															row["On-ball Plays/g"],
+															row["On-ball rORTG"],
+															row["On-ball PC/g"],
+															row["Off-ball: Partner PRF/g"], // Off-ball: Partner starts here
+															row["Off-ball: Partner PRF baseline"],
+															row["Off-ball: Partner Plays/g"],
+															row["Off-ball: Partner rORTG"],
+															row["Off-ball: Partner PC/g"],
+															row["Off-ball: Space PRF/g"], // Off-ball: Space starts here
+															row["Off-ball: Space PRF baseline"],
+															row["Off-ball: Space Plays/g"],
+															row["Off-ball: Space rORTG"],
+															row["Off-ball: Space PC/g"],
+															row["Off-ball: Crash PRF/g"], // Off-ball: Crash starts here
+															row["Off-ball: Crash PRF baseline"],
+															row["Off-ball: Crash Plays/g"],
+															row["Off-ball: Crash rORTG"],
+															row["Off-ball: Crash PC/g"],
+															row["Transition PRF/g"], // Transition starts here
+															row["Transition PRF baseline"],
+															row["Transition Plays/g"],
+															row["Transition rORTG"],
+															row["Transition PC/g"],
+															row["Total PRF/g"], // Total starts here
+															row["Total PRF baseline"],
+															row["Total Plays/g"],
+															row["Total rORTG"],
+															row["Total PC/g"],
 														]);
 													});
+
+													// Rename columns
+														table.column(5).header.innerText = 'PRF/g';
+														table.column(7).header.innerText = 'Plays/g';
+														table.column(8).header.innerText = 'rORTG/g';
+														table.column(9).header.innerText = 'PC/g';
+														table.column(10).header.innerText = 'PRF/g';
+														table.column(12).header.innerText = 'Plays/g';
+														table.column(13).header.innerText = 'rORTG/g';
+														table.column(14).header.innerText = 'PC/g';		
+														table.column(15).header.innerText = 'PRF/g';
+														table.column(17).header.innerText = 'Plays/g';
+														table.column(18).header.innerText = 'rORTG/g';
+														table.column(19).header.innerText = 'PC/g';		
+														table.column(20).header.innerText = 'PRF/g';
+														table.column(22).header.innerText = 'Plays/g';
+														table.column(23).header.innerText = 'rORTG/g';
+														table.column(24).header.innerText = 'PC/g';	
+														table.column(25).header.innerText = 'PRF/g';
+														table.column(27).header.innerText = 'Plays/g';
+														table.column(28).header.innerText = 'rORTG/g';
+														table.column(29).header.innerText = 'PC/g';	
+														table.column(30).header.innerText = 'PRF/g';
+														table.column(32).header.innerText = 'Plays/g';
+														table.column(33).header.innerText = 'rORTG/g';
+														table.column(34).header.innerText = 'PC/g';
+
 													$('#columnSelect').on('change', function() {
         											var selectedValue = $(this).val();
 
@@ -188,11 +215,6 @@
   													      if (selectedValue === 'Total') {
    											    		    table.columns([30, 32, 33, 34]).visible(true);
 															table.order([34,'desc']);
-															table.column(30).header.innerText = 'PRF/g'
-															table.column(32).header.innerText = 'Plays/g'
-															table.column(33).header.innerText = 'rORTG/g'
-															table.column(34).header.innerText = 'PC/g'
-															table.draw();
 
 													  	} else if (selectedValue === 'On-ball') {
    													        table.columns([5, 7, 8, 9]).visible(true);
