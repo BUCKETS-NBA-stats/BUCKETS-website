@@ -86,7 +86,6 @@
 									<!-- Drop down selector -->
 
 									<select id = "columnSelect">
-										<option value="">Role type</option>
 										<option value="Total">Total</option>
 										<option value="On-ball">On-ball</option>
 										<option value="Off-ball: Partner">Off-ball: Partner</option>
@@ -96,8 +95,7 @@
 									</select>
 									
 									<!-- Minimum plays slider -->
-
-									<label for="minPlaysSlider">Minimum Value: <span id="sliderValue">0</span></label>
+									<label for="minPlaysSlider">Minimum plays: <span id="sliderValue">150</span></label>
 									<input type="range" id="minPlaysSlider" min="0" max="1000" value="150" step="10">
 
 									<!-- Table for DataTables -->
@@ -203,6 +201,8 @@
 															row["Total PC/g"],
 														]);
 													});
+													table.draw();
+
 
 													// Rename columns
 														table.column(5).header().innerText = 'PRF/g'; // On-ball starts here
