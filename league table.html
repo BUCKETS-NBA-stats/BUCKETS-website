@@ -95,9 +95,9 @@
 									</select>
 									
 									<!-- Minimum plays slider -->
-									<label for="minPlaysSlider">Minimum plays: <span id="sliderValue">150</span></label>
+<!-- 									<label for="minPlaysSlider">Minimum plays: <span id="sliderValue">150</span></label>
 									<input type="range" id="minPlaysSlider" min="150" max="1000" value="150" step="10">
-
+ -->
 									<!-- Table for DataTables -->
 									<table id="league-summary" class="display">
 										<thead>
@@ -269,23 +269,10 @@
 													});	
 													
 													// Min plays logic
-
-/* 													var table = $('#league-summary').DataTable();
-
-  													// Function to filter rows based on the slider value (for Salary column)
-  													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-   													    var minPlays = parseFloat($('#minPlaysSlider').val(), 10);  // Get the slider value
-    													var totalPlays = parseFloat(data[4]) || 0; // Total plays is in the 5th column (index 4)
-
-     												// If the min plays is greater than or equal to the slider value, show the row
-       													return totalPlays >= minPlays;
-   													});
-													
-													// Update table filter when slider value changes
-													$('#minPlaysSlider').on('input change', function() {
-														$('#sliderValue').text($(this).val()); // Update the displayed slider value
-														table.draw(); // Redraw the table based on the new slider value
-													}); */
+													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+  											        	var totalPlays = parseFloat(data[4]) || 0;  // Check "Plays" value in column 5
+                										return totalPlays >= 150;  // Filter out rows where Plays < 150
+         											});
 													
 												},
 												error: function(error) {
