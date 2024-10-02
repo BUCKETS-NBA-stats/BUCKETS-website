@@ -274,6 +274,16 @@
                 										return totalPlays >= 150;  // Filter out rows where Plays < 150
          											});
 													
+													// temporary hack to exclude problem children. Exclude if Space PRF >0 but PRF baseline = 0
+													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+  											        	var spacePRF = parseFloat(data[15]) || 0;  // Check "Spacing PRF in column 16
+														var spacePRFplays = parseFloat(data[17]) || 0;  // Check "Spacing PRF baseline in column 17
+                										if (spacePRFplays === 0 && spacePRF >0){
+															return false;
+														}
+														return true;
+         											});
+
 												},
 												error: function(error) {
 													console.error("Error loading CSV file:", error);
