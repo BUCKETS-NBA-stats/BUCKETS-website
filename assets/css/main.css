@@ -1931,6 +1931,7 @@ button,
   background-color: #f5f6f7;
   font-size: 0.9em;
   position: relative;
+  will-change: margin-left;
   width: 26em; }
   #sidebar h2 {
     font-size: 1.38889em; }
