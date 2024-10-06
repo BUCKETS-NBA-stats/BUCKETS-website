@@ -34,28 +34,62 @@
 										<h1>The Westbrook Theorem</h1>
 										<h2>Quantifying the value of floor raising</h2>
 									</header>
-									<p>Some test text</p>
-									<p>Some more test text</p>
-									<!--
-									<span class="image main"><img src="images/pic11.jpg" alt="" /></span>
-									-->
+
 									<!--Intro-->
-										
+										<p>In his 2016-17 MVP season, Russell Westbrook averaged 41.2 on-ball plays per game (the most ever) at -0.5 rORTG. In the same year, Channing Frye averaged 2.7 on-ball plays per game at the same -0.5 rORTG. Who was the more effective on-ball player?</p>
+										<p>If we simply multiply volume times efficiency, Frye comes out slightly ahead in PC/g than Westbrook (-0.01 to -0.19), but that feels wrong. Shouldn't Westbrook's ability to absorb 15 times as much volume at the same efficiency have some value?</p>
+										<p>This article attempts to answer that question.</p>
+									
+									<h3>On-ball possessions have opportunity cost</h3>
+										<p>All teams average about 90 on-ball plays per game. This is remarkably consistent: 80% of teams since 2020-21 are within 2.5 of that average, and the others aren't much further than that. This includes teams with multiple great on-ball players, who had to share those 90 on-ball plays. And it also includes teams with no good on-ball players, who nonetheless had to cobble together 90 on-ball plays from among their bad options.</p>
+										<p>This means that if we are evaluating a player who averages 20 on-ball possessions, we can't just look at what happened on those possessions. We also have to consider the opportunity cost. I.e., what the value of those on-ball possessions would have been if other players had absorbed them instead.</p>
+										<p>If those possessions would have been used by less effective on-ball options, then our player has raised the floor of the offense by keeping the ball out of their hands. On the other hand, if those possessions would have been used by more effective options, then our player is lowering the offense's ceiling by hogging the ball.</p>
+
+									<h3>Opportunity cost depends on the other options</h3>
+										<p>How do we know if our player is raising or lowering their team's ceiling? It depends on their team context. For a player on the 2013-14 Heat, the replacement on-ball possession might come from Lebron (+15.5 on-ball rORTG) or DWade (+8.1). For a player on the 2015-16 Sixers, it might be Ish Smith (-8.5) or Jahlil Okafor (-6.0). Figure 1 shows this distribution for the whole league since 08-09.</p>
+										<!--Figure 1-->
+										<p>If we want to evaluate a player in a vacuum, we need to abstract away from specific team situations. We can do this by looking at what would happen if our hypothetical player played with random teammates. Once we have the principle, we can add back in the information on the quality of the specific team.</p>
+
+									<h3>Bad options get displaced first</h3>
+										<p>Let's suppose that our player's hypothetical team will have 90 on-ball possessions per game. We'll give the first 20 of those to our hypothetical player, and the other 70 will come from the random teammates. But which teammates? If the team is trying to win, we can suppose that the coaches set the offense up so those 70 plays come from the best other options on the team. That means that the opportunity cost for our player's 20 plays are the worst options on the team. Therefore, our hypothetical team's 90 on-ball plays will look something like the Figure 2 below:</p>
+										<!--Figure 2-->
+										<p>What if our player actually absorbs 30 on ball plays? Then he also displaces the next worst 10 of his teammates on-ball plays. This will look something like Figure 3 below:</p>
+										<!--Figure 3-->
+										<p>We can generalize this concept to calculate the rORTG of the marginal on-ball possession (shown in Figure 4). This shows the opportunity cost of a player absorbing one more on-ball play, with random teammates. If a player's rORTG is above this line, he is adding value on a random team by displacing worse possessions. If his rORTG falls below this line, he is hurting his team on the margin by displacing on-ball possessions that would be more efficient than his.</p>
+										<!--Figure 4-->
+
+									<h3>Floor raising has real value, but diminishing returns</h3>
+										<p>From the above, we can see that the “bar” for adding value with on-ball possessions increases as volume increases, because the possessions getting displaced come from better and better on-ball players. We can further use this to calculate the cumulative impact of replacing a given number of on-ball possessions with average efficiency (see Figure 5).</p>
+										<!--Figure 5-->
+										<p>We can see that even at "neutral" efficiency, there is significant value generated just by absorbing on-ball volume and preventing the team from having to rely on bad on-ball options. But we can also see that this value falls off with increasing volume, as the players getting displaced get better and better.</p>
+										<p>What if we want to calculate the total on-ball value generated by a player, including this impact of floor raising? We can add the floor raising value based on the above chart to their on-ball PC/g. The floor raising value tells us how much value they would generate given average efficiency, and on-ball PC/g tells us how much value they create given how much more or less efficient they are than average.</p>
+
+									<h3>Floor raising adds more value with worse teammates</h3>
+										<p>The above numbers assume random teammates, but talent is not evenly distributed. The better the offense, the better the talent, and the higher the opportunity cost of absorbing an on-ball possession.</p>
+										<p>We can quantify this difference by using the same method as above, but limiting ourselves to top 10 and bottom 10 offenses by offensive rating each season. Figure 6 shows all on-ball possessions by top 10 (on the left) and bottom 10 (on the right) offenses.</p>
+										<!--Figure 6-->
+										<p>Unsurprisingly, the best teams have more on-ball talent top to bottom. Based on this, we can calculate the rORTG of the marginal possession for a random top 10 and bottom 10 offense (see figure 7).</p>
+										<!--Figure 7-->
+										<p>[discuss the results]. Again, we can use this to calculate cumulative value from replacing on-ball volume with average efficiency, and how this differs by team quality:</p>
+										<!--Figure 8-->
+										<p>[discuss the results]</p>
+
+									<h3>Conclusion: The Westbrook theorem</h3>
+										<p>We can summarize this analysis into a few rules of thumb:</p>
+										<p>For a <u>typical primary creator</u> (with 20 on-ball plays/g), their <strong>floor raising alone contributes about 2-2.5 points per game</strong> to their team's offense. This floor raising value rises to <strong>x-y points with bad surrounding talent</strong>, but falls to <strong>x-y points with good surrounding talent</strong></p>
+										<p>For a <u>super helio creator</u> (with 40 on-ball plays), they similarly contribute <strong>about 2.5 points per game in floor raising value</strong> to a random team. This is because, with random teammates, the 20-40th best on-ball possessions will generally only be somewhat inefficient. This value rises to <strong>x-y points with bad surrounding talent</strong> as those teams lack other options. However it falls to <strong>x-y points with good talent as the player starts taking volume away from players who are good on-ball in their own right.</strong></p>
+										<p>The most productive on-ball creators will generally have PC/g (excluding floor raising) of +4 to +5. Compared to that, 2-2.5 points of additional floor raising value is significant. But when comparing primary creators to one another, this floor raising value largely cancels out, and efficiency (and the ability to maintain that efficiency at volume) matters more.</p>
+										<p>What does this mean for our original question about Westbrook and Frye? If we assume each was on a random team, adding floor raising value to the picture shows Westbrook to be clearly more valuable on the ball that season (2.46 vs. 0.55 PC/g).</p>
+										<p>If we consider a team with poor surrounding on-ball talent (which certainly describes Westbrook's 2016-17 Thunder), that advantage widens. Westbrook's on-ball value goes up to X PC/g, while Frye's only goes up to Y.</p>
+
 								</section>
 
 						</div>
 					</div>
 					<div id="sidebar-container"></div>
 			</div>
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
-
-			<!--Load sidebar-->
+	
+		<!--Load sidebar-->
 			<script>
 				// Use JavaScript to load the sidebar dynamically
 				window.onload = function() {
@@ -69,5 +103,14 @@
 						});
 					}
 			</script>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+
 	</body>
 </html>
