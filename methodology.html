@@ -51,10 +51,10 @@
 
 										<p>For each of these roles, there are stats for:</p>
 										<ul>
-											<li><b>Production:</b> the number of points the player is directly responsible for creating in this role through scoring or playmaking. (Points Responsible For or PRF/g)</li>
-											<li><b>Volume:</b> how often the player takes on this role (plays/g)</li>
-											<li><b>Efficiency:</b> how efficient the player is compared to the baseline for this role (relative offensive rating or rORTG)</li>
-											<li><b>Value:</b> how the player would impact an average offense given their volume and efficiency (points created per game or PC/g)</li></ul>
+											<li><b>PRF (Points Responsible For):</b> the number of points the player produces in this role through scoring or direct playmaking</li>
+											<li><b>Plays:</b> How many plays it takes for the player to produce those points, accounting for shot attempts, free throw attempts, and turnovers by themselves or the teammate they set up</li>
+											<li><b>rORTG (relative offensive rating)</b> How efficiently the player created those points, compared to the baseline for this role</li>
+											<li><b>PC (Points Created):</b> How the player would impact an average offense given their volume and efficiency in this role</li></ul>
 										<p>These are used in combination to understand a player's effectiveness in their role, similar to how you would use stats like points, assists, true shooting, and usage. For example, here are Luka Doncic's BUCKETS stats for the 2022-23 season:</p>
 									
 									<!-- Exmaple Table -->
@@ -103,7 +103,7 @@
 									<!--Intro continued-->
 
 										<p>The first row of this table tells us that in on-ball actions, Luka generated 43.9 points per game on his scoring and playmaking. He did this in 39.7 plays per game, with an effective offensive rating that was 10.3 points higher than the baseline. That combination of volume and efficiency in his on-ball role would add 4.09 points per game to the quality of an average offense.</p>
-										<p>You can find these stats for every player in ever season back to 2005-06 here <span style="color: red;">LINK TO STATS PAGE</span></p>
+										<p>You can find these stats for every player in every season back to 2005-06 <a href="league table.html">here</a></p>
 										<p>The below table summarizes how each of the major roles is measured. If you want the more detailed explanation for why, keep reading</p>
 									
 									<!--Summmary table-->
@@ -223,7 +223,7 @@
 											<li><b>Actions included:</b> Plays categorized by Synergy as Pick and roll ball handler possessions, Isolations, Post-Ups, and a handful of "Miscellaneous" plays. We also include “Connective Passing” plays not categorized by Synergy. These are other half court playmaking opportunities, primarily hitting teammates off screens, handoffs, and cuts.</li>
 											<li><b>Possessions counted:</b> All possessions that end with an on-ball scoring attempt, playmaking attempt, or turnover. This includes field goal attempts, free throw attempts, and turnovers by the player themself, and also FGAs, FTs, and TOs by a teammate they had just passed to.
 												<ul style="margin: 0;"><li>Typically we look at volume per game or per 75 possessions. For on-ball plays, because there is only one ball, it can also be helpful to look at the share of the team's on-ball possessions the player uses while one the court. This is on-ball usage %, and it reflects how ball dominant the player's role is within their team's offense</li></ul></li>
-											<li><b>Efficiency:</b> On-ball relative offensive rating (rORTG): is measured as PRF per 100 on the player's on-ball possessions relative to the league-average half court offensive rating. This provides a team-agnostic definition of the "opportunity cost" of only one player being able to create on-ball at a time. The true opportunity cost will vary depending on the quality of the player's teammates. For more on this, see <span style="color: red;">THIS ARTICLE ON FLOOR RAISING</span> </li>
+											<li><b>Efficiency baseline:</b> League-average half court offensive rating. This provides a team-agnostic definition of the "opportunity cost" of only one player being able to create on-ball at a time. The true opportunity cost will vary depending on the quality of the player's teammates. For more on this, see <span style="color: red;">THIS ARTICLE ON FLOOR RAISING</span> </li>
 										</ul>
 									
 									<!--Off ball-->
@@ -251,7 +251,7 @@
 												</ul>
 											</li>
 											<li><b>Possessions counted:</b> Off-ball plays include all times where the player ended a possession with an off-ball scoring attempt or turnover. Due to data limitations, playmaking attempts are not included. Similarly to on-ball, we look at this per game (plays/g) or per 75 possessions (plays/75)</li>
-											<li><b>Efficiency:</b> Off-ball rORTG is measured as PRF per 100 on the player's off-ball possessions, relative to the league-average offensive rating for that play type or league average half court offensive rating, whichever is higher. Comparing to average efficiency for that play type allows us to account for the fact that some off-ball attempts are naturally efficient almost regardless of who takes them</li>
+											<li><b>Efficiency baseline:</b> League-average offensive rating for that play type or league average half court offensive rating, whichever is higher. Comparing to average efficiency for that play type allows us to account for the fact that some off-ball attempts are naturally efficient almost regardless of who takes them</li>
 										</ul>
 
 									<!-- Transition-->
@@ -270,7 +270,7 @@
 										<ul>
 											<li><b>Actions included:</b> We use Synergy's definition of transition plays, with the addition of potential assists and potential FT assists not captured by Synergy tracking</li>
 											<li><b>Possessions counted:</b> All possessions that end with a transition scoring attempt, playmaking attempt, or turnover. This includes field goal attempts, free throw attempts, and turnovers by the player themself or by a teammate they had just passed to. Similarly to on-ball, we look at this per game (plays/g) or per 75 possessions (plays/75)</li>
-											<li><b>Efficiency:</b> Transition rORTG is measured  as the PRF per 100 on the player's transition possessions, relative to the league-average half court offensive rating. This recognizes the value created by players who push the ball and create transition opportunities, rather than walking it up and settling for a half court possession. As a result, almost all players in the league have a positive transition rORTG.</li>
+											<li><b>Efficiency baseline:</b> League-average half court offensive rating. This recognizes the value created by players who push the ball and create transition opportunities, rather than walking it up and settling for a half court possession. As a result, almost all players in the league have a positive transition rORTG.</li>
 										</ul>
 				
 									<!--Limitations-->	
@@ -323,14 +323,14 @@
 										<li>
 											<span class="opener">Stats</span>
 											<ul>
-												<li><a href="league table.html">League: Regular season</a></li>
+												<li><a href="league table.html">League-wide: Regular season</a></li>
 												<li><a href="#">More coming soon</a></li>
 											</ul>
 										</li>
 										<li>
-											<span class="opener">Research</span>
+											<span class="opener">Insights</span>
 											<ul>
-												<li><a href="#">Westbrook Theorem</a></li>
+												<li><a href="#">The Westbrook Theorem</a></li>
 												<li><a href="#">More coming soon</a></li>
 											</ul>
 										</li>
