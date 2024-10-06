@@ -43,19 +43,6 @@
 
 						</div>
 					</div>
-
-					<!--Load sidebar-->
-					<script>
-						// Use JavaScript to load the sidebar dynamically
-						fetch('sidebar.html')
-							.then(response => response.text())
-							.then(html => {
-								document.getElementById('sidebar-container').innerHTML = html;
-							})
-							.catch(error => {
-								console.error('Error loading sidebar:', error);
-							});
-					</script>
 			</div>
 
 		<!-- Scripts -->
@@ -65,5 +52,17 @@
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
 
+			<!--Load sidebar-->
+			<script>
+				// Use JavaScript to load the sidebar dynamically
+				fetch('sidebar.html')
+					.then(response => response.text())
+					.then(html => {
+						document.getElementById('sidebar-container').innerHTML = html;
+					})
+					.catch(error => {
+						console.error('Error loading sidebar:', error);
+					});
+			</script>
 	</body>
 </html>
