@@ -15,10 +15,10 @@
 		<script src="assets/js/jquery.min.js"></script>
  	   
     	<!-- DataTables CSS -->
-		<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+		<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-2.1.8/fh-4.0.1/sb-1.8.1/datatables.min.css">
 
 		<!-- DataTables JS -->
-		<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/v/dt/dt-2.1.8/fh-4.0.1/sb-1.8.1/datatables.min.js"></script>
 
 		<!-- Papa Parse CSV parser -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -153,7 +153,10 @@
        											],
 												autoWidth: false, /* Prevent automatic adjustment of table width */
     											retrieve: true,   /* Retrieve the initialized table */
-    											responsive: true  /* Enable responsiveness without shifting layout */
+    											responsive: true,  /* Enable responsiveness without shifting layout */
+												fixedHeader: true, // Column headers stay in place
+												pageLength: 25,     // Set default number of rows to display to 25
+    											lengthMenu: [ [10, 25, 50, 100], [10, 25, 50, 100] ] // Options for rows per page
 											});
 
 											// Load CSV file using Papa Parse
