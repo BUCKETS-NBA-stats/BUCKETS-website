@@ -156,7 +156,29 @@
     											responsive: true,  /* Enable responsiveness without shifting layout */
 												fixedHeader: true, // Column headers stay in place
 												pageLength: 25,     // Set default number of rows to display to 25
-    											lengthMenu: [ [10, 25, 50, 100], [10, 25, 50, 100] ] // Options for rows per page
+    											lengthMenu: [ [10, 25, 50, 100], [10, 25, 50, 100] ], // Options for rows per page
+
+												// Enable the SearchBuilder extension
+    											dom: 'Qlfrtip',  // This enables the SearchBuilder in the toolbar
+  												searchBuilder: {
+        											columns: visibleColumns() // Dynamically update the available columns based on visibility
+    											}
+											});
+
+											// Function to return the visible columns for SearchBuilder
+											function visibleColumns() {
+    										// Use DataTables API to get all columns and filter only the visible ones
+    											return table.columns().indexes().filter(function(index) {
+        											return table.column(index).visible();  // Only include visible columns
+    											}).toArray();  // Convert the result to an array
+											}
+
+											// Update SearchBuilder columns when visibility changes (if columns are toggled)
+											table.on('column-visibility.dt', function(e, settings, column, state) {
+    											// Reinitialize the SearchBuilder with only the currently visible columns
+    											table.searchBuilder.rebuild({
+        											columns: visibleColumns()  // Update SearchBuilder columns when visibility changes
+    											});
 											});
 
 											// Load CSV file using Papa Parse
