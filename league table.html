@@ -146,8 +146,10 @@
 									</table>
 									<script>
 										$(document).ready(function() {
+											console.log("Document ready - initializing DataTable...");
+
 											// Initialize the DataTable without data for now
-											var table = $('#league-summary').DataTable({
+											$('#league-summary').DataTable({
 												columnDefs: [
         										    { targets: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31], visible: false }, // Hide most columns initially
        											],
@@ -160,19 +162,27 @@
     											dom: 'Qlfrtip',  // This enables the SearchBuilder in the toolbar
   												searchBuilder: {
         											columns: function() {
-										                console.log("Defining visible columns within searchBuilder...");
-    										            return table ? getVisibleColumns() : []; // Check if table is defined
-      			        							}
+                										console.log("Defining visible columns within searchBuilder...");
+                										// Accessing DataTable instance directly to fetch visible columns
+                										return $('#league-summary').DataTable().columns().indexes().filter(function(index) {
+                    										return $('#league-summary').DataTable().column(index).visible();
+                										}).toArray();
+            										}
     											},
 
 												initComplete: function() {											
 													console.log("DataTable initialized.");
 													
-													// Update SearchBuilder columns when visibility changes (if columns are toggled)
-													table.on('column-visibility.dt', function() {
+													// Directly access DataTable instance in initComplete
+            										var tableInstance = $('#league-summary').DataTable();
+
+													// Listen to column visibility changes and update SearchBuilder columns
+            										tableInstance.on('column-visibility.dt', function() {
                 										console.log("Column visibility changed - rebuilding SearchBuilder...");
-              				  							table.searchBuilder.rebuild({
-                    										columns: getVisibleColumns()
+                										tableInstance.searchBuilder.rebuild({
+                    										columns: tableInstance.columns().indexes().filter(function(index) {
+                        										return tableInstance.column(index).visible();
+                    										}).toArray()
                 										});
             										});
 												}
