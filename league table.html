@@ -162,7 +162,17 @@
     											dom: 'Qlfrtip',  // This enables the SearchBuilder in the toolbar
   												searchBuilder: {
         											columns: visibleColumns() // Dynamically update the available columns based on visibility
-    											}
+    											},
+
+												// Update SearchBuilder columns when visibility changes (if columns are toggled)
+												initComplete: function() {											
+													table.on('column-visibility.dt', function(e, settings, column, state) {
+														// Reinitialize the SearchBuilder with only the currently visible columns
+    													table.searchBuilder.rebuild({
+        													columns: visibleColumns()  // Update SearchBuilder columns when visibility changes
+    													});
+													});
+												}
 											});
 											
 											// Function to return the visible columns for SearchBuilder
@@ -172,16 +182,6 @@
         											return table.column(index).visible();  // Only include visible columns
     											}).toArray();  // Convert the result to an array
 											}
-											console.log("Visible columns at load:", visibleColumns());
-
-											// Update SearchBuilder columns when visibility changes (if columns are toggled)
-											table.on('column-visibility.dt', function(e, settings, column, state) {
-    											console.log("Updated visible columns:", visibleColumns());
-												// Reinitialize the SearchBuilder with only the currently visible columns
-    											table.searchBuilder.rebuild({
-        											columns: visibleColumns()  // Update SearchBuilder columns when visibility changes
-    											});
-											});
 
 											// Load CSV file using Papa Parse
 											Papa.parse('assets/data/league-table.csv', {
