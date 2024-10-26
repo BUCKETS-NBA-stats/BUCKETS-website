@@ -150,6 +150,43 @@
 
 											// Initialize the DataTable without data for now
 											$('#league-summary').DataTable({
+												columns: [
+													{ title: "Player", data: "Player"},
+													{ title:"Year",	data: "Year"},
+													{ title: "Player Year", data: "Player Year"},
+													{ title: "G", data: "Games"},
+													{ title: "Total Plays", data: "Total plays"},
+													{ title: "PRF/g", data: "On-ball PRF/g"}, // On-ball starts here
+													{ title: "On-ball PRF baseline",	data: "On-ball PRF baseline"},
+													{ title: "Plays/g",	data: "On-ball Plays/g"},
+													{ title: "rORTG", data: "On-ball rORTG"},
+													{ title: "PC/g", data: "On-ball PC/g"},
+													{ title: "PRF/g", data: "Off-ball: Partner PRF/g"}, // Off-ball: Partner starts here
+													{ title: "Off-ball: Partner PRF/g baseline", data: "Off-ball: Partner PRF/g baseline"},
+													{ title: "Plays/g", data: "Off-ball: Partner Plays/g"},
+													{ title: "rORTG", data: "Off-ball: Partner rORTG"},
+													{ title: "PC/g", data: "Off-ball: Partner PC/g"},
+													{ title: "PRF/g", data: "Off-ball: Space PRF/g"}, // Off-ball: Space starts here
+													{ title: "Off-ball: Space PRF/g baseline", data: "Off-ball: Space PRF/g baseline"},
+													{ title: "Plays/g", data: "Off-ball: Space Plays/g"},
+													{ title: "rORTG", data: "Off-ball: Space rORTG"},
+													{ title: "PC/g", data: "Off-ball: Space PC/g"},
+													{ title: "PRF/g", data: "Off-ball: Crash PRF/g"}, // Off-ball: Crash starts here
+													{ title: "Off-ball: Crash PRF/g baseline", data: "Off-ball: Crash PRF/g baseline"},
+													{ title: "Plays/g",	data: "Off-ball: Crash Plays/g"},
+													{ title: "rORTG", data: "Off-ball: Crash rORTG"},
+													{ title: "PC/g", data: "Off-ball: Crash PC/g"},
+													{ title: "PRF/g", data: "Transition PRF/g"}, // Transition starts here
+													{ title: "Transition PRF/g baseline", data: "Transition PRF/g baseline"},
+													{ title: "Plays/g", data: "Transition Plays/g"},
+													{ title: "rORTG", data: "Transition rORTG"},
+													{ title: "PC/g", data: "Transition PC/g"},
+													{ title: "PRF/g", data: "Total PRF/g"}, // Total starts here
+													{ title: "Total PRF/g baseline", data: "Total PRF/g baseline"},
+													{ title: "Plays/g", data: "Total Plays/g"},
+													{ title: "rORTG", data: "Total rORTG"},
+													{ title: "PC/g", data: "Total PC/g"},
+												],
 												columnDefs: [
         										    { targets: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31], visible: false }, // Hide most columns initially
        											],
@@ -210,76 +247,48 @@
 												complete: function(results) {
 													// Loop through the data and add rows to the DataTable
 													console.log("Parsing Complete:", results);
-													results.data.forEach(function(row) {
-															table.row.add([
-															row["Player"],
-															row["Year"],
-															row["Player Year"],
-															row["Games"],
-															row["Total plays"],
-															row["On-ball PRF/g"], // On-ball starts here
-															row["On-ball PRF baseline"],
-															row["On-ball Plays/g"],
-															row["On-ball rORTG"],
-															row["On-ball PC/g"],
-															row["Off-ball: Partner PRF/g"], // Off-ball: Partner starts here
-															row["Off-ball: Partner PRF/g baseline"],
-															row["Off-ball: Partner Plays/g"],
-															row["Off-ball: Partner rORTG"],
-															row["Off-ball: Partner PC/g"],
-															row["Off-ball: Space PRF/g"], // Off-ball: Space starts here
-															row["Off-ball: Space PRF/g baseline"],
-															row["Off-ball: Space Plays/g"],
-															row["Off-ball: Space rORTG"],
-															row["Off-ball: Space PC/g"],
-															row["Off-ball: Crash PRF/g"], // Off-ball: Crash starts here
-															row["Off-ball: Crash PRF/g baseline"],
-															row["Off-ball: Crash Plays/g"],
-															row["Off-ball: Crash rORTG"],
-															row["Off-ball: Crash PC/g"],
-															row["Transition PRF/g"], // Transition starts here
-															row["Transition PRF/g baseline"],
-															row["Transition Plays/g"],
-															row["Transition rORTG"],
-															row["Transition PC/g"],
-															row["Total PRF/g"], // Total starts here
-															row["Total PRF/g baseline"],
-															row["Total Plays/g"],
-															row["Total rORTG"],
-															row["Total PC/g"],
-														]);
-													});
 
-													// Draw table after all rows have been added, then perform other operations
-													table.draw();
+													// Prepare data for DataTable by mapping each row to the correct columns
+            										const formattedData = results.data.map(row => [
+														row["Player"],
+														row["Year"],
+														row["Player Year"],
+														row["Games"],
+														row["Total plays"],
+														row["On-ball PRF/g"], // On-ball starts here
+														row["On-ball PRF baseline"],
+														row["On-ball Plays/g"],
+														row["On-ball rORTG"],
+														row["On-ball PC/g"],
+														row["Off-ball: Partner PRF/g"], // Off-ball: Partner starts here
+														row["Off-ball: Partner PRF/g baseline"],
+														row["Off-ball: Partner Plays/g"],
+														row["Off-ball: Partner rORTG"],
+														row["Off-ball: Partner PC/g"],
+														row["Off-ball: Space PRF/g"], // Off-ball: Space starts here
+														row["Off-ball: Space PRF/g baseline"],
+														row["Off-ball: Space Plays/g"],
+														row["Off-ball: Space rORTG"],
+														row["Off-ball: Space PC/g"],
+														row["Off-ball: Crash PRF/g"], // Off-ball: Crash starts here
+														row["Off-ball: Crash PRF/g baseline"],
+														row["Off-ball: Crash Plays/g"],
+														row["Off-ball: Crash rORTG"],
+														row["Off-ball: Crash PC/g"],
+														row["Transition PRF/g"], // Transition starts here
+														row["Transition PRF/g baseline"],
+														row["Transition Plays/g"],
+														row["Transition rORTG"],
+														row["Transition PC/g"],
+														row["Total PRF/g"], // Total starts here
+														row["Total PRF/g baseline"],
+														row["Total Plays/g"],
+														row["Total rORTG"],
+														row["Total PC/g"],
+													]);
 
-													// Rename columns
-														table.column(3).header().innerText = 'G'; 
-														table.column(5).header().innerText = 'PRF/g'; // On-ball starts here
-														table.column(7).header().innerText = 'Plays/g';
-														table.column(8).header().innerText = 'rORTG/g';
-														table.column(9).header().innerText = 'PC/g';
-														table.column(10).header().innerText = 'PRF/g'; // Off-ball: Partner starts here
-														table.column(12).header().innerText = 'Plays/g';
-														table.column(13).header().innerText = 'rORTG/g';
-														table.column(14).header().innerText = 'PC/g';		
-														table.column(15).header().innerText = 'PRF/g'; // Off-ball: Space starts here
-														table.column(17).header().innerText = 'Plays/g';
-														table.column(18).header().innerText = 'rORTG/g';
-														table.column(19).header().innerText = 'PC/g';		
-														table.column(20).header().innerText = 'PRF/g'; // Off-ball: Crash starts here
-														table.column(22).header().innerText = 'Plays/g';
-														table.column(23).header().innerText = 'rORTG/g';
-														table.column(24).header().innerText = 'PC/g';	
-														table.column(25).header().innerText = 'PRF/g'; // Transition starts here
-														table.column(27).header().innerText = 'Plays/g';
-														table.column(28).header().innerText = 'rORTG/g';
-														table.column(29).header().innerText = 'PC/g';	
-														table.column(30).header().innerText = 'PRF/g'; // Total starts here
-														table.column(32).header().innerText = 'Plays/g';
-														table.column(33).header().innerText = 'rORTG/g';
-														table.column(34).header().innerText = 'PC/g';
-
+													// Add all rows at once to the table and redraw
+            										table.rows.add(formattedData).draw();
 
 													// Start sorted by Total PC/g
 													table.order([34,'desc']);
