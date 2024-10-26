@@ -145,11 +145,13 @@
 										</tbody>
 									</table>
 									<script>
+										var table;
+
 										$(document).ready(function() {
 											console.log("Document ready - initializing DataTable...");
 
 											// Initialize the DataTable without data for now
-											$('#league-summary').DataTable({
+											table = $('#league-summary').DataTable({
 												columns: [
 													{ title: "Player", data: "Player"},
 													{ title:"Year",	data: "Year"},
