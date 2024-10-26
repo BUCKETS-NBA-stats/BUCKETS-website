@@ -251,43 +251,43 @@
 													console.log("Parsing Complete:", results);
 
 													// Prepare data for DataTable by mapping each row to the correct columns
-            										const formattedData = results.data.map(row => [
-														row["Player"],
-														row["Year"],
-														row["Player Year"],
-														row["Games"],
-														row["Total plays"],
-														row["On-ball PRF/g"], // On-ball starts here
-														row["On-ball PRF baseline"],
-														row["On-ball Plays/g"],
-														row["On-ball rORTG"],
-														row["On-ball PC/g"],
-														row["Off-ball: Partner PRF/g"], // Off-ball: Partner starts here
-														row["Off-ball: Partner PRF/g baseline"],
-														row["Off-ball: Partner Plays/g"],
-														row["Off-ball: Partner rORTG"],
-														row["Off-ball: Partner PC/g"],
-														row["Off-ball: Space PRF/g"], // Off-ball: Space starts here
-														row["Off-ball: Space PRF/g baseline"],
-														row["Off-ball: Space Plays/g"],
-														row["Off-ball: Space rORTG"],
-														row["Off-ball: Space PC/g"],
-														row["Off-ball: Crash PRF/g"], // Off-ball: Crash starts here
-														row["Off-ball: Crash PRF/g baseline"],
-														row["Off-ball: Crash Plays/g"],
-														row["Off-ball: Crash rORTG"],
-														row["Off-ball: Crash PC/g"],
-														row["Transition PRF/g"], // Transition starts here
-														row["Transition PRF/g baseline"],
-														row["Transition Plays/g"],
-														row["Transition rORTG"],
-														row["Transition PC/g"],
-														row["Total PRF/g"], // Total starts here
-														row["Total PRF/g baseline"],
-														row["Total Plays/g"],
-														row["Total rORTG"],
-														row["Total PC/g"],
-													]);
+            										const formattedData = results.data.map(row => ({
+														"Player": row["Player"],
+														"Year": row["Year"],
+														"Player Year": row["Player Year"],
+														"Games": row["Games"],
+														"Total plays": row["Total plays"],
+														"On-ball PRF/g": row["On-ball PRF/g"], // On-ball starts here
+														"On-ball PRF baseline": row["On-ball PRF baseline"],
+														"On-ball Plays/g": row["On-ball Plays/g"],
+														"On-ball rORTG": row["On-ball rORTG"],
+														"On-ball PC/g": row["On-ball PC/g"],
+														"Off-ball: Partner PRF/g": row["Off-ball: Partner PRF/g"], // Off-ball: Partner starts here
+														"Off-ball: Partner PRF/g baseline": row["Off-ball: Partner PRF/g baseline"],
+														"Off-ball: Partner Plays/g": row["Off-ball: Partner Plays/g"],
+														"Off-ball: Partner rORTG": row["Off-ball: Partner rORTG"],
+														"Off-ball: Partner PC/g": row["Off-ball: Partner PC/g"],
+														"Off-ball: Space PRF/g": row["Off-ball: Space PRF/g"], // Off-ball: Space starts here
+														"Off-ball: Space PRF/g baseline": row["Off-ball: Space PRF/g baseline"],
+														"Off-ball: Space Plays/g": row["Off-ball: Space Plays/g"],
+														"Off-ball: Space rORTG": row["Off-ball: Space rORTG"],
+														"Off-ball: Space PC/g": row["Off-ball: Space PC/g"],
+														"Off-ball: Crash PRF/g": row["Off-ball: Crash PRF/g"], // Off-ball: Crash starts here
+														"Off-ball: Crash PRF/g baseline": row["Off-ball: Crash PRF/g baseline"],
+														"Off-ball: Crash Plays/g": row["Off-ball: Crash Plays/g"],
+														"Off-ball: Crash rORTG": row["Off-ball: Crash rORTG"],
+														"Off-ball: Crash PC/g": row["Off-ball: Crash PC/g"],
+														"Transition PRF/g": row["Transition PRF/g"], // Transition starts here
+														"Transition PRF/g baseline": row["Transition PRF/g baseline"],
+														"Transition Plays/g": row["Transition Plays/g"],
+														"Transition rORTG": row["Transition rORTG"],
+														"Transition PC/g": row["Transition PC/g"],
+														"Total PRF/g": row["Total PRF/g"], // Total starts here
+														"Total PRF/g baseline": row["Total PRF/g baseline"],
+														"Total Plays/g": row["Total Plays/g"],
+														"Total rORTG": row["Total rORTG"],
+														"Total PC/g": row["Total PC/g"],
+												}));
 
 													// Add all rows at once to the table and redraw
             										table.rows.add(formattedData).draw();
