@@ -68,14 +68,14 @@
 			}
 
 			/* Dropdown button */
-			.dropdown-btn {
+/* 			.dropdown-btn {
 			    background-color: #3498db;
 			    color: white;
 			    padding: 10px;
 			    border: none;
 			    cursor: pointer;
 			    font-size: 16px;
-			}
+			} */
 
 			/* Dropdown content (hidden by default) */
 			.dropdown-content {
@@ -126,7 +126,7 @@
 									<!-- Column selector -->
 
 									<div class="dropdown">
-										<button class="dropdown-btn button">Select Columns</button>
+										<button class="dropdown-btn">Select Columns</button>
 										<div class="column-selector">
 											<label><input type="checkbox" class="column-toggle" data-column="0" checked> Player</label>
 											<label><input type="checkbox" class="column-toggle" data-column="1" checked> Year</label>
@@ -350,6 +350,7 @@
 											// Dropdown toggle functionality
 											$('.dropdown-btn').on('click', function(event) {
 												event.stopPropagation();
+												console.log("Button clicked"); // Confirm button interaction
 												$('.dropdown').toggleClass('show');
 											});
 									
