@@ -286,22 +286,22 @@
             										}
     											},
 
-												initComplete: function() {											
+												/* initComplete: function() {											
 													console.log("DataTable initialized.");
 													
 													// Directly access DataTable instance in initComplete
             										var tableInstance = $('#league-summary').DataTable();
 
 													// Listen to column visibility changes and update SearchBuilder columns
-            										/* tableInstance.on('column-visibility.dt', function() {
+            										tableInstance.on('column-visibility.dt', function() {
                 										console.log("Column visibility changed - rebuilding SearchBuilder...");
                 										tableInstance.searchBuilder.rebuild({
                     										columns: tableInstance.columns().indexes().filter(function(index) {
                         										return tableInstance.column(index).visible();
                     										}).toArray()
                 										});
-            										}); */
-												}
+            										});
+												} */
 											});
 											
 											// Function to return the visible columns for SearchBuilder
