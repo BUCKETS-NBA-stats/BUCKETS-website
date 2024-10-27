@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dropdown Test</title>
     <style>
-        /* Dropdown container */
+        /* CSS for dropdown */
         .dropdown {
             position: relative;
             display: inline-block;
         }
-
-        /* Dropdown button */
         .dropdown-btn {
             background-color: #3498db;
             color: white;
@@ -20,63 +18,45 @@
             cursor: pointer;
             font-size: 16px;
         }
-
-        /* Dropdown content (hidden by default) */
         .dropdown-content {
-            display: none; /* Hidden by default */
+            display: none;
             position: absolute;
             background-color: #f9f9f9;
             min-width: 200px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
             padding: 12px;
             z-index: 1;
         }
-
-        /* Show dropdown content when .show class is added */
         .dropdown.show .dropdown-content {
             display: block;
-        }
-
-        /* Checkbox styling within the dropdown */
-        .column-selector label {
-            display: block;
-            margin: 5px 0;
         }
     </style>
 </head>
 <body>
-
-<div class="dropdown">
-    <button class="dropdown-btn">Select Columns</button>
-    <div class="dropdown-content column-selector">
-        <label><input type="checkbox" class="column-toggle" data-column="0" checked> Player</label>
-        <label><input type="checkbox" class="column-toggle" data-column="1" checked> Year</label>
-        <label><input type="checkbox" class="column-toggle" data-column="2" checked> Player Year</label>
-        <label><input type="checkbox" class="column-toggle" data-column="3" checked> G</label>
-        <label><input type="checkbox" class="column-toggle" data-column="4" checked> Total Plays</label>
+    <div class="dropdown">
+        <button class="dropdown-btn">Select Columns</button>
+        <div class="dropdown-content column-selector">
+            <label><input type="checkbox" class="column-toggle" data-column="0" checked> Player</label>
+            <label><input type="checkbox" class="column-toggle" data-column="1" checked> Year</label>
+            <label><input type="checkbox" class="column-toggle" data-column="2" checked> Player Year</label>
+            <!-- Add more checkboxes as needed -->
+        </div>
     </div>
-</div>
 
-<script>
-    // Wait until the document is fully loaded
-    document.addEventListener("DOMContentLoaded", function() {
-        // Toggle the dropdown visibility on button click
-        document.querySelector('.dropdown-btn').addEventListener('click', function(event) {
-            event.stopPropagation();  // Prevent immediate closure
-            document.querySelector('.dropdown').classList.toggle('show');
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.dropdown-btn').on('click', function(event) {
+                event.stopPropagation();
+                $('.dropdown').toggleClass('show');
+            });
+
+            $(window).on('click', function(event) {
+                if (!$(event.target).closest('.dropdown').length) {
+                    $('.dropdown').removeClass('show');
+                }
+            });
         });
-
-        // Close the dropdown if clicked outside
-        window.addEventListener('click', function(event) {
-            if (!event.target.matches('.dropdown-btn')) {
-                var dropdowns = document.querySelectorAll('.dropdown');
-                dropdowns.forEach(function(dropdown) {
-                    dropdown.classList.remove('show');
-                });
-            }
-        });
-    });
-</script>
-
+    </script>
 </body>
 </html>
