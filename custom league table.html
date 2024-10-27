@@ -31,19 +31,33 @@
 				overflow: hidden;
 			}
 			/* Column selector */
-			.column-selector { margin-bottom: 1em; }
-			.column-selector label { margin-right: 1em; }
+			/* Ensure checkboxes have standard display */
 			.column-selector input[type="checkbox"] {
-    		    width: 20px; /* Make the checkboxes larger */
-        		height: 20px;
-				position: relative;
-				z-index: 10;
-        		outline: 2px solid red; /* Add a visible outline to confirm visibility */
-    		}
-    		.column-selector label {
-        		display: inline-block;
-        		padding: 5px;
-    		}
+			    -webkit-appearance: checkbox;
+			    -moz-appearance: checkbox;
+			    appearance: checkbox;
+			    width: 20px;   /* Ensure visibility */
+ 				height: 20px;
+    			margin-right: 5px;
+    			display: inline-block;
+    			vertical-align: middle;
+			}
+
+			.column-selector label {
+    			display: inline-block;  /* Ensures labels and checkboxes align horizontally */
+    			font-weight: normal;    /* Match theme but allow customization */
+    			color: #333;            /* Adjust color if theme sets labels to transparent */
+			}
+
+			/* Ensure .column-selector stays visible and organized */
+			.column-selector {
+    			position: relative;
+    			z-index: 10;
+    			display: block;       /* Ensures it’s not affected by flexbox layout rules */
+    			padding: 10px;        /* Adds spacing if the theme has tight padding */
+    			background-color: #f9f9f9; /* Adds background to visually separate if needed */
+			}
+
 		</style>
 	</head>
 	<body class="is-preload">
