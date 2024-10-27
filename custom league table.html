@@ -61,6 +61,43 @@
     			z-index: 10;
 			}
 
+			/* Dropdown container */
+			.dropdown {
+			    position: relative;
+			    display: inline-block;
+			}
+
+			/* Dropdown button */
+			.dropdown-btn {
+			    background-color: #3498db;
+			    color: white;
+			    padding: 10px;
+			    border: none;
+			    cursor: pointer;
+			    font-size: 16px;
+			}
+
+			/* Dropdown content (hidden by default) */
+			.dropdown-content {
+			    display: none;
+			    position: absolute;
+			    background-color: #f9f9f9;
+			    min-width: 200px;
+			    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			    padding: 12px;
+			    z-index: 1;
+			}
+
+			/* Show the dropdown content on button click */
+			.dropdown.show .dropdown-content {
+			    display: block;
+			}
+
+			/* Checkbox styling within the dropdown */
+			.column-selector label {
+			    display: block;    /* Ensure each label is on a new line */
+			    margin: 5px 0;     /* Add space between checkboxes */
+			}
 
 		</style>
 	</head>
@@ -88,50 +125,52 @@
 								
 									<!-- Column selector -->
 
-									<div class="column-selector">
-										<label><input type="checkbox" class="column-toggle" data-column="0" checked> Player</label>
-										<label><input type="checkbox" class="column-toggle" data-column="1" checked> Year</label>
-										<!-- <label><input type="checkbox" class="column-toggle" data-column="2" checked> Player Year</label> -->
-										<label><input type="checkbox" class="column-toggle" data-column="3" checked> G</label>
-										<label><input type="checkbox" class="column-toggle" data-column="4" checked> Total Plays</label>
+									<div class="dropdown">
+										<button class="dropdown-btn">Select Columns</button>
+										<div class="column-selector">
+											<label><input type="checkbox" class="column-toggle" data-column="0" checked> Player</label>
+											<label><input type="checkbox" class="column-toggle" data-column="1" checked> Year</label>
+											<!-- <label><input type="checkbox" class="column-toggle" data-column="2" checked> Player Year</label> -->
+											<label><input type="checkbox" class="column-toggle" data-column="3" checked> G</label>
+											<label><input type="checkbox" class="column-toggle" data-column="4" checked> Total Plays</label>
+											
+											<label><input type="checkbox" class="column-toggle" data-column="5" checked> On-ball PRF/g</label>
+											<!-- <label><input type="checkbox" class="column-toggle" data-column="6" checked> On-ball PRF baseline</label> -->
+											<label><input type="checkbox" class="column-toggle" data-column="7" checked> On-ball Plays/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="8" checked> On-ball rORTG</label>
+											<label><input type="checkbox" class="column-toggle" data-column="9" checked> On-ball PC/g</label>
+											
+											<label><input type="checkbox" class="column-toggle" data-column="10" checked> Off-ball: Partner PRF/g</label>
+											<!-- <label><input type="checkbox" class="column-toggle" data-column="11" checked> Off-ball: Partner PRF/g baseline</label> -->
+											<label><input type="checkbox" class="column-toggle" data-column="12" checked> Off-ball: Partner Plays/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="13" checked> Off-ball: Partner rORTG</label>
+											<label><input type="checkbox" class="column-toggle" data-column="14" checked> Off-ball: Partner PC/g</label>
 									
-										<label><input type="checkbox" class="column-toggle" data-column="5" checked> On-ball PRF/g</label>
-										<!-- <label><input type="checkbox" class="column-toggle" data-column="6" checked> On-ball PRF baseline</label> -->
-										<label><input type="checkbox" class="column-toggle" data-column="7" checked> On-ball Plays/g</label>
-										<label><input type="checkbox" class="column-toggle" data-column="8" checked> On-ball rORTG</label>
-										<label><input type="checkbox" class="column-toggle" data-column="9" checked> On-ball PC/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="15" checked> Off-ball: Space PRF/g</label>
+											<!-- <label><input type="checkbox" class="column-toggle" data-column="16" checked> Off-ball: Space PRF/g baseline</label> -->
+											<label><input type="checkbox" class="column-toggle" data-column="17" checked> Off-ball: Space Plays/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="18" checked> Off-ball: Space rORTG</label>
+											<label><input type="checkbox" class="column-toggle" data-column="19" checked> Off-ball: Space PC/g</label>
 									
-										<label><input type="checkbox" class="column-toggle" data-column="10" checked> Off-ball: Partner PRF/g</label>
-										<!-- <label><input type="checkbox" class="column-toggle" data-column="11" checked> Off-ball: Partner PRF/g baseline</label> -->
-										<label><input type="checkbox" class="column-toggle" data-column="12" checked> Off-ball: Partner Plays/g</label>
-										<label><input type="checkbox" class="column-toggle" data-column="13" checked> Off-ball: Partner rORTG</label>
-										<label><input type="checkbox" class="column-toggle" data-column="14" checked> Off-ball: Partner PC/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="20" checked> Off-ball: Crash PRF/g</label>
+											<!-- <label><input type="checkbox" class="column-toggle" data-column="21" checked> Off-ball: Crash PRF/g baseline</label> -->
+											<label><input type="checkbox" class="column-toggle" data-column="22" checked> Off-ball: Crash Plays/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="23" checked> Off-ball: Crash rORTG</label>
+											<label><input type="checkbox" class="column-toggle" data-column="24" checked> Off-ball: Crash PC/g</label>
 									
-										<label><input type="checkbox" class="column-toggle" data-column="15" checked> Off-ball: Space PRF/g</label>
-										<!-- <label><input type="checkbox" class="column-toggle" data-column="16" checked> Off-ball: Space PRF/g baseline</label> -->
-										<label><input type="checkbox" class="column-toggle" data-column="17" checked> Off-ball: Space Plays/g</label>
-										<label><input type="checkbox" class="column-toggle" data-column="18" checked> Off-ball: Space rORTG</label>
-										<label><input type="checkbox" class="column-toggle" data-column="19" checked> Off-ball: Space PC/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="25" checked> Transition PRF/g</label>
+											<!-- <label><input type="checkbox" class="column-toggle" data-column="26" checked> Transition PRF/g baseline</label> -->
+											<label><input type="checkbox" class="column-toggle" data-column="27" checked> Transition Plays/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="28" checked> Transition rORTG</label>
+											<label><input type="checkbox" class="column-toggle" data-column="29" checked> Transition PC/g</label>
 									
-										<label><input type="checkbox" class="column-toggle" data-column="20" checked> Off-ball: Crash PRF/g</label>
-										<!-- <label><input type="checkbox" class="column-toggle" data-column="21" checked> Off-ball: Crash PRF/g baseline</label> -->
-										<label><input type="checkbox" class="column-toggle" data-column="22" checked> Off-ball: Crash Plays/g</label>
-										<label><input type="checkbox" class="column-toggle" data-column="23" checked> Off-ball: Crash rORTG</label>
-										<label><input type="checkbox" class="column-toggle" data-column="24" checked> Off-ball: Crash PC/g</label>
-									
-										<label><input type="checkbox" class="column-toggle" data-column="25" checked> Transition PRF/g</label>
-										<!-- <label><input type="checkbox" class="column-toggle" data-column="26" checked> Transition PRF/g baseline</label> -->
-										<label><input type="checkbox" class="column-toggle" data-column="27" checked> Transition Plays/g</label>
-										<label><input type="checkbox" class="column-toggle" data-column="28" checked> Transition rORTG</label>
-										<label><input type="checkbox" class="column-toggle" data-column="29" checked> Transition PC/g</label>
-									
-										<label><input type="checkbox" class="column-toggle" data-column="30" checked> Total PRF/g</label>
-										<!-- <label><input type="checkbox" class="column-toggle" data-column="31" checked> Total PRF/g baseline</label> -->
-										<label><input type="checkbox" class="column-toggle" data-column="32" checked> Total Plays/g</label>
-										<label><input type="checkbox" class="column-toggle" data-column="33" checked> Total rORTG</label>
-										<label><input type="checkbox" class="column-toggle" data-column="34" checked> Total PC/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="30" checked> Total PRF/g</label>
+											<!-- <label><input type="checkbox" class="column-toggle" data-column="31" checked> Total PRF/g baseline</label> -->
+											<label><input type="checkbox" class="column-toggle" data-column="32" checked> Total Plays/g</label>
+											<label><input type="checkbox" class="column-toggle" data-column="33" checked> Total rORTG</label>
+											<label><input type="checkbox" class="column-toggle" data-column="34" checked> Total PC/g</label>
+										</div>
 									</div>
-									
 									
 									<!-- Minimum plays slider -->
 <!-- 									<label for="minPlaysSlider">Minimum plays: <span id="sliderValue">150</span></label>
@@ -184,6 +223,22 @@
 									</table>
 									<script>
 										var table;
+
+										// Toggle the dropdown visibility on button click
+										document.querySelector('.dropdown-btn').addEventListener('click', function() {
+										    document.querySelector('.dropdown').classList.toggle('show');
+										});
+
+										// Close the dropdown if clicked outside
+										window.addEventListener('click', function(event) {
+										    if (!event.target.matches('.dropdown-btn')) {
+        										var dropdowns = document.querySelectorAll('.dropdown');
+        										dropdowns.forEach(function(dropdown) {
+            										dropdown.classList.remove('show');
+        										});
+    										}
+										});
+
 
 										$(document).ready(function() {
 											console.log("Document ready - initializing DataTable...");
