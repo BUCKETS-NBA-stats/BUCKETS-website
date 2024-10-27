@@ -9,7 +9,7 @@
 		<title>Regular Season BUCKETS: Custom table</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<!-- <link rel="stylesheet" href="assets/css/main.css" /> -->
+		<link rel="stylesheet" href="assets/css/main.css" />
 		<title>Regular Season BUCKETS: Custom table</title>
 		
 		<script src="assets/js/jquery.min.js"></script>
@@ -31,32 +31,36 @@
 				overflow: hidden;
 			}
 			/* Column selector */
-			/* Ensure checkboxes have standard display */
+			/* Reset styles for .column-selector and checkboxes */
+			.column-selector * {
+			    all: unset;           /* Remove all inherited styles */
+			    display: inline-block; /* Ensure items align horizontally */
+			}
+
 			.column-selector input[type="checkbox"] {
+			    all: unset;
 			    -webkit-appearance: checkbox;
 			    -moz-appearance: checkbox;
 			    appearance: checkbox;
-			    width: 20px;   /* Ensure visibility */
- 				height: 20px;
+				width: 20px;
+    			height: 20px;
     			margin-right: 5px;
     			display: inline-block;
-    			vertical-align: middle;
 			}
 
 			.column-selector label {
-    			display: inline-block;  /* Ensures labels and checkboxes align horizontally */
-    			font-weight: normal;    /* Match theme but allow customization */
-    			color: #333;            /* Adjust color if theme sets labels to transparent */
+    			color: #333;
+    			margin-right: 10px;
 			}
 
-			/* Ensure .column-selector stays visible and organized */
 			.column-selector {
-    			position: relative;
+			    display: block;
+			    padding: 10px;
+			    background-color: #f9f9f9;
+ 				position: relative;
     			z-index: 10;
-    			display: block;       /* Ensures it’s not affected by flexbox layout rules */
-    			padding: 10px;        /* Adds spacing if the theme has tight padding */
-    			background-color: #f9f9f9; /* Adds background to visually separate if needed */
 			}
+
 
 		</style>
 	</head>
