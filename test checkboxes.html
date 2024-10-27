@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkbox Test</title>
+    <style>
+        /* Column selector */
+        .column-selector { margin-bottom: 1em; }
+        .column-selector label { margin-right: 1em; }
+
+        /* Temporary styling for visibility */
+        .column-selector input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            outline: 2px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div class="column-selector">
+        <label><input type="checkbox" class="column-toggle" data-column="0" checked> Player</label>
+        <label><input type="checkbox" class="column-toggle" data-column="1" checked> Year</label>
+        <label><input type="checkbox" class="column-toggle" data-column="2" checked> Player Year</label>
+    </div>
+</body>
+</html>
