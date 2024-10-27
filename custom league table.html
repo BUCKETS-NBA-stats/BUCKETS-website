@@ -84,16 +84,52 @@
 								<body>
 									<h2>Regular Season BUCKETS</h1>
 								
-									<!-- Drop down selector -->
+									<!-- Column selector -->
 
-									<select id = "columnSelect" style="font-weight: bold;">
-										<option value="Total">Total</option>
-										<option value="On-ball">On-ball</option>
-										<option value="Off-ball: Partner">Off-ball: Partner</option>
-										<option value="Off-ball: Space">Off-ball: Space</option>
-										<option value="Off-ball: Crash">Off-ball: Crash</option>
-										<option value="Transition">Transition</option>
-									</select>
+									<div class="column-selector">
+										<label><input type="checkbox" class="column-toggle" data-column="0" checked> Player</label>
+										<label><input type="checkbox" class="column-toggle" data-column="1" checked> Year</label>
+										<!-- <label><input type="checkbox" class="column-toggle" data-column="2" checked> Player Year</label> -->
+										<label><input type="checkbox" class="column-toggle" data-column="3" checked> G</label>
+										<label><input type="checkbox" class="column-toggle" data-column="4" checked> Total Plays</label>
+									
+										<label><input type="checkbox" class="column-toggle" data-column="5" checked> On-ball PRF/g</label>
+										<!-- <label><input type="checkbox" class="column-toggle" data-column="6" checked> On-ball PRF baseline</label> -->
+										<label><input type="checkbox" class="column-toggle" data-column="7" checked> On-ball Plays/g</label>
+										<label><input type="checkbox" class="column-toggle" data-column="8" checked> On-ball rORTG</label>
+										<label><input type="checkbox" class="column-toggle" data-column="9" checked> On-ball PC/g</label>
+									
+										<label><input type="checkbox" class="column-toggle" data-column="10" checked> Off-ball: Partner PRF/g</label>
+										<!-- <label><input type="checkbox" class="column-toggle" data-column="11" checked> Off-ball: Partner PRF/g baseline</label> -->
+										<label><input type="checkbox" class="column-toggle" data-column="12" checked> Off-ball: Partner Plays/g</label>
+										<label><input type="checkbox" class="column-toggle" data-column="13" checked> Off-ball: Partner rORTG</label>
+										<label><input type="checkbox" class="column-toggle" data-column="14" checked> Off-ball: Partner PC/g</label>
+									
+										<label><input type="checkbox" class="column-toggle" data-column="15" checked> Off-ball: Space PRF/g</label>
+										<!-- <label><input type="checkbox" class="column-toggle" data-column="16" checked> Off-ball: Space PRF/g baseline</label> -->
+										<label><input type="checkbox" class="column-toggle" data-column="17" checked> Off-ball: Space Plays/g</label>
+										<label><input type="checkbox" class="column-toggle" data-column="18" checked> Off-ball: Space rORTG</label>
+										<label><input type="checkbox" class="column-toggle" data-column="19" checked> Off-ball: Space PC/g</label>
+									
+										<label><input type="checkbox" class="column-toggle" data-column="20" checked> Off-ball: Crash PRF/g</label>
+										<!-- <label><input type="checkbox" class="column-toggle" data-column="21" checked> Off-ball: Crash PRF/g baseline</label> -->
+										<label><input type="checkbox" class="column-toggle" data-column="22" checked> Off-ball: Crash Plays/g</label>
+										<label><input type="checkbox" class="column-toggle" data-column="23" checked> Off-ball: Crash rORTG</label>
+										<label><input type="checkbox" class="column-toggle" data-column="24" checked> Off-ball: Crash PC/g</label>
+									
+										<label><input type="checkbox" class="column-toggle" data-column="25" checked> Transition PRF/g</label>
+										<!-- <label><input type="checkbox" class="column-toggle" data-column="26" checked> Transition PRF/g baseline</label> -->
+										<label><input type="checkbox" class="column-toggle" data-column="27" checked> Transition Plays/g</label>
+										<label><input type="checkbox" class="column-toggle" data-column="28" checked> Transition rORTG</label>
+										<label><input type="checkbox" class="column-toggle" data-column="29" checked> Transition PC/g</label>
+									
+										<label><input type="checkbox" class="column-toggle" data-column="30" checked> Total PRF/g</label>
+										<!-- <label><input type="checkbox" class="column-toggle" data-column="31" checked> Total PRF/g baseline</label> -->
+										<label><input type="checkbox" class="column-toggle" data-column="32" checked> Total Plays/g</label>
+										<label><input type="checkbox" class="column-toggle" data-column="33" checked> Total rORTG</label>
+										<label><input type="checkbox" class="column-toggle" data-column="34" checked> Total PC/g</label>
+									</div>
+									
 									
 									<!-- Minimum plays slider -->
 <!-- 									<label for="minPlaysSlider">Minimum plays: <span id="sliderValue">150</span></label>
@@ -216,14 +252,14 @@
             										var tableInstance = $('#league-summary').DataTable();
 
 													// Listen to column visibility changes and update SearchBuilder columns
-            										tableInstance.on('column-visibility.dt', function() {
+            										/* tableInstance.on('column-visibility.dt', function() {
                 										console.log("Column visibility changed - rebuilding SearchBuilder...");
                 										tableInstance.searchBuilder.rebuild({
                     										columns: tableInstance.columns().indexes().filter(function(index) {
                         										return tableInstance.column(index).visible();
                     										}).toArray()
                 										});
-            										});
+            										}); */
 												}
 											});
 											
@@ -295,41 +331,12 @@
 													// Start sorted by Total PC/g
 													table.order([34,'desc']);
 													
-													// Select columns to unhide
-													$('#columnSelect').on('change', function() {
-        											var selectedValue = $(this).val();
-
-   											   		  // First, hide all target columns
-   													     table.columns([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]).visible(false);
-
-  												      // Based on selection, show the appropriate columns and sort
-  													      if (selectedValue === 'Total') {
-   											    		    table.columns([30, 32, 33, 34]).visible(true);
-															table.order([34,'desc']);
-
-													  	} else if (selectedValue === 'On-ball') {
-   													        table.columns([5, 7, 8, 9]).visible(true);
-															table.order([9,'desc']);
-
-														} else if (selectedValue === 'Off-ball: Partner') {
-   													        table.columns([10, 12, 13, 14]).visible(true);
-															table.order([14,'desc']);
-
-														} else if (selectedValue === 'Off-ball: Space') {
-   													        table.columns([15, 17, 18, 19]).visible(true);
-															table.order([19,'desc']);
-
-														} else if (selectedValue === 'Off-ball: Crash') {
-   													        table.columns([20, 22, 23, 24]).visible(true);
-															table.order([24,'desc']);
-
-														} else if (selectedValue === 'Transition') {
-   											        		table.columns([25, 27, 28, 29]).visible(true);
-															table.order([29,'desc']);
-														}
-														table.draw();
-													});	
-													
+													// Toggle column visibility based on checkbox selection
+    												$('.column-toggle').on('change', function() {
+        												var column = table.column($(this).data('column'));
+        												column.visible($(this).is(':checked'));
+    												});
+																							
 													// Min plays logic
 													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
   											        	var totalPlays = parseFloat(data[4]) || 0;  // Check "Plays" value in column 5
