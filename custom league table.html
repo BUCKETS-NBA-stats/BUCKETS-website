@@ -224,19 +224,22 @@
 									<script>
 										var table;
 
-										// Toggle the dropdown visibility on button click
-										document.querySelector('.dropdown-btn').addEventListener('click', function() {
-										    document.querySelector('.dropdown').classList.toggle('show');
-										});
+										document.addEventListener("DOMContentLoaded", function() {
+    										// Toggle the dropdown visibility on button click
+    										document.querySelector('.dropdown-btn').addEventListener('click', function(event) {
+        										event.stopPropagation();  // Prevent the click from propagating up and closing the dropdown immediately
+        										document.querySelector('.dropdown').classList.toggle('show');
+    										});
 
-										// Close the dropdown if clicked outside
-										window.addEventListener('click', function(event) {
-										    if (!event.target.matches('.dropdown-btn')) {
-        										var dropdowns = document.querySelectorAll('.dropdown');
-        										dropdowns.forEach(function(dropdown) {
-            										dropdown.classList.remove('show');
-        										});
-    										}
+    										// Close the dropdown if clicked outside
+    										window.addEventListener('click', function(event) {
+        										if (!event.target.matches('.dropdown-btn')) {
+            										var dropdowns = document.querySelectorAll('.dropdown');
+            										dropdowns.forEach(function(dropdown) {
+                										dropdown.classList.remove('show');
+            										});
+        										}
+    										});
 										});
 
 
