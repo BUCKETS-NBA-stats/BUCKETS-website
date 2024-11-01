@@ -182,44 +182,41 @@
 											// Initialize the DataTable without data for now
 											table = $('#league-summary').DataTable({
 												columns: [
-													{ title: "Player", data: "Player"},
-													{ title: "Year", data: "Year"},
-													{ title: "Player Year", data: "Player Year"},
-													{ title: "G", data: "Games"},
-													{ title: "Total Plays", data: "Total plays"},
-													{ title: "On-ball PRF/g", data: "On-ball PRF/g"},
-													{ title: "On-ball PRF baseline", data: "On-ball PRF baseline"},
-													{ title: "On-ball Plays/g", data: "On-ball Plays/g"},
-													{ title: "On-ball rORTG", data: "On-ball rORTG"},
-													{ title: "On-ball PC/g", data: "On-ball PC/g"},
-													{ title: "Off-ball: Partner PRF/g", data: "Off-ball: Partner PRF/g"},
-													{ title: "Off-ball: Partner PRF/g baseline", data: "Off-ball: Partner PRF/g baseline"},
-													{ title: "Off-ball: Partner Plays/g", data: "Off-ball: Partner Plays/g"},
-													{ title: "Off-ball: Partner rORTG", data: "Off-ball: Partner rORTG"},
-													{ title: "Off-ball: Partner PC/g", data: "Off-ball: Partner PC/g"},
-													{ title: "Off-ball: Space PRF/g", data: "Off-ball: Space PRF/g"},
-													{ title: "Off-ball: Space PRF/g baseline", data: "Off-ball: Space PRF/g baseline"},
-													{ title: "Off-ball: Space Plays/g", data: "Off-ball: Space Plays/g"},
-													{ title: "Off-ball: Space rORTG", data: "Off-ball: Space rORTG"},
-													{ title: "Off-ball: Space PC/g", data: "Off-ball: Space PC/g"},
-													{ title: "Off-ball: Crash PRF/g", data: "Off-ball: Crash PRF/g"},
-													{ title: "Off-ball: Crash PRF/g baseline", data: "Off-ball: Crash PRF/g baseline"},
-													{ title: "Off-ball: Crash Plays/g", data: "Off-ball: Crash Plays/g"},
-													{ title: "Off-ball: Crash rORTG", data: "Off-ball: Crash rORTG"},
-													{ title: "Off-ball: Crash PC/g", data: "Off-ball: Crash PC/g"},
-													{ title: "Transition PRF/g", data: "Transition PRF/g"},
-													{ title: "Transition PRF/g baseline", data: "Transition PRF/g baseline"},
-													{ title: "Transition Plays/g", data: "Transition Plays/g"},
-													{ title: "Transition rORTG", data: "Transition rORTG"},
-													{ title: "Transition PC/g", data: "Transition PC/g"},
-													{ title: "Total PRF/g", data: "Total PRF/g"},
-													{ title: "Total PRF/g baseline", data: "Total PRF/g baseline"},
-													{ title: "Total Plays/g", data: "Total Plays/g"},
-													{ title: "Total rORTG", data: "Total rORTG"},
-													{ title: "Total PC/g", data: "Total PC/g"}
-												],
-												columnDefs: [
-													{ targets: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31], visible: false }
+													{ title: "Player", data: "Player", visible: true },
+													{ title: "Year", data: "Year", visible: true },
+													{ title: "Player Year", data: "Player Year", visible: false },
+													{ title: "G", data: "Games", visible: true, visible: false },
+													{ title: "Total Plays", data: "Total plays", visible: false },
+													{ title: "On-ball PRF/g", data: "On-ball PRF/g", visible: false },
+													{ title: "On-ball PRF baseline", data: "On-ball PRF baseline", visible: false },
+													{ title: "On-ball Plays/g", data: "On-ball Plays/g", visible: false },
+													{ title: "On-ball rORTG", data: "On-ball rORTG", visible: false },
+													{ title: "On-ball PC/g", data: "On-ball PC/g", visible: false },
+													{ title: "Off-ball: Partner PRF/g", data: "Off-ball: Partner PRF/g", visible: false },
+													{ title: "Off-ball: Partner PRF/g baseline", data: "Off-ball: Partner PRF/g baseline", visible: false },
+													{ title: "Off-ball: Partner Plays/g", data: "Off-ball: Partner Plays/g", visible: false },
+													{ title: "Off-ball: Partner rORTG", data: "Off-ball: Partner rORTG", visible: false },
+													{ title: "Off-ball: Partner PC/g", data: "Off-ball: Partner PC/g", visible: false },
+													{ title: "Off-ball: Space PRF/g", data: "Off-ball: Space PRF/g", visible: false },
+													{ title: "Off-ball: Space PRF/g baseline", data: "Off-ball: Space PRF/g baseline", visible: false },
+													{ title: "Off-ball: Space Plays/g", data: "Off-ball: Space Plays/g", visible: false },
+													{ title: "Off-ball: Space rORTG", data: "Off-ball: Space rORTG", visible: false },
+													{ title: "Off-ball: Space PC/g", data: "Off-ball: Space PC/g", visible: false },
+													{ title: "Off-ball: Crash PRF/g", data: "Off-ball: Crash PRF/g", visible: false },
+													{ title: "Off-ball: Crash PRF/g baseline", data: "Off-ball: Crash PRF/g baseline", visible: false },
+													{ title: "Off-ball: Crash Plays/g", data: "Off-ball: Crash Plays/g", visible: false },
+													{ title: "Off-ball: Crash rORTG", data: "Off-ball: Crash rORTG", visible: false },
+													{ title: "Off-ball: Crash PC/g", data: "Off-ball: Crash PC/g", visible: false },
+													{ title: "Transition PRF/g", data: "Transition PRF/g", visible: false },
+													{ title: "Transition PRF/g baseline", data: "Transition PRF/g baseline", visible: false },
+													{ title: "Transition Plays/g", data: "Transition Plays/g", visible: false },
+													{ title: "Transition rORTG", data: "Transition rORTG", visible: false },
+													{ title: "Transition PC/g", data: "Transition PC/g", visible: false },
+													{ title: "Total PRF/g", data: "Total PRF/g", visible: true },
+													{ title: "Total PRF/g baseline", data: "Total PRF/g baseline", visible: false },
+													{ title: "Total Plays/g", data: "Total Plays/g", visible: true },
+													{ title: "Total rORTG", data: "Total rORTG", visible: true },
+													{ title: "Total PC/g", data: "Total PC/g", visible: true }
 												],
 												autoWidth: false,
 												retrieve: true,
@@ -292,27 +289,19 @@
 													console.error("Error loading CSV file:", error);
 												}
 											});
-									
+
+											// Ensure checkboxes match initial column visibility state
+    										$('.column-toggle').each(function() {
+        										var column = table.column($(this).data('column'));
+        										$(this).prop('checked', column.visible());
+    										});
+
 											// Toggle column visibility based on checkbox selection
 											$('.column-toggle').on('change', function() {
 												var column = table.column($(this).data('column'));
 												column.visible($(this).is(':checked'));
 											});
-									
-											// Dropdown toggle functionality
-											$('.dropdown-btn').on('click', function(event) {
-												event.stopPropagation();
-												console.log("Button clicked"); // Confirm button interaction
-												$('.dropdown').toggleClass('show');
-											});
-									
-											// Close the dropdown if clicked outside
-											$(window).on('click', function(event) {
-												if (!$(event.target).closest('.dropdown').length) {
-													$('.dropdown').removeClass('show');
-												}
-											});
-									
+																												
 											// Filter: Min Plays Logic
 											$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
 												var totalPlays = parseFloat(data[4]) || 0; // Assuming column index 4 for "Total plays"
