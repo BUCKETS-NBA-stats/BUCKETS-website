@@ -134,10 +134,18 @@
 															table.row.add(['Off-ball: Space', selectedRow['Off-ball: Space PRF/g'], selectedRow['Off-ball: Space Plays/g'], selectedRow['Off-ball: Space rORTG'], selectedRow['Off-ball: Space PC/g']]);
 															table.row.add(['Off-ball: Crash', selectedRow['Off-ball: Crash PRF/g'], selectedRow['Off-ball: Crash Plays/g'], selectedRow['Off-ball: Crash rORTG'], selectedRow['Off-ball: Crash PC/g']]);
 															table.row.add(['Transition', selectedRow['Transition PRF/g'], selectedRow['Transition Plays/g'], selectedRow['Transition rORTG'], selectedRow['Transition PC/g']]);
-															table.row.add(['Total', selectedRow['Total PRF/g'], selectedRow['Total Plays/g'], selectedRow['Total rORTG'], selectedRow['Total PC/g']]).nodes().to$().addClass('bold-row');
 
-                            								// Draw the table
-                            								table.draw();
+                            								// Add total row and Draw the table
+                            								var totalRow = table.row.add([
+																'Total',
+																selectedRow['Total PRF/g'],
+																selectedRow['Total Plays/g'],
+																selectedRow['Total rORTG'],
+																selectedRow['Total PC/g']
+															]).draw().node();
+
+															// Apply the bold-row class to the "Total" row
+															$(totalRow).addClass('bold-row');
                         								}
                     								});													
 												},
