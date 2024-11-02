@@ -95,6 +95,8 @@
 										<option value="Transition">Transition</option>
 									</select>
 									
+									<a href="custom league table.html">Advanced search</a>
+
 									<!-- Minimum plays slider -->
 <!-- 									<label for="minPlaysSlider">Minimum plays: <span id="sliderValue">150</span></label>
 									<input type="range" id="minPlaysSlider" min="150" max="1000" value="150" step="10">
@@ -197,17 +199,7 @@
     											responsive: true,  /* Enable responsiveness without shifting layout */
 												fixedHeader: true, // Column headers stay in place
 												pageLength: 25,     // Set default number of rows to display to 25
-    											lengthMenu: [ [10, 25, 50, 100], [10, 25, 50, 100] ], // Options for rows per page
-    											dom: 'Qlfrtip',  // This enables the SearchBuilder in the toolbar
-  												searchBuilder: {
-        											columns: function() {
-                										console.log("Defining visible columns within searchBuilder...");
-                										// Accessing DataTable instance directly to fetch visible columns
-                										return $('#league-summary').DataTable().columns().indexes().filter(function(index) {
-                    										return $('#league-summary').DataTable().column(index).visible();
-                										}).toArray();
-            										}
-    											},
+    											dom: 'frtip',  // This enables the SearchBuilder in the toolbar
 
 												initComplete: function() {											
 													console.log("DataTable initialized.");
