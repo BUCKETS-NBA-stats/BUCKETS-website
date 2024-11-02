@@ -78,17 +78,6 @@
 										<option value="">--Enter here--</option>
 									</select>
 							
-									<script>
-										$(document).ready(function() {
-											// Initialize Select2 on the dropdown
-											$('#playerSeasonSelect').select2({
-												placeholder: "Select a Player Season",
-												allowClear: true,
-												width: '100%'
-											});
-										});
-									</script>
-
 									<!-- Table for DataTables -->
 									<table id="playerSeasonTable" class="display compact">
 										<thead>
@@ -104,11 +93,21 @@
 											<!-- Data from CSV will be loaded here -->
 										</tbody>
 									</table>
+
+									<div id="barmekkoChart" style="width: 100%; height: 400px;"></div>
+
 									<script>
 										var table;
 
 										$(document).ready(function() {
 											console.log("Document ready - initializing DataTable...");
+
+											// Initialize Select2 on the dropdown
+											$('#playerSeasonSelect').select2({
+												placeholder: "Select a Player Season",
+												allowClear: true,
+												width: '100%'
+											});
 
 											// Initialize the DataTable without data for now
 											table = $('#playerSeasonTable').DataTable({
@@ -171,8 +170,66 @@
 
 															// Apply the bold-row class to the "Total" row
 															$(totalRow).addClass('bold-row');
+
+															// Draw the Barmekko chart after the table is updated
+															drawBarmekkoChart();
                         								}
-                    								});													
+                    								});		
+													
+													// Function to draw the Barmekko chart
+            										function drawBarmekkoChart() {
+                										var chartData = [];
+                										$('#playerSeasonTable tbody tr').each(function() {
+                    										var cells = $(this).find('td');
+                    										if (cells.length > 0) {
+                        										var category = $(cells[0]).text(); // e.g., 'On-ball'
+                        										var prf = parseFloat($(cells[1]).text()); // e.g., On-ball PRF
+                        										var plays = parseFloat($(cells[2]).text()); // e.g., On-ball Plays/g
+																var rORTG = parseFloat($(cells[3]).text()); // e.g., On-ball rORTG
+                        										var PC = parseFloat($(cells[4]).text()); // e.g., On-ball PC/g
+
+                        										// Push data in the format: { name: 'Category', y: plays, z: prf }
+                        										if (!isNaN(prf) && !isNaN(plays) && !isNaN(rORTG) && !isNaN(PC)) {
+                            										chartData.push({
+                                										name: category,
+                                										y: plays, // Width of the bar (plays)
+                                										z: rORTG    // Height of the bar (PRF)
+                            										});
+                        										}
+                    										}
+                										});
+
+										                // Render the Highcharts Barmekko chart
+										                Highcharts.chart('barmekkoChart', {
+										                    chart: {
+										                        type: 'barmekko'
+										                    },
+    										                title: {
+    										                    text: 'Player Season Breakdown'
+    										                },
+                    										xAxis: {
+                        										title: {
+                            										text: 'Plays/g'
+                        										}
+                    										},
+                    										yAxis: {
+                        										title: {
+                            										text: 'rORTG'
+                        										}
+                    										},
+                    										series: [{
+                        										name: 'Player Data',
+                        										data: chartData,
+                        										dataLabels: {
+                            										enabled: true,
+                            										format: '{point.name}: {point.z}'
+                        										}
+                    										}],
+                    										tooltip: {
+                        										pointFormat: '<b>{point.name}</b><br>Plays: {point.y}<br>rORTG: {point.z}'
+                    										}
+                										});
+            										}
 												},
 												error: function(error) {
 													console.error("Error loading CSV file:", error);
