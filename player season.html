@@ -193,8 +193,8 @@
                         										if (!isNaN(prf) && !isNaN(plays) && !isNaN(rORTG) && !isNaN(PC)) {
                             										chartData.push({
                                 										name: category,
-                                										y: plays, // Width of the bar (plays)
-                                										z: rORTG    // Height of the bar (PRF)
+																		z: rORTG,  // Height of the bar (PRF)
+                                										y: plays // Width of the bar (plays)
                             										});
                         										}
                     										}
@@ -223,7 +223,7 @@
                         										data: chartData,
                         										dataLabels: {
                             										enabled: true,
-                            										format: '{point.name}: {point.z}'
+                            										format: '{point.name}: {point.y}'
                         										}
                     										}],
                     										tooltip: {
