@@ -1,0 +1,427 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Regular Season BUCKETS</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<title>Regular Season BUCKETS</title>
+		
+		<script src="assets/js/jquery.min.js"></script>
+ 	   
+    	<!-- DataTables CSS -->
+		<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-2.1.8/date-1.5.4/fh-4.0.1/sb-1.8.1/datatables.min.css">
+
+		<!-- DataTables JS -->
+		<script src="https://cdn.datatables.net/v/dt/dt-2.1.8/date-1.5.4/fh-4.0.1/sb-1.8.1/datatables.min.js"></script>
+
+		<!-- Papa Parse CSV parser -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+		<style>
+			/* Table styling */
+			#league-summary {
+				width: 100%;
+				table-layout: fixed;
+				overflow: hidden;
+			}
+
+			/* Basic slider styling */
+			#minPlaysSlider {
+				width: 100%;
+				height: 25px;
+				background: #ddd;
+				outline: none;
+				opacity: 0.7;
+				transition: opacity 0.2s;
+			}
+	
+			#minPlaysSlider:hover {
+				opacity: 1;
+			}
+	
+			#minPlaysSlider::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+				width: 25px;
+				height: 25px;
+				background: #4CAF50;
+				cursor: pointer;
+			}
+	
+			#minPlaysSlider::-moz-range-thumb {
+				width: 25px;
+				height: 25px;
+				background: #4CAF50;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+									<a href="index.html" class="logo"><strong>BUCKETS</strong> NBA Stats</a>
+									<ul class="icons">
+										<li><a href="twitter.com" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+										<li><a href="mailto:BUCKETS.stat@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+									</ul>
+								</header>
+
+							<!-- Table -->
+								<body>
+									<h2>Regular Season BUCKETS</h1>
+								
+									<!-- Drop down selector -->
+
+									<select id = "columnSelect" style="font-weight: bold;">
+										<option value="Total">Total</option>
+										<option value="On-ball">On-ball</option>
+										<option value="Off-ball: Partner">Off-ball: Partner</option>
+										<option value="Off-ball: Space">Off-ball: Space</option>
+										<option value="Off-ball: Crash">Off-ball: Crash</option>
+										<option value="Transition">Transition</option>
+									</select>
+									
+									<!-- Minimum plays slider -->
+<!-- 									<label for="minPlaysSlider">Minimum plays: <span id="sliderValue">150</span></label>
+									<input type="range" id="minPlaysSlider" min="150" max="1000" value="150" step="10">
+ -->
+									<!-- Table for DataTables -->
+									<table id="league-summary" class="display compact">
+										<thead>
+											<tr>
+												<th>Player</th>
+												<th>Year</th>
+												<th>Player Year</th>
+												<th>Games</th>
+												<th>Total plays</th>
+												<th>On-ball PRF/g</th>
+												<th>On-ball PRF baseline</th>
+												<th>On-ball Plays/g</th>
+												<th>On-ball rORTG</th>
+												<th>On-ball PC/g</th>
+												<th>Off-ball: Partner PRF/g</th>
+												<th>Off-ball: Partner PRF/g baseline</th>
+												<th>Off-ball: Partner Plays/g</th>
+												<th>Off-ball: Partner rORTG</th>
+												<th>Off-ball: Partner PC/g</th>
+												<th>Off-ball: Space PRF/g</th>
+												<th>Off-ball: Space PRF/g baseline</th>
+												<th>Off-ball: Space Plays/g</th>
+												<th>Off-ball: Space rORTG</th>
+												<th>Off-ball: Space PC/g</th>
+												<th>Off-ball: Crash PRF/g</th>
+												<th>Off-ball: Crash PRF/g baseline</th>
+												<th>Off-ball: Crash Plays/g</th>
+												<th>Off-ball: Crash rORTG</th>
+												<th>Off-ball: Crash PC/g</th>
+												<th>Transition PRF/g</th>
+												<th>Transition PRF/g baseline</th>
+												<th>Transition Plays/g</th>
+												<th>Transition rORTG</th>
+												<th>Transition PC/g</th>
+												<th>Total PRF/g</th>
+												<th>Total PRF/g baseline</th>
+												<th>Total Plays/g</th>
+												<th>Total rORTG</th>
+												<th>Total PC/g</th>
+											</tr>
+										</thead>
+										<tbody>
+											<!-- Data from CSV will be loaded here -->
+										</tbody>
+									</table>
+									<script>
+										var table;
+
+										$(document).ready(function() {
+											console.log("Document ready - initializing DataTable...");
+
+											// Initialize the DataTable without data for now
+											table = $('#league-summary').DataTable({
+												columns: [
+													{ title: "Player", data: "Player"},
+													{ title:"Year",	data: "Year"},
+													{ title: "Player Year", data: "Player Year"},
+													{ title: "G", data: "Games"},
+													{ title: "Total Plays", data: "Total plays"},
+													{ title: "PRF/g", data: "On-ball PRF/g"}, // On-ball starts here
+													{ title: "On-ball PRF baseline",	data: "On-ball PRF baseline"},
+													{ title: "Plays/g",	data: "On-ball Plays/g"},
+													{ title: "rORTG", data: "On-ball rORTG"},
+													{ title: "PC/g", data: "On-ball PC/g"},
+													{ title: "PRF/g", data: "Off-ball: Partner PRF/g"}, // Off-ball: Partner starts here
+													{ title: "Off-ball: Partner PRF/g baseline", data: "Off-ball: Partner PRF/g baseline"},
+													{ title: "Plays/g", data: "Off-ball: Partner Plays/g"},
+													{ title: "rORTG", data: "Off-ball: Partner rORTG"},
+													{ title: "PC/g", data: "Off-ball: Partner PC/g"},
+													{ title: "PRF/g", data: "Off-ball: Space PRF/g"}, // Off-ball: Space starts here
+													{ title: "Off-ball: Space PRF/g baseline", data: "Off-ball: Space PRF/g baseline"},
+													{ title: "Plays/g", data: "Off-ball: Space Plays/g"},
+													{ title: "rORTG", data: "Off-ball: Space rORTG"},
+													{ title: "PC/g", data: "Off-ball: Space PC/g"},
+													{ title: "PRF/g", data: "Off-ball: Crash PRF/g"}, // Off-ball: Crash starts here
+													{ title: "Off-ball: Crash PRF/g baseline", data: "Off-ball: Crash PRF/g baseline"},
+													{ title: "Plays/g",	data: "Off-ball: Crash Plays/g"},
+													{ title: "rORTG", data: "Off-ball: Crash rORTG"},
+													{ title: "PC/g", data: "Off-ball: Crash PC/g"},
+													{ title: "PRF/g", data: "Transition PRF/g"}, // Transition starts here
+													{ title: "Transition PRF/g baseline", data: "Transition PRF/g baseline"},
+													{ title: "Plays/g", data: "Transition Plays/g"},
+													{ title: "rORTG", data: "Transition rORTG"},
+													{ title: "PC/g", data: "Transition PC/g"},
+													{ title: "PRF/g", data: "Total PRF/g"}, // Total starts here
+													{ title: "Total PRF/g baseline", data: "Total PRF/g baseline"},
+													{ title: "Plays/g", data: "Total Plays/g"},
+													{ title: "rORTG", data: "Total rORTG"},
+													{ title: "PC/g", data: "Total PC/g"},
+												],
+												columnDefs: [
+        										    { targets: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31], visible: false }, // Hide most columns initially
+       											],
+												autoWidth: false, /* Prevent automatic adjustment of table width */
+    											retrieve: true,   /* Retrieve the initialized table */
+    											responsive: true,  /* Enable responsiveness without shifting layout */
+												fixedHeader: true, // Column headers stay in place
+												pageLength: 25,     // Set default number of rows to display to 25
+    											lengthMenu: [ [10, 25, 50, 100], [10, 25, 50, 100] ], // Options for rows per page
+    											dom: 'Qlfrtip',  // This enables the SearchBuilder in the toolbar
+  												searchBuilder: {
+        											columns: function() {
+                										console.log("Defining visible columns within searchBuilder...");
+                										// Accessing DataTable instance directly to fetch visible columns
+                										return $('#league-summary').DataTable().columns().indexes().filter(function(index) {
+                    										return $('#league-summary').DataTable().column(index).visible();
+                										}).toArray();
+            										}
+    											},
+
+												initComplete: function() {											
+													console.log("DataTable initialized.");
+													
+													// Directly access DataTable instance in initComplete
+            										var tableInstance = $('#league-summary').DataTable();
+
+													// Listen to column visibility changes and update SearchBuilder columns
+            										tableInstance.on('column-visibility.dt', function() {
+                										console.log("Column visibility changed - rebuilding SearchBuilder...");
+                										tableInstance.searchBuilder.rebuild({
+                    										columns: tableInstance.columns().indexes().filter(function(index) {
+                        										return tableInstance.column(index).visible();
+                    										}).toArray()
+                										});
+            										});
+												}
+											});
+											
+											// Function to return the visible columns for SearchBuilder
+											function getVisibleColumns() {
+        										console.log("Fetching visible columns...");
+        										if (!table) {
+            										console.error("Table is undefined in getVisibleColumns.");
+            										return [];
+        										}
+
+        										// Filter to only visible columns
+        										return table.columns().indexes().filter(function(index) {
+            										return table.column(index).visible();
+        										}).toArray();
+    										}
+
+											// Load CSV file using Papa Parse
+											Papa.parse('assets/data/league-table.csv', {
+												download: true,
+												header: true,
+												skipEmptyLines: true,
+												complete: function(results) {
+													// Loop through the data and add rows to the DataTable
+													console.log("Parsing Complete:", results);
+
+													// Prepare data for DataTable by mapping each row to the correct columns
+            										const formattedData = results.data.map(row => ({
+														"Player": row["Player"],
+														"Year": row["Year"],
+														"Player Year": row["Player Year"],
+														"Games": row["Games"],
+														"Total plays": row["Total plays"],
+														"On-ball PRF/g": row["On-ball PRF/g"], // On-ball starts here
+														"On-ball PRF baseline": row["On-ball PRF baseline"],
+														"On-ball Plays/g": row["On-ball Plays/g"],
+														"On-ball rORTG": row["On-ball rORTG"],
+														"On-ball PC/g": row["On-ball PC/g"],
+														"Off-ball: Partner PRF/g": row["Off-ball: Partner PRF/g"], // Off-ball: Partner starts here
+														"Off-ball: Partner PRF/g baseline": row["Off-ball: Partner PRF/g baseline"],
+														"Off-ball: Partner Plays/g": row["Off-ball: Partner Plays/g"],
+														"Off-ball: Partner rORTG": row["Off-ball: Partner rORTG"],
+														"Off-ball: Partner PC/g": row["Off-ball: Partner PC/g"],
+														"Off-ball: Space PRF/g": row["Off-ball: Space PRF/g"], // Off-ball: Space starts here
+														"Off-ball: Space PRF/g baseline": row["Off-ball: Space PRF/g baseline"],
+														"Off-ball: Space Plays/g": row["Off-ball: Space Plays/g"],
+														"Off-ball: Space rORTG": row["Off-ball: Space rORTG"],
+														"Off-ball: Space PC/g": row["Off-ball: Space PC/g"],
+														"Off-ball: Crash PRF/g": row["Off-ball: Crash PRF/g"], // Off-ball: Crash starts here
+														"Off-ball: Crash PRF/g baseline": row["Off-ball: Crash PRF/g baseline"],
+														"Off-ball: Crash Plays/g": row["Off-ball: Crash Plays/g"],
+														"Off-ball: Crash rORTG": row["Off-ball: Crash rORTG"],
+														"Off-ball: Crash PC/g": row["Off-ball: Crash PC/g"],
+														"Transition PRF/g": row["Transition PRF/g"], // Transition starts here
+														"Transition PRF/g baseline": row["Transition PRF/g baseline"],
+														"Transition Plays/g": row["Transition Plays/g"],
+														"Transition rORTG": row["Transition rORTG"],
+														"Transition PC/g": row["Transition PC/g"],
+														"Total PRF/g": row["Total PRF/g"], // Total starts here
+														"Total PRF/g baseline": row["Total PRF/g baseline"],
+														"Total Plays/g": row["Total Plays/g"],
+														"Total rORTG": row["Total rORTG"],
+														"Total PC/g": row["Total PC/g"],
+												}));
+
+													// Add all rows at once to the table and redraw
+            										table.rows.add(formattedData).draw();
+
+													// Start sorted by Total PC/g
+													table.order([34,'desc']);
+													
+													// Select columns to unhide
+													$('#columnSelect').on('change', function() {
+        											var selectedValue = $(this).val();
+
+   											   		  // First, hide all target columns
+   													     table.columns([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]).visible(false);
+
+  												      // Based on selection, show the appropriate columns and sort
+  													      if (selectedValue === 'Total') {
+   											    		    table.columns([30, 32, 33, 34]).visible(true);
+															table.order([34,'desc']);
+
+													  	} else if (selectedValue === 'On-ball') {
+   													        table.columns([5, 7, 8, 9]).visible(true);
+															table.order([9,'desc']);
+
+														} else if (selectedValue === 'Off-ball: Partner') {
+   													        table.columns([10, 12, 13, 14]).visible(true);
+															table.order([14,'desc']);
+
+														} else if (selectedValue === 'Off-ball: Space') {
+   													        table.columns([15, 17, 18, 19]).visible(true);
+															table.order([19,'desc']);
+
+														} else if (selectedValue === 'Off-ball: Crash') {
+   													        table.columns([20, 22, 23, 24]).visible(true);
+															table.order([24,'desc']);
+
+														} else if (selectedValue === 'Transition') {
+   											        		table.columns([25, 27, 28, 29]).visible(true);
+															table.order([29,'desc']);
+														}
+														table.draw();
+													});	
+													
+													// Min plays logic
+													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+  											        	var totalPlays = parseFloat(data[4]) || 0;  // Check "Plays" value in column 5
+                										return totalPlays >= 150;  // Filter out rows where Plays < 150
+         											});
+													
+													// temporary hack to exclude problem children. Exclude if Space PRF >0 but PRF baseline = 0
+													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+  											        	var spacePRF = parseFloat(data[15]) || 0;  // Check "Spacing PRF in column 16
+														var spacePRFplays = parseFloat(data[17]) || 0;  // Check "Spacing PRF baseline in column 17
+                										if (spacePRFplays === 0 && spacePRF >0){
+															return false;
+														}
+														return true;
+         											});
+
+												},
+												error: function(error) {
+													console.error("Error loading CSV file:", error);
+												}
+
+											})	
+										});
+									</script>
+								</body>
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+				<div id="sidebar">
+					<div class="inner">
+
+						<!-- Search -->
+							 <!-- not sure how to get Search to work
+								<section id="search" class="alt">
+									<form method="post" action="#">
+										<input type="text" name="query" id="query" placeholder="Search" />
+									</form>
+								</section>
+							-->
+
+						<!-- Menu -->
+							<nav id="menu">
+								<header class="major">
+									<h2>Menu</h2>
+								</header>
+								<ul>
+									<li><a href="index.html">Homepage</a></li>
+									<li>
+										<span class="opener">Stats</span>
+										<ul>
+											<li><a href="league table.html">League-wide: Regular season</a></li>
+											<li><a href="#">More coming soon</a></li>
+										</ul>
+									</li>
+									<li>
+										<span class="opener">Insights</span>
+										<ul>
+											<li><a href="floor raising.html">The Westbrook Theorem</a></li>
+											<li><a href="#">More coming soon</a></li>
+										</ul>
+									</li>
+									<li><a href="methodology.html">Under the hood</a></li>
+								</ul>
+							</nav>
+						
+						<!-- Section -->
+							<section>
+								<header class="major">
+									<h2>Get in touch</h2>
+								</header>
+								<ul class="contact">
+									<li class="icon solid fa-envelope"><a href="mailto:BUCKETS.stat@gmail.com">BUCKETS.stat@gmail.com</a></li>
+									<li class="icon brands fa-twitter"><a href="twitter.com">Twitter.com</a></li>
+								</ul>
+							</section>
+
+						<!-- Footer -->
+							<footer id="footer">
+								<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+							</footer>
+
+					</div>
+				</div>
+			</div>
+
+			<!-- Scripts -->
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+
+	</body>
+</html>
