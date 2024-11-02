@@ -12,8 +12,12 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<title>Player-season snapshot</title>
 		
+		<!-- jquery-->
 		<script src="assets/js/jquery.min.js"></script>
  	   
+		<!-- Select2-->
+		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
     	<!-- DataTables CSS -->
 		<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-2.1.8/date-1.5.4/fh-4.0.1/sb-1.8.1/datatables.min.css">
 
@@ -22,6 +26,9 @@
 
 		<!-- Papa Parse CSV parser -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+		<!-- Select2 CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 
 		<style>
 			/* Table styling */
@@ -64,6 +71,17 @@
 										<option value="">--Select a Player Season--</option>
 									</select>
 							
+									<script>
+										$(document).ready(function() {
+											// Initialize Select2 on the dropdown
+											$('#playerSeasonSelect').select2({
+												placeholder: "Select a Player Season",
+												allowClear: true,
+												width: '100%'
+											});
+										});
+									</script>
+
 									<!-- Table for DataTables -->
 									<table id="playerSeasonTable" class="display compact">
 										<thead>
