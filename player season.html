@@ -220,12 +220,6 @@
     										                },
                     										xAxis: {
             													type: 'category', // Categorical to keep stacking correct
-            													labels: {
-                													formatter: function() {
-                    													// Use index to map to plays/g values
-                    													return playsValues[this.pos] !== undefined ? `Plays/g: ${playsValues[this.pos]}` : '';
-                													}
-            													},
             													title: {
                 													text: 'Plays/g'
             													}
