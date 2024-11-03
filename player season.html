@@ -178,6 +178,9 @@
                         								}
                     								});		
 													
+													var playsValues = [];
+													var categoryNames = [];
+
 													// Function to draw the Barmekko chart
             										function drawBarmekkoChart(selectedSeason) {
                 										var chartData = [];
@@ -207,6 +210,7 @@
 																		pc: PC
                             										});
 																	playsValues.push(plays);
+																	categoryNames.push(category);
                         										}
                     										}
                 										});
