@@ -178,7 +178,7 @@
                     								});		
 													
 													// Function to draw the Barmekko chart
-            										function drawBarmekkoChart() {
+            										function drawBarmekkoChart(selectedSeason) {
                 										var chartData = [];
                 										$('#playerSeasonTable tbody tr').each(function() {
                     										var cells = $(this).find('td');
@@ -216,15 +216,20 @@
     										                    text: '${selectedSeason}'
     										                },
                     										xAxis: {
-                        										type: 'category',
 																title: {
                             										text: 'Plays/g'
-                        										}
+                        										},
+																type: 'linear',
+																min: 0,
+																max: 60,
+																tickInterval: 10
                     										},
                     										yAxis: {
                         										title: {
                             										text: 'rORTG'
-                        										}
+                        										},
+																min: 25,
+																max: 25
                     										},
                     										series: [{
                         										name: 'Player Data',
