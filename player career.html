@@ -131,7 +131,25 @@
 												responsive: true,
 												fixedHeader: true,
 												autoWidth: true,
-												ordering: false
+												ordering: false,
+												columnDefs: [
+													{
+														targets: [2, 4, 6, 8, 10, 12], // Indices of PRF columns
+														render: function(data, type, row) {
+															return parseFloat(data).toFixed(1); // Format to 1 decimal place
+														}
+													},
+													{
+														targets: [3, 5, 7, 9, 11, 13], // Indices of rORTG columns
+														render: function(data, type, row) {
+															if (!data || isNaN(data)) {
+																return ''; // Return an empty string for blank or NaN data
+															}
+															var num = parseFloat(data).toFixed(1);
+															return num > 0 ? '+' + num : num; // Add '+' if positive
+														}
+													}
+												]
 											});
 											
 										
