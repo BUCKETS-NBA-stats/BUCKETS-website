@@ -37,9 +37,15 @@
 				table-layout: fixed;
 				overflow: hidden;
 			}
+			
+			#playerCareerTable td:nth-child(1), /* Year column */
+			#playerCareerTable td:nth-child(13), /* Total PRF/g column */
+			#playerCareerTable td:nth-child(14) /* Total rORTG column */ {
+				font-weight: bold;
+			}
 
-			.bold-row {
-    			font-weight: bold;
+			#playerCareerTable th[colspan="2"] {
+    			text-align: center;
 			}
 		</style>
 	</head>
@@ -150,6 +156,8 @@
 													$('#playerSelect').on('change', function() {
 														const selectedPlayer = $(this).val();
 														const filteredData = data.filter(row => row['Player'] === selectedPlayer);
+
+														table.clear(); // clear out old data
 
 														// Prepare formatted data for DataTables
 														const formattedData = filteredData.map(row => [
