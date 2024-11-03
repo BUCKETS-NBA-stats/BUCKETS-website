@@ -219,14 +219,17 @@
     										                    text: ` ${selectedSeason} `
     										                },
                     										xAxis: {
-																title: {
-                            										text: 'Plays/g'
-                        										},
-																type: 'linear',
-																min: 0,
-																max: 60,
-																tickInterval: 10
-                    										},
+            													type: 'category', // Categorical to keep stacking correct
+            													labels: {
+                													formatter: function() {
+                    													// Use index to map to plays/g values
+                    													return playsValues[this.pos] !== undefined ? `Plays/g: ${playsValues[this.pos]}` : '';
+                													}
+            													},
+            													title: {
+                													text: 'Plays/g'
+            													}
+        													},
                     										yAxis: {
                         										title: {
                             										text: 'rORTG'
