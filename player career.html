@@ -39,8 +39,8 @@
 			}
 			
 			#playerCareerTable td:nth-child(1), /* Year column */
-			#playerCareerTable td:nth-child(13), /* Total PRF/g column */
-			#playerCareerTable td:nth-child(14) /* Total rORTG column */ {
+			#playerCareerTable td:nth-child(3), /* Total PRF/g column */
+			#playerCareerTable td:nth-child(4) /* Total rORTG column */ {
 				font-weight: bold;
 			}
 
@@ -83,12 +83,12 @@
 											<tr>
 												<th rowspan="2">Season</th>
                 								<th rowspan="2">Games</th>
+												<th colspan="2">Total</th>
 								                <th colspan="2">On-ball</th>
                 								<th colspan="2">Off-ball: Partner</th>
                 								<th colspan="2">Off-ball: Space</th>
                 								<th colspan="2">Off-ball: Crash</th>
                 								<th colspan="2">Transition</th>
-                								<th colspan="2">Total</th>
 											</tr>
 											<tr>
 												<th>PRF/g</th>
@@ -163,6 +163,8 @@
 														const formattedData = filteredData.map(row => [
 															row['Year'],
 															row['Games'],
+															row['Total PRF/g'],
+															row['Total rORTG'],
 															row['On-ball PRF/g'],
 															row['On-ball rORTG'],
 															row['Off-ball: Partner PRF/g'],
@@ -173,8 +175,6 @@
 															row['Off-ball: Crash rORTG'],
 															row['Transition PRF/g'],
 															row['Transition rORTG'],
-															row['Total PRF/g'],
-															row['Total rORTG']
 														]);
 
 														// Add new data to DataTable and redraw
