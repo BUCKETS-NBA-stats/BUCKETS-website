@@ -193,8 +193,10 @@
                         										if (!isNaN(prf) && !isNaN(plays) && !isNaN(rORTG) && !isNaN(PC)) {
                             										chartData.push({
                                 										name: category,
-																		z: rORTG,  // Height of the bar (PRF)
-                                										y: plays // Width of the bar (plays)
+																		y: rORTG,  // Height of the bar (PRF)
+                                										z: plays, // Width of the bar (plays)
+																		prf: prf,
+																		pc: PC
                             										});
                         										}
                     										}
@@ -209,7 +211,8 @@
     										                    text: 'Player Season Breakdown'
     										                },
                     										xAxis: {
-                        										title: {
+                        										type: 'category',
+																title: {
                             										text: 'Plays/g'
                         										}
                     										},
@@ -223,12 +226,15 @@
                         										data: chartData,
                         										dataLabels: {
                             										enabled: true,
-                            										format: '{point.name}: {point.y}'
+                            										format: '{point.name}'
                         										}
                     										}],
                     										tooltip: {
-                        										pointFormat: '<b>{point.name}</b><br>Plays: {point.y}<br>rORTG: {point.z}'
-                    										}
+            													headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
+            													pointFormat: 'Plays: {point.z}<br/>rORTG: {point.y}<br/>PRF: {point.prf}<br/>PC: {point.pc}'
+        													},
+															borderRadius: 3,
+															colorByPoint: true
                 										});
             										}
 												},
