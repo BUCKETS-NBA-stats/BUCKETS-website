@@ -229,11 +229,13 @@
 																max: 60,
 																labels: {
             														formatter: function() {
-                														console.log("Label Index:", this.pos);
-        																return playsValues[this.pos] !== undefined ? `Plays/g: ${playsValues[this.pos]}` : '';
-    																	}
+                														if (categoryNames[this.pos] !== undefined && playsValues[this.pos] !== undefined) {
+                        													return `${categoryNames[this.pos]}: ${playsValues[this.pos].toFixed(1)} plays/g`;
+                    													}
+                    													return '';
             														},
-        														},
+        														}
+															},
                     										yAxis: {
                         										title: {
                             										text: 'rORTG'
