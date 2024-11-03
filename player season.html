@@ -230,14 +230,9 @@
             													title: {
                 													text: 'Plays/g'
             													},
-																/* labels: {
-            														formatter: function() {
-                														if (categoryNames[this.pos] !== undefined && playsValues[this.pos] !== undefined) {
-                        													return `${categoryNames[this.pos]}: ${playsValues[this.pos].toFixed(1)} plays/g`;
-                    													}
-                    													return '';
-            														},
-        														} */
+																labels: {
+            														enabled: false // Hide x-axis labels
+        														}
 															},
                     										yAxis: {
                         										title: {
@@ -258,8 +253,7 @@
             													headerFormat: '<span style="font-size:10px">{point.key}</span><br/>',
             													pointFormat: 'PRF: {point.prf}<br/>Plays/g: {point.z}<br/>rORTG: {point.y}<br/>PC: {point.pc}'
         													},
-															borderRadius: 3,
-															colorByPoint: true
+															borderRadius: 3
                 										});
             										}
 												},
