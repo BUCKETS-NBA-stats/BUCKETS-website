@@ -220,17 +220,18 @@
     										                },
                     										xAxis: {
             													type: 'category', // Categorical to keep stacking correct
-            													labels: {
-            														formatter: function() {
-                														return 'Test Label'; // Simplified to check if labels display
-            														}
-        														},
-																title: {
+            													title: {
                 													text: 'Plays/g'
             													},
 																min: 0,
-																max: 60
-        													},
+																max: 60,
+																labels: {
+            														formatter: function() {
+                														console.log("Label Index:", this.pos);
+        																return playsValues[this.pos] !== undefined ? `Plays/g: ${playsValues[this.pos]}` : '';
+    																	}
+            														},
+        														},
                     										yAxis: {
                         										title: {
                             										text: 'rORTG'
