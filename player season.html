@@ -181,6 +181,7 @@
 													// Function to draw the Barmekko chart
             										function drawBarmekkoChart(selectedSeason) {
                 										var chartData = [];
+														playsValues = [];
                 										$('#playerSeasonTable tbody tr').each(function() {
                     										var cells = $(this).find('td');
                     										if (cells.length > 0) {
