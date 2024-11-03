@@ -6,11 +6,11 @@
 -->
 <html>
 	<head>
-		<title>Player-season snapshot</title>
+		<title>Career snapshot</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
-		<title>Player-season snapshot</title>
+		<title>Career snapshot</title>
 		
 		<!-- jquery-->
 		<script src="assets/js/jquery.min.js"></script>
@@ -63,7 +63,7 @@
 
 							<!-- Table -->
 								<body>
-									<h2>Player Career snapshot</h1>
+									<h2>Career snapshot</h1>
 								
 									<!-- Drop down selector -->
 									<label for="playerSelect">Select Player:</label>
@@ -75,8 +75,8 @@
 									<table id="playerCareerTable" class="display compact">
 										<thead>
 											<tr>
-												<th rowspan="2">Year</th>
-                								<th rowspan="2">G</th>
+												<th rowspan="2">Season</th>
+                								<th rowspan="2">Games</th>
 								                <th colspan="2">On-ball</th>
                 								<th colspan="2">Off-ball: Partner</th>
                 								<th colspan="2">Off-ball: Space</th>
@@ -125,63 +125,60 @@
 												responsive: true,
 												fixedHeader: true,
 												autoWidth: true,
+												ordering: false
 											});
 											
 										
 											// Load CSV file using Papa Parse
 											Papa.parse('assets/data/league-table.csv', {
-												download: true,
-												header: true,
-												skipEmptyLines: true,
-												complete: function(results) {
-													// Loop through the data and add rows to the DataTable
+    											download: true,
+    											header: true,
+    											skipEmptyLines: true,
+    											complete: function(results) {
+													table.clear().draw(); // Clear the existing table data
 													console.log("Parsing Complete:", results);
 
 													var data = results.data;
 
-													// Populate the dropdown with player seasons
+													// Populate the dropdown with unique player seasons
 													const players = [...new Set(data.map(row => row['Player']))];
-            										players.forEach(player => {
-                										$('#playerSelect').append(`<option value="${player}">${player}</option>`);
-            										});
+													players.forEach(player => {
+														$('#playerSelect').append(`<option value="${player}">${player}</option>`);
+													});
 
-													// Handle selection change
+													// Handle dropdown selection change
 													$('#playerSelect').on('change', function() {
-                        								const selectedPlayer = $(this).val();
-                										const filteredData = data.filter(row => row['Player'] === selectedPlayer);
+														const selectedPlayer = $(this).val();
+														const filteredData = data.filter(row => row['Player'] === selectedPlayer);
 
-                        								// Clear existing table rows
-                        								table.clear();
+														// Prepare formatted data for DataTables
+														const formattedData = filteredData.map(row => [
+															row['Year'],
+															row['Games'],
+															row['On-ball PRF/g'],
+															row['On-ball rORTG'],
+															row['Off-ball: Partner PRF/g'],
+															row['Off-ball: Partner rORTG'],
+															row['Off-ball: Space PRF/g'],
+															row['Off-ball: Space rORTG'],
+															row['Off-ball: Crash PRF/g'],
+															row['Off-ball: Crash rORTG'],
+															row['Transition PRF/g'],
+															row['Transition rORTG'],
+															row['Total PRF/g'],
+															row['Total rORTG']
+														]);
 
-                        								// Populate the table with the filtered data
-                										filteredData.forEach(row => {
-                    										const newRow = `
-                        										<tr>
-                            										<td>${row['Year']}</td>
-                            										<td>${row['G']}</td>
-                            										<td>${row['On-ball PRF/g']}</td>
-                            										<td>${row['On-ball rORTG']}</td>
-                            										<td>${row['Off-ball: Partner PRF/g']}</td>
-                            										<td>${row['Off-ball: Partner rORTG']}</td>
-                        											<td>${row['Off-ball: Space PRF/g']}</td>
-                            										<td>${row['Off-ball: Space rORTG']}</td>
-                            										<td>${row['Off-ball: Crash PRF/g']}</td>
-                            										<td>${row['Off-ball: Crash rORTG']}</td>
-                            										<td>${row['Transition PRF/g']}</td>
-                            										<td>${row['Transition rORTG']}</td>
-                            										<td>${row['Total PRF/g']}</td>
-                            										<td>${row['Total rORTG']}</td>
-                        										</tr>
-                    										`;
-															$('#playerStatsTable tbody').append(newRow);
-                										});
-            										});
-                    								
+														// Add new data to DataTable and redraw
+														table.rows.add(formattedData).draw();
+														console.log("Total Rows Appended:", formattedData.length);
+													});
 												},
 												error: function(error) {
 													console.error("Error loading CSV file:", error);
 												}
-											})	
+											});
+
 										});
 									</script>
 								</body>
