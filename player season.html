@@ -146,7 +146,8 @@
 													// Handle selection change
 													$('#playerSeasonSelect').on('change', function() {
                         								var selectedSeason = $(this).val();
-
+														console.log("Selected season passed to chart: " + selectedSeason);
+														
                         								// Clear existing table rows
                         								table.clear();
 
@@ -207,6 +208,8 @@
                     										}
                 										});
 
+														console.log("Received selected season in drawVariwideChart: " + selectedSeason);
+
 										                // Render the Highcharts Barmekko chart
 										                Highcharts.chart('barmekkoChart', {
 										                    chart: {
@@ -219,7 +222,7 @@
 																title: {
                             										text: 'Plays/g'
                         										},
-																type: 'category',
+																type: 'linear',
 																min: 0,
 																max: 60,
 																tickInterval: 10
