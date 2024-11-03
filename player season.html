@@ -147,7 +147,7 @@
 													$('#playerSeasonSelect').on('change', function() {
                         								var selectedSeason = $(this).val();
 														console.log("Selected season passed to chart: " + selectedSeason);
-														
+
                         								// Clear existing table rows
                         								table.clear();
 
@@ -174,7 +174,7 @@
 															$(totalRow).addClass('bold-row');
 
 															// Draw the Barmekko chart after the table is updated
-															drawBarmekkoChart();
+															drawBarmekkoChart(selectedSeason);
                         								}
                     								});		
 													
@@ -208,7 +208,7 @@
                     										}
                 										});
 
-														console.log("Received selected season in drawVariwideChart: " + selectedSeason);
+														console.log("Received selected season in drawBarmekkoChart: " + selectedSeason);
 
 										                // Render the Highcharts Barmekko chart
 										                Highcharts.chart('barmekkoChart', {
