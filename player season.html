@@ -220,9 +220,16 @@
     										                },
                     										xAxis: {
             													type: 'category', // Categorical to keep stacking correct
-            													title: {
+            													labels: {
+            														formatter: function() {
+                														return 'Test Label'; // Simplified to check if labels display
+            														}
+        														},
+																title: {
                 													text: 'Plays/g'
-            													}
+            													},
+																min: 0,
+																max: 60
         													},
                     										yAxis: {
                         										title: {
