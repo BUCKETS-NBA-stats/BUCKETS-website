@@ -1,0 +1,294 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Team Summary</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<title>Team Summary</title>
+		
+		<!-- jquery-->
+		<script src="assets/js/jquery.min.js"></script>
+ 	   
+		<!-- Select2-->
+		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+    	<!-- DataTables CSS -->
+		<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-2.1.8/date-1.5.4/fh-4.0.1/sb-1.8.1/datatables.min.css">
+
+		<!-- DataTables JS -->
+		<script src="https://cdn.datatables.net/v/dt/dt-2.1.8/date-1.5.4/fh-4.0.1/sb-1.8.1/datatables.min.js"></script>
+
+		<!-- Papa Parse CSV parser -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+		<!-- Select2 CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+		<style>
+			/* Table styling */
+			#playerTable {
+				width: 100%;
+				table-layout: fixed;
+				overflow: hidden;
+			}
+			
+			#playerTable td:nth-child(1), /* Year column */
+			#playerTable td:nth-child(3), /* Total PRF/g column */
+			#playerTable td:nth-child(4) /* Total rORTG column */ {
+				font-weight: bold;
+			}
+
+			#playerTable th[colspan="2"] {
+    			text-align: center;
+			}
+
+			#playerTable th[colspan="3"] {
+    			text-align: center;
+			}
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+									<a href="index.html" class="logo"><strong>BUCKETS</strong> NBA Stats</a>
+									<ul class="icons">
+										<li><a href="twitter.com" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+										<li><a href="mailto:BUCKETS.stat@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+									</ul>
+								</header>
+
+							<!-- Table -->
+								<body>
+									<h2>Team Summary</h1>
+								
+									<!-- Drop down selector -->
+									<label for="teamSelect">Select Team:</label>
+									<select id="teamSelect">
+										<option value="">--Enter here--</option>
+									</select>
+							
+									<!-- Table for DataTables -->
+									<table id="playerTable" class="display compact">
+										<thead>
+											<tr>
+												<th rowspan="2">Player</th>
+                								<th rowspan="2">Games</th>
+												<th colspan="3">Total</th>
+								                <th colspan="2">On-ball</th>
+                								<th colspan="2">Off-ball: Partner</th>
+                								<th colspan="2">Off-ball: Space</th>
+                								<th colspan="2">Off-ball: Crash</th>
+                								<th colspan="2">Transition</th>
+											</tr>
+											<tr>
+												<th>PC/g</th>
+												<th>PRF/g</th>
+												<th>rORTG</th>
+												<th>PRF/g</th>
+												<th>rORTG</th>
+												<th>PRF/g</th>
+												<th>rORTG</th>
+												<th>PRF/g</th>
+												<th>rORTG</th>
+												<th>PRF/g</th>
+												<th>rORTG</th>
+												<th>PRF/g</th>
+												<th>rORTG</th>
+											</tr>
+										</thead>
+										<tbody>
+											<!-- Data from CSV will be loaded here -->
+										</tbody>
+									</table>
+
+									<script>
+										var table;
+
+										$(document).ready(function() {
+											console.log("Document ready - initializing DataTable...");
+
+											// Initialize Select2 on the dropdown
+											$('#teamSelect').select2({
+												placeholder: "Select a Team",
+												allowClear: true,
+												width: '100%'
+											});
+
+											// Initialize the DataTable without data for now
+											table = $('#playerTable').DataTable({
+												paging: false,
+												searching: false,
+												info: false,
+												responsive: true,
+												fixedHeader: true,
+												autoWidth: true,
+												ordering: false,
+												columnDefs: [
+													{
+														targets: [2], // Indices of PRF columns
+														render: function(data, type, row) {
+															return parseFloat(data).toFixed(2); // Format to 1 decimal place
+														}
+													},
+													{
+														targets: [3, 5, 7, 9, 11, 13], // Indices of PRF columns
+														render: function(data, type, row) {
+															return parseFloat(data).toFixed(1); // Format to 1 decimal place
+														}
+													},
+													{
+														targets: [4, 6, 8, 10, 12, 14], // Indices of rORTG columns
+														render: function(data, type, row) {
+															if (!data || isNaN(data)) {
+																return ''; // Return an empty string for blank or NaN data
+															}
+															var num = parseFloat(data).toFixed(1);
+															return num > 0 ? '+' + num : num; // Add '+' if positive
+														}
+													}
+												]
+											});
+											
+										
+											// Load CSV file using Papa Parse
+											Papa.parse('assets/data/league-table-team.csv', {
+    											download: true,
+    											header: true,
+    											skipEmptyLines: true,
+    											complete: function(results) {
+													table.clear().draw(); // Clear the existing table data
+													console.log("Parsing Complete:", results);
+
+													var data = results.data;
+
+													// Populate the dropdown with unique teams
+													const teams = [...new Set(data.map(row => row['Team']))].sort();
+													teams.forEach(team => {
+														$('#teamSelect').append(`<option value="${team}">${team}</option>`);
+													});
+
+													// Handle dropdown selection change
+													$('#teamSelect').on('change', function() {
+														const selectedTeam = $(this).val();
+														const filteredData = data.filter(row => row['Team'] === selectedTeam);
+
+														table.clear(); // clear out old data
+
+														// Prepare formatted data for DataTables
+														const formattedData = filteredData.map(row => [
+															row['Player'],
+															row['Games'],
+															row['Total PC/g'],
+															row['Total PRF/g'],
+															row['Total rORTG'],
+															row['On-ball PRF/g'],
+															row['On-ball rORTG'],
+															row['Off-ball: Partner PRF/g'],
+															row['Off-ball: Partner rORTG'],
+															row['Off-ball: Space PRF/g'],
+															row['Off-ball: Space rORTG'],
+															row['Off-ball: Crash PRF/g'],
+															row['Off-ball: Crash rORTG'],
+															row['Transition PRF/g'],
+															row['Transition rORTG'],
+														]);
+
+														// Add new data to DataTable and redraw
+														table.rows.add(formattedData).draw();
+														console.log("Total Rows Appended:", formattedData.length);
+													});
+												},
+												error: function(error) {
+													console.error("Error loading CSV file:", error);
+												}
+											});
+
+										});
+									</script>
+								</body>
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+				<div id="sidebar">
+					<div class="inner">
+
+						<!-- Search -->
+							 <!-- not sure how to get Search to work
+								<section id="search" class="alt">
+									<form method="post" action="#">
+										<input type="text" name="query" id="query" placeholder="Search" />
+									</form>
+								</section>
+							-->
+
+						<!-- Menu -->
+							<nav id="menu">
+								<header class="major">
+									<h2>Menu</h2>
+								</header>
+								<ul>
+									<li><a href="index.html">Homepage</a></li>
+									<li>
+										<span class="opener">Stats</span>
+										<ul>
+											<li><a href="league table.html">League-wide: Regular season</a></li>
+											<li><a href="player season.html">Player-season Snapshot</a></li>
+											<li><a href="player career.html">Career Overview</a></li>
+											<li><a href="#">More coming soon</a></li>
+										</ul>
+									</li>
+									<li>
+										<span class="opener">Insights</span>
+										<ul>
+											<li><a href="floor raising.html">The Westbrook Theorem</a></li>
+											<li><a href="#">More coming soon</a></li>
+										</ul>
+									</li>
+									<li><a href="methodology.html">Under the hood</a></li>
+								</ul>
+							</nav>
+						
+						<!-- Section -->
+							<section>
+								<header class="major">
+									<h2>Get in touch</h2>
+								</header>
+								<ul class="contact">
+									<li class="icon solid fa-envelope"><a href="mailto:BUCKETS.stat@gmail.com">BUCKETS.stat@gmail.com</a></li>
+									<li class="icon brands fa-twitter"><a href="twitter.com">Twitter.com</a></li>
+								</ul>
+							</section>
+
+						<!-- Footer -->
+							<footer id="footer">
+								<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+							</footer>
+
+					</div>
+				</div>
+			</div>
+
+			<!-- Scripts -->
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+
+	</body>
+</html>
