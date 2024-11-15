@@ -47,6 +47,10 @@
 			#playerCareerTable th[colspan="2"] {
     			text-align: center;
 			}
+
+			#playerCareerTable th[colspan="3"] {
+    			text-align: center;
+			}
 		</style>
 	</head>
 	<body class="is-preload">
@@ -83,7 +87,7 @@
 											<tr>
 												<th rowspan="2">Season</th>
                 								<th rowspan="2">Games</th>
-												<th colspan="2">Total</th>
+												<th colspan="3">Total</th>
 								                <th colspan="2">On-ball</th>
                 								<th colspan="2">Off-ball: Partner</th>
                 								<th colspan="2">Off-ball: Space</th>
@@ -91,6 +95,7 @@
                 								<th colspan="2">Transition</th>
 											</tr>
 											<tr>
+												<th>PC/g</th>
 												<th>PRF/g</th>
 												<th>rORTG</th>
 												<th>PRF/g</th>
@@ -134,13 +139,19 @@
 												ordering: false,
 												columnDefs: [
 													{
-														targets: [2, 4, 6, 8, 10, 12], // Indices of PRF columns
+														targets: [2], // Indices of PRF columns
+														render: function(data, type, row) {
+															return parseFloat(data).toFixed(2); // Format to 1 decimal place
+														}
+													},
+													{
+														targets: [3, 5, 7, 9, 11, 13], // Indices of PRF columns
 														render: function(data, type, row) {
 															return parseFloat(data).toFixed(1); // Format to 1 decimal place
 														}
 													},
 													{
-														targets: [3, 5, 7, 9, 11, 13], // Indices of rORTG columns
+														targets: [4, 6, 8, 10, 12, 14], // Indices of rORTG columns
 														render: function(data, type, row) {
 															if (!data || isNaN(data)) {
 																return ''; // Return an empty string for blank or NaN data
@@ -181,6 +192,7 @@
 														const formattedData = filteredData.map(row => [
 															row['Year'],
 															row['Games'],
+															row['Total PC/g'],
 															row['Total PRF/g'],
 															row['Total rORTG'],
 															row['On-ball PRF/g'],
