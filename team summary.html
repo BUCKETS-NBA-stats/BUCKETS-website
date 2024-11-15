@@ -51,6 +51,12 @@
 			#playerTable th[colspan="3"] {
     			text-align: center;
 			}
+
+			#yourTableID th:nth-child(1), 
+			#yourTableID td:nth-child(1) {
+				width: 200px; /* Adjust as needed */
+				white-space: nowrap; /* Prevent wrapping */
+			}
 		</style>
 	</head>
 	<body class="is-preload">
@@ -76,17 +82,22 @@
 									<h2>Team Summary</h1>
 								
 									<!-- Drop down selector -->
-									<label for="teamSelect">Select Team:</label>
+									<!-- <label for="teamSelect">Select Team:</label> -->
 									<select id="teamSelect">
 										<option value="">--Enter here--</option>
 									</select>
 							
+									<!-- <label for="yearSelect">Select Year:</label> -->
+									<select id="yearSelect">
+										<option value="">--Enter here--</option>
+									</select>
+
 									<!-- Table for DataTables -->
 									<table id="playerTable" class="display compact">
 										<thead>
 											<tr>
 												<th rowspan="2">Player</th>
-                								<th rowspan="2">Games</th>
+                								<th rowspan="2">Gm</th>
 												<th colspan="3">Total</th>
 								                <th colspan="2">On-ball</th>
                 								<th colspan="2">Off-ball: Partner</th>
@@ -121,9 +132,15 @@
 										$(document).ready(function() {
 											console.log("Document ready - initializing DataTable...");
 
-											// Initialize Select2 on the dropdown
+											// Initialize Select2 on the dropdowns
 											$('#teamSelect').select2({
 												placeholder: "Select a Team",
+												allowClear: true,
+												width: '100%'
+											});
+
+											$('#yearSelect').select2({
+												placeholder: "Select a Season",
 												allowClear: true,
 												width: '100%'
 											});
@@ -138,6 +155,11 @@
 												autoWidth: true,
 												ordering: false,
 												columnDefs: [
+													{
+														targets: 0,  // Adjust to the index of the "Player" column
+														width: "200px",
+														className: "nowrap"  // Add a class to control wrapping
+													},
 													{
 														targets: [2], // Indices of PRF columns
 														render: function(data, type, row) {
@@ -159,8 +181,14 @@
 															var num = parseFloat(data).toFixed(1);
 															return num > 0 ? '+' + num : num; // Add '+' if positive
 														}
+													},
+													{
+														targets: 3,  // Adjust to the index of the "Total PRF/g" column
+														orderData: [3],  // Set this column for default sorting
+														type: "num"  // Ensure numerical sorting for proper order
 													}
-												]
+												],
+												order: [[3, 'desc']]
 											});
 											
 										
@@ -172,45 +200,72 @@
     											complete: function(results) {
 													table.clear().draw(); // Clear the existing table data
 													console.log("Parsing Complete:", results);
-
+													
 													var data = results.data;
 
-													// Populate the dropdown with unique teams
+													// Populate the dropdowns with unique teams
 													const teams = [...new Set(data.map(row => row['Team']))].sort();
 													teams.forEach(team => {
 														$('#teamSelect').append(`<option value="${team}">${team}</option>`);
 													});
 
-													// Handle dropdown selection change
-													$('#teamSelect').on('change', function() {
-														const selectedTeam = $(this).val();
-														const filteredData = data.filter(row => row['Team'] === selectedTeam);
-
-														table.clear(); // clear out old data
-
-														// Prepare formatted data for DataTables
-														const formattedData = filteredData.map(row => [
-															row['Player'],
-															row['Games'],
-															row['Total PC/g'],
-															row['Total PRF/g'],
-															row['Total rORTG'],
-															row['On-ball PRF/g'],
-															row['On-ball rORTG'],
-															row['Off-ball: Partner PRF/g'],
-															row['Off-ball: Partner rORTG'],
-															row['Off-ball: Space PRF/g'],
-															row['Off-ball: Space rORTG'],
-															row['Off-ball: Crash PRF/g'],
-															row['Off-ball: Crash rORTG'],
-															row['Transition PRF/g'],
-															row['Transition rORTG'],
-														]);
-
-														// Add new data to DataTable and redraw
-														table.rows.add(formattedData).draw();
-														console.log("Total Rows Appended:", formattedData.length);
+													const years = [...new Set(data.map(row => row['Year']))].sort();
+													years.forEach(year => {
+														$('#yearSelect').append(`<option value="${year}">${year}</option>`);
 													});
+
+													// Handle dropdown selection change
+													$('#teamSelect, #yearSelect').on('change', function() {
+														const selectedTeam = $('#teamSelect').val();
+														const selectedYear = $('#yearSelect').val(); // Corrected the ID to #yearSelect
+
+
+														let filteredData = []; // Define filteredData outside the if block
+
+														// Check if both selections are made
+														if (selectedTeam && selectedYear) {
+															filteredData = data.filter(row => {
+																const matchesTeam = row['Team'] === selectedTeam;
+																const matchesYear = row['Year'] === selectedYear;
+																const meetsThreshold = parseFloat(row['Total plays']) >= 150;
+																return matchesTeam && matchesYear && meetsThreshold;
+															});
+														}
+
+														// Clear out old data from DataTable
+														table.clear();
+
+														// Prepare formatted data for DataTables only if filteredData has content
+														if (filteredData.length > 0) {
+															const formattedData = filteredData.map(row => [
+																row['Player'],
+																row['Games'],
+																row['Total PC/g'],
+																row['Total PRF/g'],
+																row['Total rORTG'],
+																row['On-ball PRF/g'],
+																row['On-ball rORTG'],
+																row['Off-ball: Partner PRF/g'],
+																row['Off-ball: Partner rORTG'],
+																row['Off-ball: Space PRF/g'],
+																row['Off-ball: Space rORTG'],
+																row['Off-ball: Crash PRF/g'],
+																row['Off-ball: Crash rORTG'],
+																row['Transition PRF/g'],
+																row['Transition rORTG']
+															]);
+
+															// Add new data to DataTable and redraw
+															table.rows.add(formattedData).draw();
+															// Apply sorting to "Total PRF/g" column after data is added
+        													table.order([3, 'desc']).draw();
+															console.log("Total Rows Appended:", formattedData.length);
+														} else {
+															// If no data is filtered, just redraw the empty table
+															table.draw();
+														}
+													});
+
 												},
 												error: function(error) {
 													console.error("Error loading CSV file:", error);
