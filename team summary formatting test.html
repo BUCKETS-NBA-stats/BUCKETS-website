@@ -32,23 +32,23 @@
 
 		<style>
 			/* Table styling */
-			#playerCareerTable {
+			#playerTable {
 				width: 100%;
 				table-layout: fixed;
 				overflow: hidden;
 			}
 			
-			#playerCareerTable td:nth-child(1), /* Year column */
-			#playerCareerTable td:nth-child(3), /* Total PRF/g column */
-			#playerCareerTable td:nth-child(4) /* Total rORTG column */ {
+			#playerTable td:nth-child(1), /* Year column */
+			#playerTable td:nth-child(3), /* Total PRF/g column */
+			#playerTable td:nth-child(4) /* Total rORTG column */ {
 				font-weight: bold;
 			}
 
-			#playerCareerTable th[colspan="2"] {
+			#playerTable th[colspan="2"] {
     			text-align: center;
 			}
 
-			#playerCareerTable th[colspan="3"] {
+			#playerTable th[colspan="3"] {
     			text-align: center;
 			}
 		</style>
@@ -73,19 +73,24 @@
 
 							<!-- Table -->
 								<body>
-									<h2>Career Overview</h1>
+									<h2>Team Summary</h1>
 								
-									<!-- Drop down selector -->
-									<!-- <label for="playerSelect">Select Player:</label> -->
-									<select id="playerSelect">
-										<option value="">--Enter here--</option>
-									</select>
+										<!-- Drop down selector -->
+										<!-- <label for="teamSelect">Select Team:</label> -->
+										<select id="teamSelect">
+											<option value="">--Enter here--</option>
+										</select>
+								
+										<!-- <label for="yearSelect">Select Year:</label> -->
+										<select id="yearSelect">
+											<option value="">--Enter here--</option>
+										</select>
 							
 									<!-- Table for DataTables -->
-									<table id="playerCareerTable" class="display compact">
+									<table id="playerTable" class="display compact">
 										<thead>
 											<tr>
-												<th rowspan="2">Season</th>
+												<th rowspan="2">Player</th>
                 								<th rowspan="2">Games</th>
 												<th colspan="3">Total</th>
 								                <th title="Includes PNR ball handler, ISO, Post-up, and other playmaking plays" colspan="2">On-ball</th>
@@ -189,23 +194,34 @@
 										$(document).ready(function () {
 											console.log("Document ready - initializing DataTable...");
 									
-											// Initialize Select2 on the dropdown
-											$('#playerSelect').select2({
-												placeholder: "Select a Player",
+											// Initialize Select2 on the dropdowns
+											$('#teamSelect').select2({
+												placeholder: "Select a Team",
+												allowClear: true,
+												width: '100%'
+											});
+
+											$('#yearSelect').select2({
+												placeholder: "Select a Season",
 												allowClear: true,
 												width: '100%'
 											});
 									
 											// Initialize the DataTable
-											table = $('#playerCareerTable').DataTable({
+											table = $('#playerTable').DataTable({
 												paging: false,
 												searching: false,
 												info: false,
 												responsive: true,
 												fixedHeader: true,
 												autoWidth: true,
-												ordering: false,
+												ordering: true,
 												columnDefs: [
+													{
+														targets: 0,  // Adjust to the index of the "Player" column
+														width: "200px",
+														className: "nowrap"  // Add a class to control wrapping
+													},
 													{
 														targets: [2], // Total PC/g
 														render: function(data, type, row) {
@@ -227,6 +243,11 @@
 															var num = parseFloat(data).toFixed(1);
 															return num > 0 ? '+' + num : num; // Add '+' if positive
 														}
+													},
+													{
+														targets: 3,  // Adjust to the index of the "Total PRF/g" column
+														orderData: [3],  // Set this column for default sorting
+														type: "num"  // Ensure numerical sorting for proper order
 													}
 												],
 												createdRow: function (row, rowData) {
@@ -307,7 +328,7 @@
 											});
 									
 											// Load CSV file using Papa Parse
-											Papa.parse('assets/data/league-table.csv', {
+											Papa.parse('assets/data/league-table-team.csv', {
 												download: true,
 												header: true,
 												skipEmptyLines: true,
@@ -315,47 +336,74 @@
 													table.clear().draw(); // Clear the existing table data
 													console.log("Parsing Complete:", results);
 									
-													const data = results.data;
+													var data = results.data;
 									
 													// Compute min/max values for PRF/g, rORTG, and Total PC/g
 													computeColumnMinMax(data);
 									
-													// Populate the dropdown with unique player seasons
-													const players = [...new Set(data.map(row => row['Player']))];
-													players.forEach(player => {
-														$('#playerSelect').append(`<option value="${player}">${player}</option>`);
+													// Populate the dropdowns with unique teams
+													const teams = [...new Set(data.map(row => row['Team']))].sort();
+													teams.forEach(team => {
+														$('#teamSelect').append(`<option value="${team}">${team}</option>`);
+													});
+
+													const years = [...new Set(data.map(row => row['Year']))].sort();
+													years.forEach(year => {
+														$('#yearSelect').append(`<option value="${year}">${year}</option>`);
 													});
 									
 													// Handle dropdown selection change
-													$('#playerSelect').on('change', function () {
-														const selectedPlayer = $(this).val();
-														const filteredData = data.filter(row => row['Player'] === selectedPlayer);
-									
-														table.clear(); // Clear out old data
-									
-														// Prepare formatted data for DataTables
-														const formattedData = filteredData.map(row => [
-															row['Year'],
-															row['Games'],
-															row['Total PC/g'],
-															row['Total PRF/g'],
-															row['Total rORTG'],
-															row['On-ball PRF/g'],
-															row['On-ball rORTG'],
-															row['Off-ball: Partner PRF/g'],
-															row['Off-ball: Partner rORTG'],
-															row['Off-ball: Space PRF/g'],
-															row['Off-ball: Space rORTG'],
-															row['Off-ball: Crash PRF/g'],
-															row['Off-ball: Crash rORTG'],
-															row['Transition PRF/g'],
-															row['Transition rORTG']
-														]);
-									
-														// Add new data to DataTable and redraw
-														table.rows.add(formattedData).draw();
-														console.log("Total Rows Appended:", formattedData.length);
+													$('#teamSelect, #yearSelect').on('change', function() {
+														const selectedTeam = $('#teamSelect').val();
+														const selectedYear = $('#yearSelect').val(); // Corrected the ID to #yearSelect
+
+
+														let filteredData = []; // Define filteredData outside the if block
+
+														// Check if both selections are made
+														if (selectedTeam && selectedYear) {
+															filteredData = data.filter(row => {
+																const matchesTeam = row['Team'] === selectedTeam;
+																const matchesYear = row['Year'] === selectedYear;
+																const meetsThreshold = parseFloat(row['Total plays']) >= 150;
+																return matchesTeam && matchesYear && meetsThreshold;
+															});
+														}
+
+														// Clear out old data from DataTable
+														table.clear();
+
+														// Prepare formatted data for DataTables only if filteredData has content
+														if (filteredData.length > 0) {
+															const formattedData = filteredData.map(row => [
+																row['Player'],
+																row['Games'],
+																row['Total PC/g'],
+																row['Total PRF/g'],
+																row['Total rORTG'],
+																row['On-ball PRF/g'],
+																row['On-ball rORTG'],
+																row['Off-ball: Partner PRF/g'],
+																row['Off-ball: Partner rORTG'],
+																row['Off-ball: Space PRF/g'],
+																row['Off-ball: Space rORTG'],
+																row['Off-ball: Crash PRF/g'],
+																row['Off-ball: Crash rORTG'],
+																row['Transition PRF/g'],
+																row['Transition rORTG']
+															]);
+
+															// Add new data to DataTable and redraw
+															table.rows.add(formattedData).draw();
+															// Apply sorting to "Total PRF/g" column after data is added
+        													table.order([3, 'desc']).draw();
+															console.log("Total Rows Appended:", formattedData.length);
+														} else {
+															// If no data is filtered, just redraw the empty table
+															table.draw();
+														}
 													});
+
 												},
 												error: function (error) {
 													console.error("Error loading CSV file:", error);
