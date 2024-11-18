@@ -185,14 +185,14 @@
 
 												// Check X-axis Plays/g condition if X-axis is an rORTG column
 												if (xAxis in playsMapping) {
-												const xPlays = parseFloat(row[playsMapping[xAxis]]);
-												if (xPlays < 2) return false;
+													const xPlays = parseFloat(row[playsMapping[xAxis]]);
+													if (xPlays < 2) return false;
 												}
 
 												// Check Y-axis Plays/g condition if Y-axis is an rORTG column
 												if (yAxis in playsMapping) {
-												const yPlays = parseFloat(row[playsMapping[yAxis]]);
-												if (yPlays < 2) return false;
+													const yPlays = parseFloat(row[playsMapping[yAxis]]);
+													if (yPlays < 2) return false;
 												}
 
 												return true;
@@ -203,12 +203,12 @@
 												const playerLabel = row['Player Year'];
 
 												return {
-												x: xValue,
-												y: yValue,
-												z: sizeValue,      // Bubble size
-												value: sizeValue,  // Used for gradient color mapping
-												name: playerLabel, // Tooltip title
-												label: `${playerLabel}<br>${xAxis}: ${formatValue(xAxis, xValue)}<br>${yAxis}: ${formatValue(yAxis, yValue)}<br>${bubbleSize}: ${formatValue(bubbleSize, sizeValue)}`
+													x: xValue,
+													y: yValue,
+													z: sizeValue,      // Bubble size
+													value: sizeValue,  // Used for gradient color mapping
+													name: playerLabel, // Tooltip title and label
+													label: `${playerLabel}<br>${xAxis}: ${formatValue(xAxis, xValue)}<br>${yAxis}: ${formatValue(yAxis, yValue)}<br>${bubbleSize}: ${formatValue(bubbleSize, sizeValue)}`
 												};
 											});
 
@@ -228,53 +228,72 @@
 											// Debug: Log colorAxis range
 											console.log("Color Axis Min:", minValue, "Color Axis Max:", maxValue);
 
+											// Construct dynamic chart title
+   											const chartTitle = `${xAxis} vs. ${yAxis}${yearFilter ? `, ${yearFilter}` : ""}`;
+
 											// Render the chart with Highcharts
 											Highcharts.chart("chart-container", {
 												chart: {
-												type: "bubble",
-												plotBorderWidth: 1,
-												zoomType: "xy",
-												height: Math.min(window.innerWidth, window.innerHeight) * 0.67 // At least 2/3 of the width
+													type: "bubble",
+													plotBorderWidth: 1,
+													zoomType: "xy",
+													height: Math.min(window.innerWidth, window.innerHeight) * 0.67 // At least 2/3 of the width
 												},
 												title: {
-												text: "Custom Bubble Chart"
+													text: chartTitle
 												},
 												xAxis: {
-												title: { text: xAxis }
+													title: { text: xAxis }
 												},
 												yAxis: {
-												title: { text: yAxis }
+													title: { text: yAxis }
 												},
 												colorAxis: {
-												min: minValue,
-												max: maxValue,
-												stops: [
-													[0, '#cc6600'],   // Orange for smallest value
-													[0.5, '#ffffff'], // White for mid-range value
-													[1, '#006622']    // Green for largest value
-												]
+													min: minValue,
+													max: maxValue,
+													stops: [
+														[0, '#cc6600'],   // Orange for smallest value
+														[0.5, '#ffffff'], // White for mid-range value
+														[1, '#006622']    // Green for largest value
+													]
 												},
 												tooltip: {
-												useHTML: true,
-												headerFormat: "",
-												pointFormat: "{point.label}"
+													useHTML: true,
+													headerFormat: "",
+													pointFormat: "{point.label}"
 												},
 												plotOptions: {
-												bubble: {
-													maxSize: '4%', // Reduce bubble size to prevent overlap
-													minSize: '1%'  // Ensure small bubbles are visible
-												}
+													bubble: {
+														maxSize: '4%', // Reduce bubble size to prevent overlap
+														minSize: '1%', // Ensure small bubbles are visible
+														dataLabels: {
+															enabled: true,          // Enable data labels
+															format: "{point.name}", // Show Player Year
+															align: "left",          // Align labels to the left of the bubble
+															verticalAlign: "middle", // Center labels vertically
+															allowOverlap: false,    // Prevent overlapping labels
+															style: {
+																color: "#000000",   // Label text color
+																fontSize: "10px",  // Adjust font size
+																textOutline: "none" // Remove text outline for better readability
+															},
+															padding: 5,              // Add padding between the label and bubble
+															inside: false,           // Place labels outside the bubbles
+															overflow: "none"         // Prevent labels from spilling outside the chart area
+														}
+													}
 												},
 												series: [{
-												data: chartData,
-												name: "Players",
-												colorKey: 'value' // Explicitly map gradient coloring to the 'value' field
+													data: chartData,
+													name: "Players",
+													colorKey: 'value' // Explicitly map gradient coloring to the 'value' field
 												}],
 												accessibility: {
 													enabled: false // Disable the accessibility module
 												}
 											});
-											}
+										}
+
 
 
 
