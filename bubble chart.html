@@ -36,6 +36,7 @@
 				margin: 20px auto;
 				width: 90%;
 			}
+			
 			.select-container {
 				margin: 20px;
 				display: flex;
@@ -100,11 +101,8 @@
 										  <label for="year-filter">Filter by Year:</label>
 										  <select id="year-filter" class="select2"></select>
 										</div>
-									  </div>
-									  <button id="plot-btn">Plot Chart</button>
-									  <div id="chart-container"></div>
-									  
-									
+									</div>
+									<button id="plot-btn">Plot Chart</button>
 									<div id="chart-container"></div>
 
 								<script>
@@ -207,11 +205,28 @@
 												return {
 												x: xValue,
 												y: yValue,
-												z: sizeValue,
-												name: playerLabel,
+												z: sizeValue,      // Bubble size
+												value: sizeValue,  // Used for gradient color mapping
+												name: playerLabel, // Tooltip title
 												label: `${playerLabel}<br>${xAxis}: ${formatValue(xAxis, xValue)}<br>${yAxis}: ${formatValue(yAxis, yValue)}<br>${bubbleSize}: ${formatValue(bubbleSize, sizeValue)}`
 												};
 											});
+
+											// Debug: Log chart data
+											console.log("Chart Data:", chartData);
+
+											// Ensure there is data to display
+											if (chartData.length === 0) {
+												alert("No data to display for the selected filters.");
+												return;
+											}
+
+											// Get min and max values for bubble size
+											const minValue = Math.min(...chartData.map(d => d.value));
+											const maxValue = Math.max(...chartData.map(d => d.value));
+
+											// Debug: Log colorAxis range
+											console.log("Color Axis Min:", minValue, "Color Axis Max:", maxValue);
 
 											// Render the chart with Highcharts
 											Highcharts.chart("chart-container", {
@@ -230,6 +245,15 @@
 												yAxis: {
 												title: { text: yAxis }
 												},
+												colorAxis: {
+												min: minValue,
+												max: maxValue,
+												stops: [
+													[0, '#cc6600'],   // Orange for smallest value
+													[0.5, '#ffffff'], // White for mid-range value
+													[1, '#006622']    // Green for largest value
+												]
+												},
 												tooltip: {
 												useHTML: true,
 												headerFormat: "",
@@ -237,16 +261,22 @@
 												},
 												plotOptions: {
 												bubble: {
-													maxSize: '4%' // Reduce bubble size to prevent overlap
+													maxSize: '4%', // Reduce bubble size to prevent overlap
+													minSize: '1%'  // Ensure small bubbles are visible
 												}
 												},
 												series: [{
 												data: chartData,
 												name: "Players",
-												colorByPoint: true
-												}]
+												colorKey: 'value' // Explicitly map gradient coloring to the 'value' field
+												}],
+												accessibility: {
+													enabled: false // Disable the accessibility module
+												}
 											});
-										}
+											}
+
+
 
 
 										// Format values based on column type
