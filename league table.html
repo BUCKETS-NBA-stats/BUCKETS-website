@@ -225,12 +225,28 @@
 														"Total PC/g": row["Total PC/g"],
 												}));
 
-													// Add all rows at once to the table and redraw
-            										table.rows.add(formattedData).draw();
+													// Min plays logic
+													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+  											        	var totalPlays = parseFloat(data[4]) || 0;  // Check "Plays" value in column 5
+                										return totalPlays >= 150;  // Filter out rows where Plays < 150
+         											});
+													
+													// temporary hack to exclude problem children. Exclude if Space PRF >0 but PRF baseline = 0
+													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+  											        	var spacePRF = parseFloat(data[15]) || 0;  // Check "Spacing PRF in column 16
+														var spacePRFplays = parseFloat(data[17]) || 0;  // Check "Spacing PRF baseline in column 17
+                										if (spacePRFplays === 0 && spacePRF >0){
+															return false;
+														}
+														return true;
+         											});
 
 													// Start sorted by Total PC/g
-													table.order([34,'desc']);
-													
+													table.order([34,'desc']);													
+
+													// Add all rows at once to the table and redraw
+            										table.rows.add(formattedData).draw();
+											
 													// Select columns to unhide
 													$('#columnSelect').on('change', function() {
         											var selectedValue = $(this).val();
@@ -266,21 +282,7 @@
 														table.draw();
 													});	
 													
-													// Min plays logic
-													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-  											        	var totalPlays = parseFloat(data[4]) || 0;  // Check "Plays" value in column 5
-                										return totalPlays >= 150;  // Filter out rows where Plays < 150
-         											});
 													
-													// temporary hack to exclude problem children. Exclude if Space PRF >0 but PRF baseline = 0
-													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-  											        	var spacePRF = parseFloat(data[15]) || 0;  // Check "Spacing PRF in column 16
-														var spacePRFplays = parseFloat(data[17]) || 0;  // Check "Spacing PRF baseline in column 17
-                										if (spacePRFplays === 0 && spacePRF >0){
-															return false;
-														}
-														return true;
-         											});
 
 												},
 												error: function(error) {
