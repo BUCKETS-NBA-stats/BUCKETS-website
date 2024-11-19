@@ -119,6 +119,8 @@
 										$(document).ready(function() {
 											console.log("Document ready - initializing DataTable...");
 
+											let formattedData = []; // Store formatted data here for filtering
+
 											// Initialize the DataTable without data for now
 											table = $('#league-summary').DataTable({
 												columns: [
@@ -187,7 +189,7 @@
 													console.log("Parsing Complete:", results);
 
 													// Prepare data for DataTable by mapping each row to the correct columns
-            										const formattedData = results.data.map(row => ({
+            										formattedData = results.data.map(row => ({
 														"Player": row["Player"],
 														"Year": row["Year"],
 														"Player Year": row["Player Year"],
@@ -266,21 +268,37 @@
 														table.draw();
 													});	
 													
-													// Min plays logic
+													// Filter logic
 													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-  											        	var totalPlays = parseFloat(data[4]) || 0;  // Check "Plays" value in column 5
-                										return totalPlays >= 150;  // Filter out rows where Plays < 150
-         											});
-													
-													// temporary hack to exclude problem children. Exclude if Space PRF >0 but PRF baseline = 0
-													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-  											        	var spacePRF = parseFloat(data[15]) || 0;  // Check "Spacing PRF in column 16
-														var spacePRFplays = parseFloat(data[17]) || 0;  // Check "Spacing PRF baseline in column 17
-                										if (spacePRFplays === 0 && spacePRF >0){
-															return false;
+														const row = formattedData[dataIndex];
+
+														// Min plays logic
+														const totalPlays = parseFloat(row["Total plays"]) || 0; // Check "Plays" value
+														if (totalPlays < 150) {
+															console.log(`Excluding row at index ${dataIndex} due to total plays:`, row);
+															return false; // Exclude row
 														}
-														return true;
-         											});
+
+														return true; // Pass row to the next filter
+													});
+
+													$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+														const row = formattedData[dataIndex];
+
+														// Temporary hack to exclude problem children
+														const spacePRF = parseFloat(row["Off-ball: Space PRF/g"]) || 0; // Check "Spacing PRF"
+														const spacePRFplays = parseFloat(row["Off-ball: Space Plays/g"]) || 0; // Check "Spacing PRF baseline"
+
+														console.log(`Row ${dataIndex}: spacePRF = ${spacePRF}, spacePRFplays = ${spacePRFplays}`);
+
+														if (spacePRFplays === 0 && spacePRF > 0) {
+															console.log(`Excluding row at index ${dataIndex}:`, row);
+															return false; // Exclude row
+														}
+
+														return true; // Pass row
+													});
+
 
 												},
 												error: function(error) {
