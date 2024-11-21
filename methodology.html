@@ -38,33 +38,27 @@
 									<span class="image main"><img src="images/pic11.jpg" alt="" /></span>
 									-->
 									<!--Intro-->
-										<p>Current NBA stats ignore an important truth about offense, which muddles our understanding of the game. We are introducing some new stats to fix this problem.</p>
-										<p>That important truth: <strong>Roles matter</strong>. When a team tries to score, the 5 players each take on different jobs. Someone needs to face down a set defense and try to create an advantage with the ball. Other players support this by spacing the floor, setting screens, fighting for position, and moving off ball. These aren't rigid jobs. Players will fill multiple roles over the course of a single possession or game. However, each role requires different skill sets and players tend to specialize in certain roles.</p>
-										<p>Therefore, to understand how effective a player is on offense, we need to understand:</p>
+										<p>BUCKETS is a new set of NBA stats that accounts for every point created, every possession used to create them, and the context in which those things happen. It consists of:</p>
 										<ul>
-											<li>What <u>roles</u> are they playing in the offense, how often?</li>
-											<li>What does it mean to be <u>successful</u> in each of those roles?</li>
-											<li>How <u>effective</u> is the player in that role, relative to that standard?</li>
+											<li><b>PRF (Points Responsible For):</b> Points scored + assisted, including both field goals and free throws. This measures offensive <b>production</b></li>
+											<li><b>Plays:</b> Total possessions the player used while attempting to score or set up a teammate, including field goal attempts, free throw attempts, and turnovers.. This measures offensive <b>volume</b> or usage</li>
+											<li><b>PRF baseline:</b> Total plays x baseline points per possession for that play type. This establishes a context-specific threshold to measure efficiency against</li>
+											<li><b>rORTG (relative offensive rating)</b> (PRF - PRF baseline)/Plays. This measures offensive <b>efficiency</b></li>
+											<li><b>PC (Points Created):</b> PRF - PRF baseline (or equivalently, Plays x rORTG). This measures total offensive <b>value</b> added over the baseline</li>
 										</ul>
+										<p>Together, these stats have several advantages over traditional box score and advanced stats:	</p>
 
-										<p>BUCKETS is a new set of stats designed to answer those questions. These stats allow us to analyze how players perform in several major offensive roles (<u>creating on-ball</u>, <u>scoring off-ball</u>, and <u>pushing in transition</u>), while accounting for the unique nuances and dynamics of each.</p>
+										<h4>Count every point created</h4>
+										<p>Scoring and playmaking are two sides of the same coin. The best offensive players use the threat of their scoring to set up opportunities for their teammates, and use the threat of their playmaking to open up scoring chances for themselves.</p>
+										<p>Existing stats like points per game, assists, and true shooting only look at one side of this coin or the other. But points scored and points created for teammates both count the same on the scoreboard. BUCKETS considers them all together.</p>
+										
+										<h4>Count every possession used</h4>
+										<p>In the process of trying to score or create for teammates, players might attempt a field goal, generate a free throw, or turn the ball over, or pass to a teammate who immediately does any of those things.</p>
+										<p>Almost all usage stats and efficiency stats (like usage and true shooting) only account for some of these. But all of them are ways that possessions are used in the pursuit of creating points. BUCKETS counts them all.</p>
 
-										<p>For each of these roles, there are stats for:</p>
-										<ul>
-											<li><b>PRF (Points Responsible For):</b> Points scored (field goals and free throws) + Points assisted (field goals and free throws)*. This measures total <b>production</b></li>
-											<li><b>Plays:</b> Possessions with a scoring attempt (field goal attempts, free throws, or a scoring turnover) + possessions with a playmaking attempt (potential assists or playmaking turnovers)*. This measures total <b>volume</b></li>
-											<li><b>PRF baseline:</b> Plays x baseline points per possession for that action. This establishes a context-specific expectation for efficiency</li>
-											<li><b>rORTG (relative offensive rating)</b> (PRF - PRF baseline)/Plays. This measures <b>efficiency</b></li>
-											<li><b>PC (Points Created):</b> (PRF - PRF baseline). This measures total <b>value</b> added over baseline</li>
-										</ul>
-										<p><i>(*Due to data limitations, off-ball stats currently exclude playmaking)</i></p>
-
-										<p>You can use these stats in combination to understand a player's effectiveness in in their role, similar to how you would use points, assists, and true shooting. However, we think our stats have several advantages:</p>
-										<ul>
-											<li><b>Count every point created:</b> Traditional stats don't count whether an assist was for a 2 or a 3, and don't credit passes that lead to free throws at all. Those points all count on the scoreboard (just like points the player scores themselves), and our stats count them too. </li>
-											<li><b>Count every possession used:</b> Field goal attempts, free throw attempts, potential assists, and turnovers are all ways that a player uses a possession to attempt to create points for their team. Stats like FG%, eFG%, and true shooting only account for some of them. Our stats account for all of them.</li>
-											<li><b>Account for context:</b> It is harder to be efficient creating against a set half court defense than it is to hit an open 3 or transition layup. Traditional stats can't account for that, but our stats do.</li>
-										</ul>
+										<h4>Account for context and role</h4>
+										<p>All points count equally, but not all points are created equally. Someone needs to face down a set defense and try to create an advantage with the ball. Other players support this by spacing the floor, setting screens, fighting for position, and moving off-ball. To understand how valuable a player’s offense is, we need to understand the role he is playing.</p>
+										<p>Existing stats have no way to account for this - they can’t distinguish a player creating points against a set half court defense from a player finishing easy shots created by others. BUCKETS understands and accounts for this context.</p>
 
 										<h3>Example</h3>
 										<p>To see how these stats work, let's look at James Harden's BUCKETS stats for his 2016-17 MVP season:</p>
