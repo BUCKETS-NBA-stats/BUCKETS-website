@@ -75,7 +75,7 @@
 										<thead>
 											<tr>
 												<th rowspan="2">Player</th>
-                								<th title ="Average of best 5 seasons in total PC/g"rowspan="2">Best 5 seasons</th>
+                								<th title ="Average of best 5 seasons in total PC/g"rowspan="2">5 Best Seasons</th>
 												<th colspan="15">Total PC/g in nth best season</th>
 											</tr>
 											<tr>
@@ -108,7 +108,7 @@
 										// Map displayed table columns to their respective CSV keys
 										const tableToCsvMap = {
 											pcg: [
-												'Best 5 seasons', 
+												'5 Best Seasons', 
 												'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'
 											]
 										};
@@ -161,6 +161,25 @@
 												fixedHeader: true,
 												autoWidth: true,
 												ordering: true,
+												columns: [
+													{ data: "Player", title: "Player" },
+													{ data: "5 Best seasons", title: "5 Best seasons" },
+													{ data: "1", title: "1" },
+													{ data: "2", title: "2" },
+													{ data: "3", title: "3" },
+													{ data: "4", title: "4" },
+													{ data: "5", title: "5" },
+													{ data: "6", title: "6" },
+													{ data: "7", title: "7" },
+													{ data: "8", title: "8" },
+													{ data: "9", title: "9" },
+													{ data: "10", title: "10" },
+													{ data: "11", title: "11" },
+													{ data: "12", title: "12" },
+													{ data: "13", title: "13" },
+													{ data: "14", title: "14" },
+													{ data: "15", title: "15" }
+												],
 												columnDefs: [
 													{
 														targets: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], // PC/g
@@ -185,14 +204,16 @@
 													}
 
 													// Apply gradient for PC/g
-													const pcgValue = parseFloat(rowData[pcgIndices]);
-													if (!isNaN(pcgValue) && pcgMinMax.min !== undefined && pcgMinMax.max !== undefined) {
-														const pcgColor = getDivergingGradient(pcgValue, pcgMinMax.min, pcgMinMax.max, '#cc6600', '#ffffff', '#006622');
-														const textColor = adjustTextColor(pcgColor); // Dynamically adjust text color
-														const cell = $('td', row).eq(pcgIndex);
-														cell.css('background-color', pcgColor);
-														cell.css('color', textColor); // Set text color
-													}														
+													pcgIndices.forEach(index => {
+														const pcgValue = parseFloat(rowData[index]); // Get value for the column
+														if (!isNaN(pcgValue) && pcgMinMax.min !== null && pcgMinMax.max !== null) {
+															const pcgColor = getDivergingGradient(pcgValue, pcgMinMax.min, pcgMinMax.max, '#cc6600', '#ffffff', '#006622');
+															const textColor = adjustTextColor(pcgColor); // Adjust text color dynamically
+															const cell = $('td', row).eq(index - 1); // Get cell in the row (adjust index for DataTables)
+															cell.css('background-color', pcgColor);
+															cell.css('color', textColor);
+														}
+													});														
 												}
 											});
 									
@@ -202,16 +223,15 @@
 												header: true,
 												skipEmptyLines: true,
 												complete: function (results) {
-													table.clear().draw(); // Clear the existing table data
 													console.log("Parsing Complete:", results);
 									
 													const data = results.data;
 									
-													// Compute min/max values for PRF/g
-													computeColumnMinMax(data);
+													// Compute min/max for PC/g
+													pcgMinMax = computeColumnMinMax(data, tableToCsvMap.pcg);
 																																		
 													// Add new data to DataTable and redraw
-													table.rows.add(data).draw();
+													table.clear().rows.add(data).draw();
 													console.log("Total Rows Appended:", data.length);
 												},
 												error: function (error) {
@@ -220,28 +240,27 @@
 											});
 									
 											// Compute min/max for PC/g
-
-											const pcgKey = tableToCsvMap.pcg; // Key for PC/g
 											function computeColumnMinMax(data, pcgKey) {
-												const allValues = columnKeys.flatMap(key =>
+												const allValues = pcgKey.flatMap(key =>
 													data
 														.map(row => parseFloat(row[key])) // Parse values from the column
 														.filter(v => !isNaN(v))          // Exclude invalid values
-												);		
-									
-												// Calculate overall min and max
+												);
+
 												if (allValues.length > 0) {
-													return {
+													const result = {
 														min: Math.min(...allValues),
 														max: Math.max(...allValues)
 													};
+													console.log("PC/g MinMax:", result);
+													return result;
 												}
 
-												// If no valid values, return null for min/max
-												return { min: null, max: null };
-
-												console.log("PC/g MinMax:", result);
-											}																					
+												const noDataResult = { min: null, max: null };
+												console.log("PC/g MinMax: No valid numeric data found.", noDataResult); // Log no data case
+												return noDataResult;
+											}
+																		
 										});
 									</script>
 								</body>
