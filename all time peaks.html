@@ -195,15 +195,19 @@
 														className: "text-center"
 													},
 													{
+														targets: [0], // Rk column
+														width: "50px"
+													},
+													{
 														targets: [1], // Player column (text)
-														width: "220px",
+														width: "225px",
 														render: function (data, type, row) {
 															return data || ""; // Ensure blanks are displayed for missing or undefined values
 														}
 													},
 													{
 														targets: [2], // 5 Best Seasons
-														width: "80px"
+														width: "75px"
 													}
 												],
 												rowCallback: function (row, data, index) {
