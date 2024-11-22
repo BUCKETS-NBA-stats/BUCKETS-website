@@ -32,18 +32,17 @@
 				overflow: hidden;
 			}
 			
-			#allTimeTable td:nth-child(1), /* Player column */
-			#allTimeTable td:nth-child(2) /* Best 5 season PC/g column */
+			#allTimeTable td:nth-child(2), /* Player column */
+			#allTimeTable td:nth-child(3) /* Best 5 season PC/g column */
 			{
 				font-weight: bold;
 			}
 
-			#allTimeTable th[colspan="2"] {
+			#allTimeTable th[colspan="15"] {
     			text-align: center;
 			}
-
-			#allTimeTable th[colspan="3"] {
-    			text-align: center;
+			table.dataTable td.text-center {
+    			text-align: center !important;
 			}
 
 		</style>
@@ -74,9 +73,10 @@
 									<table id="allTimeTable" class="display compact">
 										<thead>
 											<tr>
+												<th rowspan="2">Rk</th>
 												<th rowspan="2">Player</th>
-                								<th title ="Average of best 5 seasons in total PC/g"rowspan="2">5 Best Seasons</th>
-												<th colspan="15">Total PC/g in nth best season</th>
+                								<th title ="Average of best 5 seasons in total PC/g" rowspan="2">5 Best Seasons</th>
+												<th title ="" colspan="15">Total PC/g in Nth best season</th>
 											</tr>
 											<tr>
 												<th>1</th>
@@ -104,6 +104,7 @@
 									<script>
 										var table;
 										var pcgMinMax = {}; // Store calculated min/max for Total PC/g
+										var originalData = []; // Store the full dataset for min/max calculations
 									
 										// Map displayed table columns to their respective CSV keys
 										const tableToCsvMap = {
@@ -160,10 +161,14 @@
 												responsive: true,
 												fixedHeader: true,
 												autoWidth: true,
+												pageLength: 25,
+												lengthChange: false,
 												ordering: true,
+												order: [[2, "desc"]], // Default sort by "5 Best Seasons" column (index 1), descending
 												columns: [
+													{ title: "Rk", data: null, orderable: false }, // Rank column
 													{ data: "Player", title: "Player" },
-													{ data: "5 Best seasons", title: "5 Best seasons" },
+													{ data: "5 Best Seasons", title: "5 Best Seasons" },
 													{ data: "1", title: "1" },
 													{ data: "2", title: "2" },
 													{ data: "3", title: "3" },
@@ -182,14 +187,42 @@
 												],
 												columnDefs: [
 													{
-														targets: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], // PC/g
-														render: function(data, type, row) {
-															return parseFloat(data).toFixed(2); // Format to 2 decimal places
+														targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], // PC/g columns (numeric)
+														render: function (data, type, row) {
+															const value = parseFloat(data); // Convert data to number
+															return isNaN(value) ? "" : value.toFixed(2); // Show blank if NaN, otherwise format to 2 decimals
+														},
+														className: "text-center"
+													},
+													{
+														targets: [1], // Player column (text)
+														width: "220px",
+														render: function (data, type, row) {
+															return data || ""; // Ensure blanks are displayed for missing or undefined values
 														}
+													},
+													{
+														targets: [2], // 5 Best Seasons
+														width: "80px"
 													}
 												],
+												rowCallback: function (row, data, index) {
+													// Get the rows in the currently sorted and filtered order
+													const orderedData = table.rows({ order: "applied" }).data();
+
+													// Find the index of the current row in the ordered dataset
+													const overallIndex = orderedData.indexOf(data);
+
+													// Rank is 1-based, so add 1
+													const overallRank = overallIndex + 1;
+
+													// Update the first cell (Rk column) with the calculated rank
+													$('td:eq(0)', row).html(overallRank);
+												},
+												
+
 												createdRow: function (row, rowData) {
-													const pcgIndices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]; // PC/g
+													const pcgIndices = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]; // PC/g
 
 													// Helper function to adjust text color
 													function adjustTextColor(backgroundColor) {
@@ -205,11 +238,11 @@
 
 													// Apply gradient for PC/g
 													pcgIndices.forEach(index => {
-														const pcgValue = parseFloat(rowData[index]); // Get value for the column
+														const pcgValue = parseFloat(table.cell(row, index).data()); // Get value for the column
 														if (!isNaN(pcgValue) && pcgMinMax.min !== null && pcgMinMax.max !== null) {
 															const pcgColor = getDivergingGradient(pcgValue, pcgMinMax.min, pcgMinMax.max, '#cc6600', '#ffffff', '#006622');
 															const textColor = adjustTextColor(pcgColor); // Adjust text color dynamically
-															const cell = $('td', row).eq(index - 1); // Get cell in the row (adjust index for DataTables)
+															const cell = $('td', row).eq(index); // Get cell in the row (adjust index for DataTables)
 															cell.css('background-color', pcgColor);
 															cell.css('color', textColor);
 														}
@@ -224,15 +257,14 @@
 												skipEmptyLines: true,
 												complete: function (results) {
 													console.log("Parsing Complete:", results);
-									
-													const data = results.data;
+													originalData = results.data;
 									
 													// Compute min/max for PC/g
-													pcgMinMax = computeColumnMinMax(data, tableToCsvMap.pcg);
+													pcgMinMax = computeColumnMinMax(originalData, tableToCsvMap.pcg);
 																																		
 													// Add new data to DataTable and redraw
-													table.clear().rows.add(data).draw();
-													console.log("Total Rows Appended:", data.length);
+													table.clear().rows.add(originalData).draw();
+													console.log("Total Rows Appended:", originalData.length);
 												},
 												error: function (error) {
 													console.error("Error loading CSV file:", error);
@@ -290,6 +322,7 @@
 									<li>
 										<span class="opener">Stats</span>
 										<ul>
+											<li><a href="all time peaks.html">All-time Peaks</a></li>
 											<li><a href="league table.html">League: Leaderboards</a></li>
 											<li><a href="bubble chart.html">League: Custom charts</a></li>
 											<li><a href="team summary.html">Team: Season Summary</a></li>
