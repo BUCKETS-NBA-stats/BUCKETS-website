@@ -1,0 +1,320 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>All-time Peaks</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<title>All-time Peaks</title>
+		
+		<!-- jquery-->
+		<script src="assets/js/jquery.min.js"></script>
+ 	   
+    	<!-- DataTables CSS -->
+		<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-2.1.8/date-1.5.4/fh-4.0.1/sb-1.8.1/datatables.min.css">
+
+		<!-- DataTables JS -->
+		<script src="https://cdn.datatables.net/v/dt/dt-2.1.8/date-1.5.4/fh-4.0.1/sb-1.8.1/datatables.min.js"></script>
+
+		<!-- Papa Parse CSV parser -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+		<style>
+			/* Table styling */
+			#allTimeTable {
+				width: 100%;
+				table-layout: fixed;
+				overflow: hidden;
+			}
+			
+			#allTimeTable td:nth-child(1), /* Player column */
+			#allTimeTable td:nth-child(2) /* Best 5 season PC/g column */
+			{
+				font-weight: bold;
+			}
+
+			#allTimeTable th[colspan="2"] {
+    			text-align: center;
+			}
+
+			#allTimeTable th[colspan="3"] {
+    			text-align: center;
+			}
+
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+									<a href="index.html" class="logo"><strong>BUCKETS</strong> NBA Stats</a>
+									<ul class="icons">
+										<li><a href="twitter.com" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+										<li><a href="mailto:BUCKETS.stat@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+									</ul>
+								</header>
+
+							<!-- Table -->
+								<body>
+									<h2>All-time Peaks</h2>
+													
+									<!-- Table for DataTables -->
+									<table id="allTimeTable" class="display compact">
+										<thead>
+											<tr>
+												<th rowspan="2">Player</th>
+                								<th title ="Average of best 5 seasons in total PC/g"rowspan="2">Best 5 seasons</th>
+												<th colspan="15">Total PC/g in nth best season</th>
+											</tr>
+											<tr>
+												<th>1</th>
+												<th>2</th>
+												<th>3</th>
+												<th>4</th>
+												<th>5</th>
+												<th>6</th>
+												<th>7</th>
+												<th>8</th>
+												<th>9</th>
+												<th>10</th>
+												<th>11</th>
+												<th>12</th>
+												<th>13</th>
+												<th>14</th>
+												<th>15</th>
+											</tr>
+										</thead>
+										<tbody>
+											<!-- Data from CSV will be loaded here -->
+										</tbody>
+									</table>
+
+									<script>
+										var table;
+										var pcgMinMax = {}; // Store calculated min/max for Total PC/g
+									
+										// Map displayed table columns to their respective CSV keys
+										const tableToCsvMap = {
+											pcg: [
+												'Best 5 seasons', 
+												'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'
+											]
+										};
+									
+										// Helper function for linear gradient
+										function getGradientColor(value, min, max, colorStart, colorEnd) {
+											let ratio = (value - min) / (max - min); // Normalize to [0, 1]
+											ratio = Math.max(0, Math.min(1, ratio)); // Clamp ratio between 0 and 1
+											const start = hexToRgb(colorStart);
+											const end = hexToRgb(colorEnd);
+											const r = Math.round(start.r + ratio * (end.r - start.r));
+											const g = Math.round(start.g + ratio * (end.g - start.g));
+											const b = Math.round(start.b + ratio * (end.b - start.b));
+											return `rgb(${r}, ${g}, ${b})`;
+										}
+									
+										// Helper function for diverging gradient
+										function getDivergingGradient(value, min, max, colorLow, colorZero, colorHigh) {
+											if (value === 0) return colorZero;
+									
+											// Normalize and clamp the value
+											if (value > 0) {
+												const clampedValue = Math.min(value, max); // Clamp positive value to max
+												return getGradientColor(clampedValue, 0, max, colorZero, colorHigh);
+											} else {
+												const clampedValue = Math.max(value, min); // Clamp negative value to min
+												return getGradientColor(clampedValue, min, 0, colorLow, colorZero);
+											}
+										}
+									
+										// Convert hex to RGB
+										function hexToRgb(hex) {
+											const bigint = parseInt(hex.slice(1), 16);
+											return {
+												r: (bigint >> 16) & 255,
+												g: (bigint >> 8) & 255,
+												b: bigint & 255
+											};
+										}
+									
+										$(document).ready(function () {
+											console.log("Document ready - initializing DataTable...");
+																		
+											// Initialize the DataTable
+											table = $('#allTimeTable').DataTable({
+												paging: true,
+												searching: true,
+												info: false,
+												responsive: true,
+												fixedHeader: true,
+												autoWidth: true,
+												ordering: true,
+												columnDefs: [
+													{
+														targets: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], // PC/g
+														render: function(data, type, row) {
+															return parseFloat(data).toFixed(2); // Format to 2 decimal places
+														}
+													}
+												],
+												createdRow: function (row, rowData) {
+													const pcgIndices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]; // PC/g
+
+													// Helper function to adjust text color
+													function adjustTextColor(backgroundColor) {
+														if (!backgroundColor || !backgroundColor.match(/\d+/g)) {
+															// Return default color (black) if backgroundColor is invalid
+															return '#3d4449';
+														}
+
+														const rgb = backgroundColor.match(/\d+/g).map(Number); // Extract RGB values
+														const luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255; // Calculate luminance
+														return luminance > 0.5 ? '#3d4449' : '#f5f5f5'; // High luminance -> black text, low luminance -> white text
+													}
+
+													// Apply gradient for PC/g
+													const pcgValue = parseFloat(rowData[pcgIndices]);
+													if (!isNaN(pcgValue) && pcgMinMax.min !== undefined && pcgMinMax.max !== undefined) {
+														const pcgColor = getDivergingGradient(pcgValue, pcgMinMax.min, pcgMinMax.max, '#cc6600', '#ffffff', '#006622');
+														const textColor = adjustTextColor(pcgColor); // Dynamically adjust text color
+														const cell = $('td', row).eq(pcgIndex);
+														cell.css('background-color', pcgColor);
+														cell.css('color', textColor); // Set text color
+													}														
+												}
+											});
+									
+											// Load CSV file using Papa Parse
+											Papa.parse('assets/data/all-time-players.csv', {
+												download: true,
+												header: true,
+												skipEmptyLines: true,
+												complete: function (results) {
+													table.clear().draw(); // Clear the existing table data
+													console.log("Parsing Complete:", results);
+									
+													const data = results.data;
+									
+													// Compute min/max values for PRF/g
+													computeColumnMinMax(data);
+																																		
+													// Add new data to DataTable and redraw
+													table.rows.add(data).draw();
+													console.log("Total Rows Appended:", data.length);
+												},
+												error: function (error) {
+													console.error("Error loading CSV file:", error);
+												}
+											});
+									
+											// Compute min/max for PC/g
+
+											const pcgKey = tableToCsvMap.pcg; // Key for PC/g
+											function computeColumnMinMax(data, pcgKey) {
+												const allValues = columnKeys.flatMap(key =>
+													data
+														.map(row => parseFloat(row[key])) // Parse values from the column
+														.filter(v => !isNaN(v))          // Exclude invalid values
+												);		
+									
+												// Calculate overall min and max
+												if (allValues.length > 0) {
+													return {
+														min: Math.min(...allValues),
+														max: Math.max(...allValues)
+													};
+												}
+
+												// If no valid values, return null for min/max
+												return { min: null, max: null };
+
+												console.log("PC/g MinMax:", result);
+											}																					
+										});
+									</script>
+								</body>
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+				<div id="sidebar">
+					<div class="inner">
+
+						<!-- Search -->
+							 <!-- not sure how to get Search to work
+								<section id="search" class="alt">
+									<form method="post" action="#">
+										<input type="text" name="query" id="query" placeholder="Search" />
+									</form>
+								</section>
+							-->
+
+						<!-- Menu -->
+							<nav id="menu">
+								<header class="major">
+									<h2>Menu</h2>
+								</header>
+								<ul>
+									<li><a href="index.html">Homepage</a></li>
+									<li>
+										<span class="opener">Stats</span>
+										<ul>
+											<li><a href="league table.html">League: Leaderboards</a></li>
+											<li><a href="bubble chart.html">League: Custom charts</a></li>
+											<li><a href="team summary.html">Team: Season Summary</a></li>
+											<li><a href="player career.html">Player: Career Overview</a></li>
+											<li><a href="player season.html">Player: Season Snapshot</a></li>
+										</ul>
+									</li>
+									<li>
+										<span class="opener">Insights</span>
+										<ul>
+											<li><a href="floor raising.html">The Westbrook Theorem</a></li>
+											<li><a href="#">More coming soon</a></li>
+										</ul>
+									</li>
+									<li><a href="methodology.html">Our stats explained</a></li>
+								</ul>
+							</nav>
+						
+						<!-- Section -->
+							<section>
+								<header class="major">
+									<h2>Get in touch</h2>
+								</header>
+								<ul class="contact">
+									<li class="icon solid fa-envelope"><a href="mailto:BUCKETS.stat@gmail.com">BUCKETS.stat@gmail.com</a></li>
+									<li class="icon brands fa-twitter"><a href="twitter.com">Twitter.com</a></li>
+								</ul>
+							</section>
+
+						<!-- Footer -->
+							<footer id="footer">
+								<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+							</footer>
+
+					</div>
+				</div>
+			</div>
+
+			<!-- Scripts -->
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+
+	</body>
+</html>
