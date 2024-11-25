@@ -218,6 +218,19 @@
 													{ title: "Total rORTG", data: "Total rORTG", visible: true },
 													{ title: "Total PC/g", data: "Total PC/g", visible: true }
 												],
+												columnDefs: [
+													{
+														targets: 0,
+														render: function (data, type, row) {
+															if (type === 'display') {
+																// Generate a link to the player page
+																const playerUrl = `player%20career.html?player=${encodeURIComponent(data)}`;
+																return `<a href="${playerUrl}">${data}</a>`;
+															}
+															return data; // Return raw data for sorting, etc.
+														}
+													}
+												],
 												autoWidth: false,
 												retrieve: true,
 												responsive: true,

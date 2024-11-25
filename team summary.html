@@ -235,7 +235,15 @@
 													{
 														targets: 0,  // Adjust to the index of the "Player" column
 														width: "200px",
-														className: "nowrap"  // Add a class to control wrapping
+														className: "nowrap",  // Add a class to control wrapping
+														render: function (data, type, row) {
+															if (type === 'display') {
+																// Generate a link to the player page
+																const playerUrl = `player%20career.html?player=${encodeURIComponent(data)}`;
+																return `<a href="${playerUrl}">${data}</a>`;
+															}
+															return data; // Return raw data for sorting, etc.
+														}
 													},
 													{
 														targets: [2], // Total PC/g

@@ -160,6 +160,16 @@
 												],
 												columnDefs: [
         										    { targets: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31], visible: false }, // Hide most columns initially
+													{ targets: 0,
+														render: function (data, type, row) {
+															if (type === 'display') {
+																// Generate a link to the player page
+																const playerUrl = `player%20career.html?player=${encodeURIComponent(data)}`;
+																return `<a href="${playerUrl}">${data}</a>`;
+															}
+															return data; // Return raw data for sorting, etc.
+														}
+													}
        											],
 												autoWidth: false, /* Prevent automatic adjustment of table width */
     											retrieve: true,   /* Retrieve the initialized table */

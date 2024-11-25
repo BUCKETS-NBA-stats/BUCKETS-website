@@ -202,6 +202,11 @@
 														targets: [1], // Player column (text)
 														width: "225px",
 														render: function (data, type, row) {
+															if (type === 'display') {
+																// Generate a link to the player page
+																const playerUrl = `player%20career.html?player=${encodeURIComponent(data)}`;
+																return `<a href="${playerUrl}">${data}</a>`;
+															}
 															return data || ""; // Ensure blanks are displayed for missing or undefined values
 														}
 													},
