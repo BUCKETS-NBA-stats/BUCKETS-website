@@ -130,6 +130,12 @@
 										var rortgMinMax = {};
 										var pcgMinMax = {}; // Store calculated min/max for Total PC/g
 									
+										// Function to get URL parameters
+										function getQueryParam(param) {
+											const urlParams = new URLSearchParams(window.location.search);
+											return urlParams.get(param);
+										}
+										
 										// Map displayed table columns to their respective CSV keys
 										const tableToCsvMap = {
 											prfg: [
@@ -197,7 +203,7 @@
 									
 										$(document).ready(function () {
 											console.log("Document ready - initializing DataTable...");
-									
+											
 											// Initialize Select2 on the dropdown
 											$('#playerSelect').select2({
 												placeholder: "Select a Player",
@@ -338,7 +344,9 @@
 													// Handle dropdown selection change
 													$('#playerSelect').on('change', function () {
 														const selectedPlayer = $(this).val();
+														console.log(`Player selected: ${selectedPlayer}`);
 														const filteredData = data.filter(row => row['Player'] === selectedPlayer);
+														console.log(`Filtered Data for ${selectedPlayer}:`, filteredData);
 									
 														table.clear(); // Clear out old data
 									
@@ -365,6 +373,14 @@
 														table.rows.add(formattedData).draw();
 														console.log("Total Rows Appended:", formattedData.length);
 													});
+
+													// Pre-select player if `player` query parameter exists
+													const playerParam = getQueryParam("player"); // Fetch 'player' parameter from the URL
+													if (playerParam) {
+														const decodedPlayer = decodeURIComponent(playerParam); // Decode %20 back to spaces
+														console.log(`Pre-selecting player: ${decodedPlayer}`);
+														$('#playerSelect').val(decodedPlayer).trigger('change'); // Set dropdown value and trigger change
+													}
 												},
 												error: function (error) {
 													console.error("Error loading CSV file:", error);
