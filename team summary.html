@@ -119,15 +119,15 @@
 												<th title="Points Responsible For: &#10;Total scored and assisted points including FT">PRF/g</th>
 												<th title="Relative Offensive Rating: &#10;Points per 100 plays above baseline">rORTG</th>
 												<th title="Points Responsible For: &#10;Total scored and assisted points including FT">PRF/g</th>
-												<th title="Relative Offensive Rating: &#10;Points per 100 plays above baseline. &#10;For on-ball, baseline is league average half court offensive rating">rORTG</th>
+												<th title="Points Created: &#10;Total points added vs baseline efficiency. &#10;For on-ball, baseline is league average half court offensive rating">PC/g</th>
 												<th title="Points Responsible For: &#10;Total scored and assisted points including FT">PRF/g</th>
-												<th title="Relative Offensive Rating: &#10;Points per 100 plays above baseline. &#10;For off-ball, baseline is average PPP for the play type">rORTG</th>
+												<th title="Points Created: &#10;Total points added vs baseline efficiency. &#10;For off-ball, baseline is average PPP for the play type">PC/g</th>
 												<th title="Points Responsible For: &#10;Total scored and assisted points including FT">PRF/g</th>
-												<th title="Relative Offensive Rating: &#10;Points per 100 plays above baseline. &#10;For off-ball, baseline is average PPP for the play type">rORTG</th>
+												<th title="Points Created: &#10;Total points added vs baseline efficiency. &#10;For off-ball, baseline is average PPP for the play type">PC/g</th>
 												<th title="Points Responsible For: &#10;Total scored and assisted points including FT">PRF/g</th>
-												<th title="Relative Offensive Rating: &#10;Points per 100 plays above baseline. &#10;For off-ball, baseline is average PPP for the play type">rORTG</th>
+												<th title="Points Created: &#10;Total points added vs baseline efficiency. &#10;For off-ball, baseline is average PPP for the play type">PC/g</th>
 												<th title="Points Responsible For: &#10;Total scored and assisted points including FT">PRF/g</th>
-												<th title="Relative Offensive Rating: &#10;Points per 100 plays above baseline. &#10;For transition, baseline is league average half court offensive rating">rORTG</th>
+												<th title="Points Created: &#10;Total points added vs baseline efficiency. &#10;For transition, baseline is league average half court offensive rating">PC/g</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -151,6 +151,14 @@
 												'Off-ball: Crash PRF/g', 
 												'Transition PRF/g'
 											],
+											pcg: [
+												'Total PC/g', 
+												'On-ball PC/g', 
+												'Off-ball: Partner PC/g', 
+												'Off-ball: Space PC/g', 
+												'Off-ball: Crash PC/g', 
+												'Transition PC/g'
+											],
 											rortg: [
 												'Total rORTG', 
 												'On-ball rORTG', 
@@ -166,8 +174,7 @@
 												'Off-ball: Space Plays/g',
 												'Off-ball: Crash Plays/g',
 												'Transition Plays/g'
-											],
-											pcg: 'Total PC/g' // Key for Total PC/g
+											]
 										};
 									
 										// Helper function for linear gradient
@@ -246,7 +253,7 @@
 														}
 													},
 													{
-														targets: [2], // Total PC/g
+														targets: [2, 6, 8, 10, 12, 14], // PC/g columns
 														render: function(data, type, row) {
 															return parseFloat(data).toFixed(2); // Format to 2 decimal places
 														}
@@ -258,7 +265,7 @@
 														}
 													},
 													{
-														targets: [4, 6, 8, 10, 12, 14], // rORTG columns
+														targets: [4], // rORTG columns
 														render: function(data, type, row) {
 															if (!data || isNaN(data)) {
 																return ''; // Return empty string for invalid data
@@ -274,9 +281,9 @@
 													}
 												],
 												createdRow: function (row, rowData) {
-													const pcgIndex = 2; // Total PC/g
+													const pcgIndices = [2, 6, 8, 10, 12, 14]; // PC/g columns
 													const prfgIndices = [3, 5, 7, 9, 11, 13]; // PRF/g columns
-													const rortgIndices = [4, 6, 8, 10, 12, 14]; // rORTG columns
+													const rortgIndices = [4]; // rORTG column
 
 													// Helper function to adjust text color
 													function adjustTextColor(backgroundColor) {
@@ -290,15 +297,35 @@
 														return luminance > 0.5 ? '#3d4449' : '#f5f5f5'; // High luminance -> black text, low luminance -> white text
 													}
 
-													// Apply gradient for Total PC/g
-													const pcgValue = parseFloat(rowData[pcgIndex]);
-													if (!isNaN(pcgValue) && pcgMinMax.min !== undefined && pcgMinMax.max !== undefined) {
-														const pcgColor = getDivergingGradient(pcgValue, pcgMinMax.min, pcgMinMax.max, '#cc6600', '#ffffff', '#006622');
-														const textColor = adjustTextColor(pcgColor); // Dynamically adjust text color
-														const cell = $('td', row).eq(pcgIndex);
-														cell.css('background-color', pcgColor);
-														cell.css('color', textColor); // Set text color
-													}
+													// Apply gradient for PC/g columns
+													pcgIndices.forEach((index, i) => {
+														const csvKey = tableToCsvMap.pcg[i];
+														const pcgValue = parseFloat(rowData[index]);
+
+														console.log(`PC/g column index: ${index}, csvKey: ${csvKey}, Value: ${pcgValue}`);
+
+														if (
+															pcgMinMax[csvKey] &&
+															!isNaN(pcgValue) &&
+															pcgMinMax[csvKey].min !== undefined &&
+															pcgMinMax[csvKey].max !== undefined
+														) {
+															const pcgColor = getDivergingGradient(
+																pcgValue,
+																pcgMinMax[csvKey].min,
+																pcgMinMax[csvKey].max,
+																'#cc6600',
+																'#ffffff',
+																'#006622'
+															);
+
+															const textColor = adjustTextColor(pcgColor);
+															const cell = $('td', row).eq(index);
+
+															cell.css('background-color', pcgColor);
+															cell.css('color', textColor);
+														} 
+													});
 
 													// Apply gradient for PRF/g columns
 													prfgIndices.forEach((index, i) => {
@@ -361,7 +388,7 @@
 									
 													var data = results.data;
 									
-													// Compute min/max values for PRF/g, rORTG, and Total PC/g
+													// Compute min/max values for PRF/g, rORTG, and PC/g
 													computeColumnMinMax(data);
 									
 													// Populate the dropdowns with unique teams
@@ -405,15 +432,15 @@
 																row['Total PRF/g'],
 																row['Total rORTG'],
 																row['On-ball PRF/g'],
-																row['On-ball rORTG'],
+																row['On-ball PC/g'],
 																row['Off-ball: Partner PRF/g'],
-																row['Off-ball: Partner rORTG'],
+																row['Off-ball: Partner PC/g'],
 																row['Off-ball: Space PRF/g'],
-																row['Off-ball: Space rORTG'],
+																row['Off-ball: Space PC/g'],
 																row['Off-ball: Crash PRF/g'],
-																row['Off-ball: Crash rORTG'],
+																row['Off-ball: Crash PC/g'],
 																row['Transition PRF/g'],
-																row['Transition rORTG']
+																row['Transition PC/g']
 															]);
 
 															// Add new data to DataTable and redraw
@@ -438,7 +465,7 @@
 												const prfgKeys = tableToCsvMap.prfg; // Use mapped PRF/g keys
 												const rortgKeys = tableToCsvMap.rortg; // Use mapped rORTG keys
 												const playsPerGameKeys = tableToCsvMap.playsPerGame; // Use mapped Plays/g keys
-												const pcgKey = tableToCsvMap.pcg; // Key for Total PC/g
+												const pcgKeys = tableToCsvMap.pcg; // Use mapped PC/g keys
 												const totalPlaysKey = 'Total plays'; // Key for Total Plays
 												const offBallSpacePrfKey = 'Off-ball: Space PRF/g'; // Key for Off-ball Space PRF/g
 												const offBallSpacePlaysKey = 'Off-ball: Space Plays/g'; // Key for Off-ball Space Plays/g
@@ -457,21 +484,29 @@
 													}
 												});
 									
-												// Calculate Total PC/g min and max, excluding rows where Total Plays < 150
-												const pcgValues = data
-													.filter(row => {
-														const totalPlays = parseFloat(row[totalPlaysKey]);
-														return totalPlays >= 150; // Only include rows where Total Plays >= 150
-													})
-													.map(row => parseFloat(row[pcgKey]))
-													.filter(v => !isNaN(v)); // Exclude invalid values
-									
-												if (pcgValues.length > 0) {
-													pcgMinMax = {
-														min: Math.min(...pcgValues),
-														max: Math.max(...pcgValues)
-													};
-												}
+												// Calculate PC/g min and max, excluding rows where Total Plays < 150 and additional logic
+												pcgKeys.forEach((key, i) => {											
+													const columnValues = data
+														.filter(row => {
+															const totalPlays = parseFloat(row[totalPlaysKey]);
+															const offBallSpacePrf = parseFloat(row[offBallSpacePrfKey]); // Off-ball Space PRF/g
+															const offBallSpacePlays = parseFloat(row[offBallSpacePlaysKey]); // Off-ball Space Plays/g
+															if (offBallSpacePrf > 0 && offBallSpacePlays === 0) {
+																console.warn(`Excluding row: Off-ball Space PRF/g > 0 but Off-ball Space Plays/g = 0`);
+																return false;
+															}
+															return totalPlays >= 150; // Only include rows where Total Plays >= 150
+														})
+														.map(row => parseFloat(row[key]))
+														.filter(v => !isNaN(v)); // Exclude invalid values
+										
+													if (columnValues.length > 0) {
+														pcgMinMax[key] = {
+															min: Math.min(...columnValues),
+															max: Math.max(...columnValues)
+														};
+													}
+												});
 									
 												// Calculate rORTG min and max, excluding rows with low data and additional logic
 												rortgKeys.forEach((key, i) => {
@@ -506,7 +541,7 @@
 									
 												console.log("PRF/g MinMax:", prfgMinMax);
 												console.log("rORTG MinMax:", rortgMinMax);
-												console.log("Total PC/g MinMax:", pcgMinMax);
+												console.log("PC/g MinMax:", pcgMinMax);
 											}
 										});
 									</script>
