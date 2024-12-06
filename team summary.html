@@ -66,6 +66,12 @@
 				align-items: center;
     			justify-content: center;
 			}
+
+			/* Add a thin gray line to the right of the specified columns */
+			.dataTables_wrapper table.dataTable td.group-separator,
+			.dataTables_wrapper table.dataTable th.group-separator {
+				border-right: 1px solid #a6a6a6;
+			}
 		</style>
 	</head>
 	<body class="is-preload">
@@ -274,6 +280,14 @@
 															return num > 0 ? '+' + num : num; // Add '+' if positive
 														}
 													},
+
+													//add separator lines
+													{ targets: [4], className: 'group-separator' }, // After Total columns
+													{ targets: [6], className: 'group-separator' }, // After On-ball columns
+													{ targets: [8], className: 'group-separator' }, // After Off-ball Partner columns
+													{ targets: [10], className: 'group-separator' }, // After Off-ball Space columns
+													{ targets: [12], className: 'group-separator' }, // After Off-ball Crash columns
+													
 													{
 														targets: 3,  // Adjust to the index of the "Total PRF/g" column
 														orderData: [3],  // Set this column for default sorting
