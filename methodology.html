@@ -10,6 +10,59 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<style>
+			.tooltip {
+				position: relative;
+				cursor: pointer;
+				color: #007acc; /* Matches Editorial's link color */
+				text-decoration: underline;
+			}
+
+			.tooltip::after {
+				content: attr(data-tooltip);
+				position: absolute;
+				bottom: 125%; /* Position above the text */
+				left: 50%;
+				transform: translateX(-50%);
+				background-color: #333;
+				color: #fff;
+				padding: 0.5em;
+				border-radius: 5px;
+				white-space: nowrap;
+				font-size: 0.9em;
+				opacity: 0;
+				visibility: hidden;
+				transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+				z-index: 10;
+			}
+
+			.tooltip:hover::after,
+			.tooltip:focus::after {
+				opacity: 1;
+				visibility: visible;
+			}
+
+			.tooltip::before {
+				content: '';
+				position: absolute;
+				bottom: 115%; /* Adjust based on ::after */
+				left: 50%;
+				transform: translateX(-50%);
+				border-width: 5px;
+				border-style: solid;
+				border-color: transparent transparent #333 transparent;
+				opacity: 0;
+				visibility: hidden;
+				transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+			}
+
+			.tooltip:hover::before,
+			.tooltip:focus::before {
+				opacity: 1;
+				visibility: visible;
+			}
+
+		</style>
 	</head>
 	<body class="is-preload">
 
@@ -38,7 +91,8 @@
 									<span class="image main"><img src="images/pic11.jpg" alt="" /></span>
 									-->
 									<!--Intro-->
-									<p>BUCKETS is a new set of NBA stats that accounts for every point created, every possession used to create them, and the context in which those things happen. It consists of:</p>
+									<p>BUCKETS<sup><span class="tooltip" data-tooltip="BUCKETS stands for Baseline adjUsted Categorized KrEation poinTS. We couldn't resist the sabermetric tradition of giving dubious acronyms to new advanced stats.">[1]</span></sup>
+										 is a new set of NBA stats that accounts for every point created, every possession used to create them, and the context in which those things happen. It consists of:</p>
 									<ul>
 										<li><b>PRF (Points Responsible For):</b> Points scored + assisted, including both field goals and free throws. This measures offensive <b>production</b></li>
 										<li><b>Plays:</b> Total possessions the player used while attempting to score or set up a teammate, including field goal attempts, free throw attempts, and turnovers. This measures offensive <b>volume</b> or usage</li>
@@ -61,7 +115,7 @@
 									
 									<h4>Count every possession used</h4>
 									<p>In the process of trying to score or create for teammates, players might attempt a field goal, generate a free throw, or turn the ball over, or pass to a teammate who immediately does any of those things.</p>
-									<p>Almost all usage and efficiency stats (like usage % and true shooting) only account for some of these events. But all of them are ways that possessions are used in the pursuit of creating points. BUCKETS counts them all.</p>
+									<p>Almost all usage and efficiency stats (like usage % and true shooting) only account for some of these events<sup><span class="tooltip" data-tooltip="Seth Partnow's Total Usage is an exception">[2]</span></sup>. But all of these events are ways that possessions are used in the pursuit of creating points. BUCKETS counts them all.</p>
 
 									<h4>Account for context and role</h4>
 									<p>All points count equally, but not all points are created equally. Someone needs to face down a set defense and try to create an advantage with the ball. Other players support this by spacing the floor, setting screens, fighting for position, and moving off-ball. To understand how valuable a player's offense is, we need to understand the role he is playing.</p>
