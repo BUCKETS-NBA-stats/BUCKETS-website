@@ -36,8 +36,10 @@
 				width: 100%;
 				table-layout: fixed;
 				overflow: hidden;
+				border-collapse: separate !important;
+				border-spacing: 0; /* Ensures no extra spacing between cells */
 			}
-			
+		
 			#playerTable td:nth-child(1), /* Player column */
 			#playerTable td:nth-child(3) /* Total PC/g column */ 
 			{
@@ -52,8 +54,8 @@
     			text-align: center;
 			}
 
-			#yourTableID th:nth-child(1), 
-			#yourTableID td:nth-child(1) {
+			#playerTable th:nth-child(1), 
+			#playerTable td:nth-child(1) {
 				width: 200px; /* Adjust as needed */
 				white-space: nowrap; /* Prevent wrapping */
 			}
@@ -70,7 +72,8 @@
 			/* Add a thin gray line to the right of the specified columns */
 			.dataTables_wrapper table.dataTable td.group-separator,
 			.dataTables_wrapper table.dataTable th.group-separator {
-				border-right: 1px solid #a6a6a6;
+				border-right: 1px solid #464646 !important; /* Ensures color and width */
+    			border-right-width: 1px !important; /* Forces width */
 			}
 		</style>
 	</head>
