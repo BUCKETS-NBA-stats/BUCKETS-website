@@ -124,6 +124,9 @@
                 								<th title="Includes Spot-Up and Off-screen plays" colspan="2">Off-ball: Space</th>
                 								<th title="Includes Basket cuts and Putbacks" colspan="2">Off-ball: Crash</th>
                 								<th title="Includes all Transition plays" colspan="2">Transition</th>
+												<th rowspan="2">Scoring PC/g</th>
+												<th rowspan="2">Playmaking PC/G</th>
+												<th rowspan="2">Floor raising PC/G</th>
 											</tr>
 											<tr>
 												<th title="Points Created: &#10;Total points added vs baseline efficiency">PC/g</th>
@@ -163,12 +166,15 @@
 												'Transition PRF/g'
 											],
 											pcg: [
-												'Total PC/g', 
-												'On-ball PC/g', 
+												'Total PC/g (floor raising adj.)', 
+												'On-ball PC/g (floor raising adj.)', 
 												'Off-ball: Partner PC/g', 
 												'Off-ball: Space PC/g', 
 												'Off-ball: Crash PC/g', 
-												'Transition PC/g'
+												'Transition PC/g',
+												'Scoring PC/g',
+												'Playmaking PC/g',
+												'Floor raising PC/g'
 											],
 											rortg: [
 												'Total rORTG', 
@@ -306,7 +312,7 @@
 													}
 												],
 												createdRow: function (row, rowData) {
-													const pcgIndices = [3, 7, 9, 11, 13, 15]; // PC/g columns
+													const pcgIndices = [3, 7, 9, 11, 13, 15, 16, 17, 18]; // PC/g columns
 													const prfgIndices = [4, 6, 8, 10, 12, 14]; // PRF/g columns
 													const rortgIndices = [5]; // rORTG column
 
@@ -435,11 +441,11 @@
 														row['Player'],
 														row['Tm'],
 														row['Games'],
-														row['Total PC/g'],
+														row['Total PC/g (floor raising adj.)'],
 														row['Total PRF/g'],
 														row['Total rORTG'],
 														row['On-ball PRF/g'],
-														row['On-ball PC/g'],
+														row['On-ball PC/g (floor raising adj.)'],
 														row['Off-ball: Partner PRF/g'],
 														row['Off-ball: Partner PC/g'],
 														row['Off-ball: Space PRF/g'],
@@ -447,7 +453,10 @@
 														row['Off-ball: Crash PRF/g'],
 														row['Off-ball: Crash PC/g'],
 														row['Transition PRF/g'],
-														row['Transition PC/g']
+														row['Transition PC/g'],
+														row['Scoring PC/g'],
+														row['Playmaking PC/g'],
+														row['Floor raising PC/g']
 													]);
 
 													// Add new data to DataTable and redraw
