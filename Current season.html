@@ -41,7 +41,7 @@
 			}
 		
 			#playerTable td:nth-child(1), /* Player column */
-			#playerTable td:nth-child(3) /* Total PC/g column */ 
+			#playerTable td:nth-child(4) /* Total PC/g column */ 
 			{
 				font-weight: bold;
 			}
@@ -56,7 +56,7 @@
 
 			#playerTable th:nth-child(1), 
 			#playerTable td:nth-child(1) {
-				width: 200px; /* Adjust as needed */
+				width: 280px; /* Adjust as needed */
 				white-space: nowrap; /* Prevent wrapping */
 			}
 
@@ -116,6 +116,7 @@
 										<thead>
 											<tr>
 												<th rowspan="2">Player</th>
+												<th rowspan="2">Tm</th>
                 								<th rowspan="2">G</th>
 												<th colspan="3">Total</th>
 								                <th title="Includes PNR ball handler, ISO, Post-up, and other playmaking plays" colspan="2">On-ball</th>
@@ -263,7 +264,7 @@
 														}
 													},
 													{
-														targets: [2, 6, 8, 10, 12, 14], // PC/g columns
+														targets: [3, 7, 9, 11, 13, 15], // PC/g columns
 														render: function(data, type, row) {
 															if (!data || isNaN(data)) {
 																return ''; // Return empty string for invalid data
@@ -272,7 +273,7 @@
 														}
 													},
 													{
-														targets: [3, 5, 7, 9, 11, 13], // PRF/g columns
+														targets: [4, 6, 8, 10, 12, 14], // PRF/g columns
 														render: function(data, type, row) {
 															if (!data || isNaN(data)) {
 																return ''; // Return empty string for invalid data
@@ -281,7 +282,7 @@
 														}
 													},
 													{
-														targets: [4], // rORTG columns
+														targets: [5], // rORTG columns
 														render: function(data, type, row) {
 															if (!data || isNaN(data)) {
 																return ''; // Return empty string for invalid data
@@ -292,22 +293,22 @@
 													},
 
 													//add separator lines
-													{ targets: [4], className: 'group-separator' }, // After Total columns
-													{ targets: [6], className: 'group-separator' }, // After On-ball columns
-													{ targets: [8], className: 'group-separator' }, // After Off-ball Partner columns
-													{ targets: [10], className: 'group-separator' }, // After Off-ball Space columns
-													{ targets: [12], className: 'group-separator' }, // After Off-ball Crash columns
+													{ targets: [5], className: 'group-separator' }, // After Total columns
+													{ targets: [7], className: 'group-separator' }, // After On-ball columns
+													{ targets: [9], className: 'group-separator' }, // After Off-ball Partner columns
+													{ targets: [11], className: 'group-separator' }, // After Off-ball Space columns
+													{ targets: [13], className: 'group-separator' }, // After Off-ball Crash columns
 													
 													{
-														targets: 3,  // Adjust to the index of the "Total PRF/g" column
-														orderData: [3],  // Set this column for default sorting
+														targets: 4,  // Adjust to the index of the "Total PRF/g" column
+														orderData: [4],  // Set this column for default sorting
 														type: "num"  // Ensure numerical sorting for proper order
 													}
 												],
 												createdRow: function (row, rowData) {
-													const pcgIndices = [2, 6, 8, 10, 12, 14]; // PC/g columns
-													const prfgIndices = [3, 5, 7, 9, 11, 13]; // PRF/g columns
-													const rortgIndices = [4]; // rORTG column
+													const pcgIndices = [3, 7, 9, 11, 13, 15]; // PC/g columns
+													const prfgIndices = [4, 6, 8, 10, 12, 14]; // PRF/g columns
+													const rortgIndices = [5]; // rORTG column
 
 													// Helper function to adjust text color
 													function adjustTextColor(backgroundColor) {
@@ -373,7 +374,7 @@
 													// Apply gradient for rORTG columns
 													rortgIndices.forEach((index, i) => {
 														const csvKey = tableToCsvMap.rortg[i];
-														const playsPerGameIndex = 3 + i * 2; // Map to correct index in rowData for Plays/g
+														const playsPerGameIndex = 4 + i * 2; // Map to correct index in rowData for Plays/g
 														const playsPerGame = parseFloat(rowData[playsPerGameIndex]); // Use calculated index
 														const rortgValue = parseFloat(rowData[index]);
 
@@ -432,6 +433,7 @@
 
 													const formattedData = filteredData.map(row => [
 														row['Player'],
+														row['Tm'],
 														row['Games'],
 														row['Total PC/g'],
 														row['Total PRF/g'],
@@ -451,7 +453,7 @@
 													// Add new data to DataTable and redraw
 													table.rows.add(formattedData).draw();
 													// Apply sorting to "Total PRF/g" column after data is added
-													table.order([2, 'desc']).draw();
+													table.order([3, 'desc']).draw();
 													console.log("Total Rows Appended:", formattedData.length);
 													
 												},
