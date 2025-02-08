@@ -76,6 +76,16 @@
 				border-right: 1px solid #0000004D !important;
 			}
 
+			/* Custom controls */
+			.custom-controls {
+				display: flex;
+				align-items: center;
+			}
+
+			.top-controls {
+    			margin-bottom: 20px; /* Adjust the value as needed */
+			}
+
 		</style>
 	</head>
 	<body class="is-preload">
@@ -113,12 +123,14 @@
 							</select> -->
 
 							<!-- Drop down selector for unit -->
-							<label for="statUnitSelect">Unit</label>
-							<select id="statUnitSelect">
-								<option value="per game" selected>per game</option>
-								<option value="per 36 minutes">per 36 minutes</option>
-								<option value="per 75 possessions">per 75 possessions</option>
-							</select>
+							<div id="unit-dropdown">
+								<label for="statUnitSelect">Unit:</label>
+								<select id="statUnitSelect">
+									<option value="per game" selected>per game</option>
+									<option value="per 36 minutes">per 36 minutes</option>
+									<option value="per 75 possessions">per 75 possessions</option>
+								</select>
+							</div>
 
 
 							<!-- Table for DataTables -->
@@ -452,6 +464,7 @@
 										fixedHeader: true,
 										autoWidth: true,
 										ordering: true,
+										dom: "<'row top-controls'<'col-sm-6'f><'col-sm-6 custom-controls'>>rt<'row'<'col-sm-6'i><'col-sm-6'p>>",
 										columnDefs: [
 											{
 												targets: 0,  // "Player" column
@@ -597,6 +610,10 @@
 										}
 									});
 
+									// inject drop down
+									$('.custom-controls').append($('#unit-dropdown'));
+
+									
 									// Add the event listener for the unit dropdown
 									$('#statUnitSelect').on('change', function() {
 										currentUnit = $(this).val();
