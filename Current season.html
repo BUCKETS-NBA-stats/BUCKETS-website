@@ -164,8 +164,8 @@
 										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
 										  <th title="Points Created: Total points added vs baseline efficiency. For off-ball, baseline is average PPP for the play type" class="unit-pc" data-base="PC">PC/g</th>
 										  <!-- Transition -->
-										  <th title="Points Created: Total points added vs baseline efficiency. For transition, baseline is set based on transition volume" class="unit-pc" data-base="PC">PC/g</th>
 										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
+										  <th title="Points Created: Total points added vs baseline efficiency. For transition, baseline is set based on transition volume" class="unit-pc" data-base="PC">PC/g</th>
 										  <!-- Components -->
 										  <th title="Points created from scoring more efficiently than baseline">Scoring</th>
 										  <th title="Points created from playmaking more efficiently than baseline">Playmaking</th>
@@ -263,8 +263,8 @@
 										row[pcKeys[1]],                  // index 7: On-ball PC
 										row[prfKeys[2]],                 // index 8: Off-ball PRF
 										row[pcKeys[2]],                  // index 9: Off-ball PC
-										row[pcKeys[3]],                  // index 10: Transition PC
-										row[prfKeys[3]],                 // index 11: Transition PRF
+										row[prfKeys[3]],                  // index 10: Transition PC
+										row[pcKeys[3]],                 // index 11: Transition PRF
 										row[pcKeys[4]],                  // index 12: Scoring PC
 										row[pcKeys[5]],                  // index 13: Playmaking PC
 										row[pcKeys[6]]                   // index 14: Floor raising PC
@@ -467,16 +467,16 @@
 												}
 											},
 											{
-												// PC columns: indices 3, 7, 9, 10, 12, 13, 14
-												targets: [3, 7, 9, 10, 12, 13, 14],
+												// PC columns: indices 3, 7, 9, 11, 12, 13, 14
+												targets: [3, 7, 9, 11, 12, 13, 14],
 												render: function (data, type, row) {
 													if (!data || isNaN(data)) { return ''; }
 													return parseFloat(data).toFixed(2);
 												}
 											},
 											{
-												// PRF columns: indices 4, 6, 8, 11
-												targets: [4, 6, 8, 11],
+												// PRF columns: indices 4, 6, 8, 10
+												targets: [4, 6, 8, 10],
 												render: function (data, type, row) {
 													if (!data || isNaN(data)) { return ''; }
 													return parseFloat(data).toFixed(1);
@@ -500,9 +500,9 @@
 										],
 
 										createdRow: function (row, rowData) {
-											// New indices: PC: [3, 7, 9, 10, 12, 13, 14], PRF: [4, 6, 8, 11], rORTG: [5]
-											const pcIndices = [3, 7, 9, 10, 12, 13, 14];
-											const prfIndices = [4, 6, 8, 11];
+											// New indices: PC: [3, 7, 9, 11, 12, 13, 14], PRF: [4, 6, 8, 10], rORTG: [5]
+											const pcIndices = [3, 7, 9, 11, 12, 13, 14];
+											const prfIndices = [4, 6, 8, 10];
 											const rortgIndices = [5];
 
 											function adjustTextColor(backgroundColor) {
