@@ -50,7 +50,7 @@
     			text-align: center;
 			}
 
-			#playerTable th[colspan="3"] {
+			#playerTable th[colspan="4"] {
     			text-align: center;
 			}
 
@@ -146,7 +146,7 @@
 										  <th rowspan="2">Player</th>
 										  <th rowspan="2">Tm</th>
 										  <th rowspan="2">G</th>
-										  <th colspan="3">Total</th>
+										  <th colspan="4">Total</th>
 										  <th colspan="2">On-ball</th>
 										  <th colspan="2">Off-ball</th>
 										  <th colspan="2">Transition</th>
@@ -155,11 +155,12 @@
 										<tr>
 										  <!-- Total -->
 										  <th title="Points Created: Total points added vs baseline efficiency" class="unit-pc" data-base="PC">PC/g</th>
+										  <th title="Total Usage: % of possessions where the player had a scoring attempt, potential assist, or turnover">Usage</th>
 										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
 										  <th title="Relative Offensive Rating: Points per 100 plays above baseline">rORTG</th>
 										  <!-- On-ball -->
 										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
-										  <th title="Points Created: Total points added vs baseline efficiency. For on-ball, baseline is league average half court offensive rating" class="unit-pc" data-base="PC">PC/g</th>
+										  <th title="Points Created: Total points added vs baseline efficiency. For on-ball, baseline is league average half court offensive rating and points added includes floor raising value" class="unit-pc" data-base="PC">PC/g</th>
 										  <!-- Off-ball -->
 										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
 										  <th title="Points Created: Total points added vs baseline efficiency. For off-ball, baseline is average PPP for the play type" class="unit-pc" data-base="PC">PC/g</th>
@@ -256,20 +257,20 @@
 										row['Player'],                   // index 0
 										row['Tm'],                       // index 1
 										row['Games'],                    // index 2
-										row[pcKeys[0]],                  // index 3: Total PC
-										row[prfKeys[0]],                 // index 4: Total PRF
-										row['Total rORTG'],              // index 5: Total rORTG
-										row[prfKeys[1]],                 // index 6: On-ball PRF
-										row[pcKeys[1]],                  // index 7: On-ball PC
-										row[prfKeys[2]],                 // index 8: Off-ball PRF
-										row[pcKeys[2]],                  // index 9: Off-ball PC
-										row[prfKeys[3]],                  // index 10: Transition PC
-										row[pcKeys[3]],                 // index 11: Transition PRF
-										row[pcKeys[4]],                  // index 12: Scoring PC
-										row[pcKeys[5]],                  // index 13: Playmaking PC
-										row[pcKeys[6]]                   // index 14: Floor raising PC
+										row[pcKeys[0]],                  // index 3: Total PC/g
+										row['Total usage %'],            // index 4: Total usage % (constant)
+										row[prfKeys[0]],                 // index 5: Total PRF/g
+										row['Total rORTG'],              // index 6: Total rORTG
+										row[prfKeys[1]],                 // index 7: On-ball PRF/g
+										row[pcKeys[1]],                  // index 8: On-ball PC/g
+										row[prfKeys[2]],                 // index 9: Off-ball PRF/g
+										row[pcKeys[2]],                  // index 10: Off-ball PC/g
+										row[prfKeys[3]],                 // index 11: Transition PRF/g
+										row[pcKeys[3]],                  // index 12: Transition PC/g
+										row[pcKeys[4]],                  // index 13: Scoring PC/g
+										row[pcKeys[5]],                  // index 14: Playmaking PC/g
+										row[pcKeys[6]]                   // index 15: Floor raising PC/g
 									]);
-
 
 									table.clear();
 									table.rows.add(formattedData);
@@ -365,6 +366,18 @@
 										}
 									});
 									
+									// Compute min/max for Total usage % column (constant, no unit conversion)
+									const usageValues = data
+										.map(row => parseFloat(row['Total usage %']))
+										.filter(v => !isNaN(v));
+									if (usageValues.length > 0) {
+										prfMinMax['Total usage %'] = {
+											min: Math.min(...usageValues),
+											max: Math.max(...usageValues)
+										};
+									}
+
+
 									// Compute min/max for PC columns
 									pcKeys.forEach((key, i) => {											
 										const columnValues = data
@@ -375,10 +388,10 @@
 										.map(row => parseFloat(row[key]))
 										.filter(v => !isNaN(v));
 										if (columnValues.length > 0) {
-										pcMinMax[key] = {
-											min: Math.min(...columnValues),
-											max: Math.max(...columnValues)
-										};
+											pcMinMax[key] = {
+												min: Math.min(...columnValues),
+												max: Math.max(...columnValues)
+											};
 										}
 									});
 							
@@ -467,43 +480,58 @@
 												}
 											},
 											{
-												// PC columns: indices 3, 7, 9, 11, 12, 13, 14
-												targets: [3, 7, 9, 11, 12, 13, 14],
+												// PC columns: indices 3, 8, 10, 12, 13, 14, 15
+												targets: [3, 8, 10, 12, 13, 14, 15],
 												render: function (data, type, row) {
-													if (!data || isNaN(data)) { return ''; }
+													if (!data || isNaN(data)) return '';
 													return parseFloat(data).toFixed(2);
 												}
 											},
 											{
-												// PRF columns: indices 4, 6, 8, 10
-												targets: [4, 6, 8, 10],
-												render: function (data, type, row) {
-													if (!data || isNaN(data)) { return ''; }
-													return parseFloat(data).toFixed(1);
+												// Total usage % column at index 4
+												targets: 4,
+												render: function(data, type, row) {
+													if (!data) return '';
+													// Remove a trailing '%' if present and parse the numeric portion.
+													var numeric = parseFloat(data.toString().replace('%',''));
+													if (isNaN(numeric)) return data; // Fallback if parsing fails
+													return numeric.toFixed(1) + '%';
 												}
 											},
 											{
-												// rORTG column: index 5
-												targets: [5],
+												// Other PRF columns (Total PRF/g, On-ball PRF/g, Off-ball PRF/g, Transition PRF/g)
+												targets: [5, 7, 9, 11],
 												render: function (data, type, row) {
-													if (!data || isNaN(data)) { return ''; }
+													if (!data || isNaN(data)) return '';
+													return parseFloat(data).toFixed(1);
+												}
+											},
+
+											{
+												// rORTG column: index 6
+												targets: [6],
+												render: function (data, type, row) {
+													if (!data || isNaN(data)) return '';
 													var num = parseFloat(data).toFixed(1);
 													return num > 0 ? '+' + num : num;
 												}
 											},
-											// Group separators: after columns 2, 5, 7, 9, and 11
+											// Group separators after: index 2 (Games), index 6 (Total group),
+											// index 8 (On-ball), index 10 (Off-ball), index 12 (Transition)
 											{ targets: [2], className: 'group-separator' },
-											{ targets: [5], className: 'group-separator' },
-											{ targets: [7], className: 'group-separator' },
-											{ targets: [9], className: 'group-separator' },
-											{ targets: [11], className: 'group-separator' }
+											{ targets: [6], className: 'group-separator' },
+											{ targets: [8], className: 'group-separator' },
+											{ targets: [10], className: 'group-separator' },
+											{ targets: [12], className: 'group-separator' }
 										],
 
 										createdRow: function (row, rowData) {
-											// New indices: PC: [3, 7, 9, 11, 12, 13, 14], PRF: [4, 6, 8, 10], rORTG: [5]
-											const pcIndices = [3, 7, 9, 11, 12, 13, 14];
-											const prfIndices = [4, 6, 8, 10];
-											const rortgIndices = [5];
+											// PC: [3, 8, 10, 12, 13, 14, 15]
+											// PRF: [4, 5, 7, 9, 11]  (note: index 4 is for Total usage %)
+											// rORTG: [6]
+											const pcIndices = [3, 8, 10, 12, 13, 14, 15];
+											const prfIndices = [4, 5, 7, 9, 11];
+											const rortgIndices = [6];
 
 											function adjustTextColor(backgroundColor) {
 												if (!backgroundColor || !backgroundColor.match(/\d+/g)) {
@@ -514,6 +542,7 @@
 												return luminance > 0.5 ? '#3d4449' : '#f5f5f5';
 											}
 
+											// Format PC cells
 											pcIndices.forEach((index, i) => {
 												const csvKey = getCurrentPCKeys()[i];
 												const pcValue = parseFloat(rowData[index]);
@@ -531,8 +560,21 @@
 												}
 											});
 
-											prfIndices.forEach((index, i) => {
-												const csvKey = getCurrentPRFKeys()[i];
+											// Format PRF cells (including the constant Total usage % column)
+											prfIndices.forEach((index) => {
+												let csvKey;
+												if (index === 4) {
+													// For index 4, use the constant CSV key for Total usage %
+													csvKey = 'Total usage %';
+												} else if (index === 5) {
+													csvKey = getCurrentPRFKeys()[0]; // Total PRF/g
+												} else if (index === 7) {
+													csvKey = getCurrentPRFKeys()[1]; // On-ball PRF/g
+												} else if (index === 9) {
+													csvKey = getCurrentPRFKeys()[2]; // Off-ball PRF/g
+												} else if (index === 11) {
+													csvKey = getCurrentPRFKeys()[3]; // Transition PRF/g
+												}
 												const prfValue = parseFloat(rowData[index]);
 												if (prfMinMax[csvKey]) {
 													const prfColor = getGradientColor(
@@ -547,12 +589,14 @@
 												}
 											});
 
+
+											// Format rORTG cell at index 6
 											rortgIndices.forEach((index, i) => {
 												const csvKey = tableToCsvMap.rortg[i];
-												const playsPerGameIndex = 4 + i * 2;
-												const playsPerGame = parseFloat(rowData[playsPerGameIndex]);
+												// For the Total group, use the CSV field "Total Plays/g" if available.
+												const totalPlays = parseFloat(row['Total Plays/g'] || 0);
 												const rortgValue = parseFloat(rowData[index]);
-												if (rortgMinMax[csvKey] && !isNaN(rortgValue) && !isNaN(playsPerGame) && playsPerGame >= 1) {
+												if (rortgMinMax[csvKey] && !isNaN(rortgValue) && totalPlays >= 1) {
 													const rortgColor = getDivergingGradient(
 														rortgValue,
 														rortgMinMax[csvKey].min,
