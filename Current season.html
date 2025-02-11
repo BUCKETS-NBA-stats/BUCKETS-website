@@ -145,7 +145,7 @@
 										<tr>
 										  <th rowspan="2">Player</th>
 										  <th rowspan="2">Tm</th>
-										  <th rowspan="2">G</th>
+										  <th rowspan="2">Rk</th>
 										  <th colspan="3">Total</th>
 										  <th colspan="2">On-ball</th>
 										  <th colspan="2">Off-ball</th>
@@ -255,7 +255,7 @@
 									const formattedData = filteredData.map(row => [
 										row['Player'],                   // index 0
 										row['Tm'],                       // index 1
-										row['Games'],                    // index 2
+										'',                              // index 2: Rank placeholder (to be updated later)
 										row[pcKeys[0]],                  // index 3: Total PC
 										row[prfKeys[0]],                 // index 4: Total PRF
 										row['Total rORTG'],              // index 5: Total rORTG
@@ -263,8 +263,8 @@
 										row[pcKeys[1]],                  // index 7: On-ball PC
 										row[prfKeys[2]],                 // index 8: Off-ball PRF
 										row[pcKeys[2]],                  // index 9: Off-ball PC
-										row[prfKeys[3]],                  // index 10: Transition PC
-										row[pcKeys[3]],                 // index 11: Transition PRF
+										row[prfKeys[3]],                 // index 10: Transition PC
+										row[pcKeys[3]],                  // index 11: Transition PRF
 										row[pcKeys[4]],                  // index 12: Scoring PC
 										row[pcKeys[5]],                  // index 13: Playmaking PC
 										row[pcKeys[6]]                   // index 14: Floor raising PC
@@ -467,6 +467,12 @@
 												}
 											},
 											{
+												targets: 2,
+												orderable: false,
+												searchable: false,
+												className: "rank-column"
+											},
+											{
 												// PC columns: indices 3, 7, 9, 11, 12, 13, 14
 												targets: [3, 7, 9, 11, 12, 13, 14],
 												render: function (data, type, row) {
@@ -498,7 +504,7 @@
 											{ targets: [9], className: 'group-separator' },
 											{ targets: [11], className: 'group-separator' }
 										],
-
+											
 										createdRow: function (row, rowData) {
 											// New indices: PC: [3, 7, 9, 11, 12, 13, 14], PRF: [4, 6, 8, 10], rORTG: [5]
 											const pcIndices = [3, 7, 9, 11, 12, 13, 14];
@@ -565,7 +571,21 @@
 													$('td', row).eq(index).css({ 'background-color': rortgColor, 'color': textColor });
 												}
 											});
+										},
+										
+										drawCallback: function(settings) {
+											var api = this.api();
+											// Get the full order from the dataset ignoring filtering:
+											var fullOrder = api.rows({ order: 'applied', search: 'none' }).indexes().toArray();
+											// For visible rows (using the current filtered order) update the rank
+											api.rows({ order: 'applied', search: 'applied' }).every(function() {
+												// Find the original (full dataset) rank by looking up the row's index in the full order array
+												var rank = fullOrder.indexOf(this.index()) + 1;
+												$(this.node()).find('td:eq(2)').html(rank);
+											});
 										}
+
+										
 									});
 
 									// inject drop down
