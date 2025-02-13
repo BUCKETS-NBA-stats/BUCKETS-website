@@ -54,11 +54,14 @@
     			text-align: center;
 			}
 
-			#playerTable th:nth-child(1), 
-			#playerTable td:nth-child(1) {
-				width: 280px; /* Adjust as needed*/
-				white-space: nowrap; /* Prevent wrapping */
+			@media (max-width: 767px) {
+				#playerTable th:nth-child(1),
+				#playerTable td:nth-child(1) {
+					white-space: normal !important;
+					word-wrap: break-word;
+				}
 			}
+
 
 			.select2-selection__clear {
     			line-height: 1 !important;
