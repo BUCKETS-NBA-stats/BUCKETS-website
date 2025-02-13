@@ -65,9 +65,17 @@
 			
 			.custom-controls {
 				display: flex;
+				width: 100%;  /* Ensure the container spans full width if needed */
 				align-items: center;
 			}
+			.flex-spacer {
+				flex-grow: 1;
+			}
 			
+			#copyLinkTeam {
+				margin-left: auto;
+			}
+
 			.top-controls {
 				margin-bottom: 20px;
 			}
@@ -117,6 +125,8 @@
 							<option value="per 75 possessions">per 75 possessions</option>
 						</select>
 					</div>
+					<button id="copyLinkTeam">Copy Link</button>
+
 					
 					<!-- Table for DataTables -->
 					<div class="table-container" style="overflow-x: auto;">
@@ -561,6 +571,23 @@
 							$('.custom-controls').append($('#team-dropdown'));
 							$('.custom-controls').append($('#season-dropdown'));
 							$('.custom-controls').append($('#unit-dropdown'));
+							$('.custom-controls').append('<div class="flex-spacer"></div>');
+							$('.custom-controls').append($('#copyLinkTeam'));
+
+							$('#copyLinkTeam').on('click', function(){
+								var team = $('#teamSelect').val();
+								var season = $('#yearSelect').val();
+								// Build a full URL using the current origin and the target page name.
+								var baseUrl = window.location.origin + "/team.html"; // Adjust if your file name/path is different.
+								var url = baseUrl + "?team=" + encodeURIComponent(team) + "&season=" + encodeURIComponent(season);
+								navigator.clipboard.writeText(url).then(function(){
+									alert("Link copied: " + url);
+								}, function(err){
+									console.error("Could not copy text: ", err);
+								});
+							});
+
+
 							
 							function getUrlParameter(name) {
 								name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');

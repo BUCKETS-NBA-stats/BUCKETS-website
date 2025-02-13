@@ -79,9 +79,16 @@
 			/* Custom controls */
 			.custom-controls {
 				display: flex;
+				width: 100%;  /* Ensure the container spans full width if needed */
 				align-items: center;
 			}
-
+			.flex-spacer {
+				flex-grow: 1;
+			}
+			
+			#copyLinkSeason {
+				margin-left: auto;
+			}
 			.top-controls {
     			margin-bottom: 20px; /* Adjust the value as needed */
 			}
@@ -116,16 +123,6 @@
 							<h5>Data updated Feb 10, 2025</h5>
 							<p>Notable players with missing data: Cade Cunningham, Anthony Davis, Ty Jerome, Jarrett Allen, Isaiah Hartenstein, D'Angelo Russell</p>
 						
-							<!-- Drop down selector -->
-							<!-- <label for="teamSelect">Select Team:</label> -->
-							<!-- <select id="teamSelect">
-								<option value="">--Enter here--</option>
-							</select> -->
-					
-							<!-- <label for="yearSelect">Select Year:</label> -->
-							<!-- <select id="yearSelect">
-								<option value="">--Enter here--</option>
-							</select> -->
 
 							<!-- Drop down selector for unit -->
 							<div id="unit-dropdown">
@@ -143,6 +140,7 @@
 								  <!-- Options will be populated dynamically from CSV -->
 								</select>
 							</div>
+							<button id="copyLinkSeason">Copy Link</button>
 							  
 
 
@@ -630,6 +628,8 @@
 									// inject drop downs
 									$('.custom-controls').append($('#season-dropdown'));
 									$('.custom-controls').append($('#unit-dropdown'));
+									$('.custom-controls').append('<div class="flex-spacer"></div>');
+									$('.custom-controls').append($('#copyLinkSeason'));
 									
 									// Event listener for the unit dropdown
 									$('#statUnitSelect').on('change', function() {
@@ -670,6 +670,23 @@
 										error: function (error) {
 											console.error("Error loading CSV file:", error);
 										}
+									});
+
+									// Create page link to share the current season selection
+									$('#copyLinkSeason').on('click', function(){
+										var season = $('#yearSelect').val();
+										if (!season) {
+											alert("Please select a season.");
+											return;
+										}
+										// Build a full URL using the current origin and the target page name.
+										var baseUrl = window.location.origin + "/league.html";
+										var url = baseUrl + "?season=" + encodeURIComponent(season);
+										navigator.clipboard.writeText(url).then(function(){
+											alert("Link copied: " + url);
+										}, function(err){
+											console.error("Could not copy text: ", err);
+										});
 									});
 								});
 																

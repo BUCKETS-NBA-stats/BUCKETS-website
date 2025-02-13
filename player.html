@@ -60,8 +60,16 @@
 			}
 			.custom-controls {
 				display: flex;
+				width: 100%;  /* Ensure the container spans full width if needed */
 				align-items: center;
 			}
+			.flex-spacer {
+				flex-grow: 1;
+			}
+			#copyLinkPlayer {
+				margin-left: auto;
+			}
+
 			.top-controls {
 				margin-bottom: 20px;
 			}
@@ -103,6 +111,7 @@
 							<option value="per 75 possessions">per 75 possessions</option>
 						</select>
 					</div>
+					<button id="copyLinkPlayer">Copy Link</button>
 					
 					<!-- Table -->
 					<div class="table-container" style="overflow-x: auto;">
@@ -544,9 +553,11 @@
 								}
 							});
 							
-							// Inject dropdowns into custom controls (no search box now)
+							// Inject dropdowns into custom controls
 							$('.custom-controls').append($('#player-dropdown'));
 							$('.custom-controls').append($('#unit-dropdown'));
+							$('.custom-controls').append('<div class="flex-spacer"></div>');
+							$('.custom-controls').append($('#copyLinkPlayer'));
 							
 							// Event listener for unit dropdown
 							$('#statUnitSelect').on('change', function() {
@@ -607,6 +618,24 @@
 									console.error("Error loading CSV file:", error);
 								}
 							});
+
+							// Create page link to share the current player selection
+							$('#copyLinkPlayer').on('click', function(){
+								var player = $('#playerSelect').val();
+								if (!player) {
+									alert("Please select a player.");
+									return;
+								}
+								// Build a full URL using the current origin and the target page name.
+								var baseUrl = window.location.origin + "/player.html";
+								var url = baseUrl + "?player=" + encodeURIComponent(player);
+								navigator.clipboard.writeText(url).then(function(){
+									alert("Link copied: " + url);
+								}, function(err){
+									console.error("Could not copy text: ", err);
+								});
+							});
+
 						});
 						
 						// Update table data when unit dropdown changes
