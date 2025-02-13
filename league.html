@@ -114,7 +114,7 @@
 								
 							<h2>2024-25 Summary</h2>
 							<h4>Updated Feb 10, 2025</h4>
-							<p>Notable missing data: Transition for Cade, AD, Ty Jerome, Jarrett Allen; All data for Hartenstein and DLo</p>
+							<p>Notable players with missing data: Cade Cunningham, Anthony Davis, Ty Jerome, Jarrett Allen, Isaiah Hartenstein, D'Angelo Russell</p>
 						
 							<!-- Drop down selector -->
 							<!-- <label for="teamSelect">Select Team:</label> -->
@@ -129,13 +129,21 @@
 
 							<!-- Drop down selector for unit -->
 							<div id="unit-dropdown">
-								<label for="statUnitSelect">Unit:</label>
+								<label for="statUnitSelect">Units:</label>
 								<select id="statUnitSelect">
 									<option value="per game" selected>per game</option>
 									<option value="per 36 minutes">per 36 minutes</option>
 									<option value="per 75 possessions">per 75 possessions</option>
 								</select>
 							</div>
+
+							<div id="season-dropdown" style="margin-right: 10px;">
+								<label for="yearSelect">Season: </label>
+								<select id="yearSelect">
+								  <!-- Options will be populated dynamically from CSV -->
+								</select>
+							</div>
+							  
 
 
 							<!-- Table for DataTables -->
@@ -183,6 +191,21 @@
 								var rortgMinMax = {};
 								var pcMinMax = {}; // Store calculated min/max for Total PC/g
 								var currentUnit = "per game"; // Default is per game
+								var currentSeason = "2024-25";  // Default season is 2024-25
+
+								function getUrlParameter(name) {
+									name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+									var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+									var results = regex.exec(window.location.search);
+									return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+								}
+
+								var urlSeason = getUrlParameter('season');
+								if (urlSeason) {
+									currentSeason = urlSeason;
+									$("#yearSelect").val(urlSeason);
+								}
+
 
 								function convertUnitToPCUnit(unit) {
 									if (unit === "per game") return "PC/g";
@@ -249,8 +272,10 @@
 
 									var filteredData = window.fullCSVData.filter(row => {
 										const possessions = parseFloat(row['Possessions'].trim());
-										return !isNaN(possessions) && possessions >= 600;
+										// Only include rows with sufficient possessions and matching the current season.
+										return !isNaN(possessions) && possessions >= 600 && row['Year'].trim() === currentSeason;
 									});
+
 
 									const formattedData = filteredData.map(row => [
 										row['Player'],                   // index 0
@@ -455,17 +480,30 @@
 										dom: "<'row top-controls'<'col-sm-6'f><'col-sm-6 custom-controls'>>rt<'row'<'col-sm-6'i><'col-sm-6'p>>",
 										columnDefs: [
 											{
+												// Player column
 												targets: 0,
 												width: "200px",
 												className: "nowrap",
-												render: function (data, type, row) {
+												render: function(data, type, row) {
 													if (type === 'display') {
-														const playerUrl = `player%20career.html?player=${encodeURIComponent(data)}`;
-														return `<a href="${playerUrl}">${data}</a>`;
+														// Link to the player summary page with the player name as a parameter.
+														return `<a href="player.html?player=${encodeURIComponent(data)}">${data}</a>`;
 													}
 													return data;
 												}
 											},
+											{
+												// Tm (Team) column
+												targets: 1,
+												render: function(data, type, row) {
+													if (type === 'display') {
+														// Get the current season from the Season dropdown.
+														let season = $('#yearSelect').val() || "";
+														return `<a href="team.html?team=${encodeURIComponent(data)}&season=${encodeURIComponent(season)}">${data}</a>`;
+													}
+													return data;
+												}
+												},
 											{
 												targets: 2,
 												orderable: false,
@@ -575,7 +613,7 @@
 										
 										drawCallback: function(settings) {
 											var api = this.api();
-											// Get the full order from the dataset ignoring filtering:
+											// Get the full order from the dataset ignoring filtering (but note that updateTableData() already filters by season):
 											var fullOrder = api.rows({ order: 'applied', search: 'none' }).indexes().toArray();
 											// For visible rows (using the current filtered order) update the rank
 											api.rows({ order: 'applied', search: 'applied' }).every(function() {
@@ -588,17 +626,26 @@
 										
 									});
 
-									// inject drop down
+									// inject drop downs
+									$('.custom-controls').append($('#season-dropdown'));
 									$('.custom-controls').append($('#unit-dropdown'));
-
 									
-									// Add the event listener for the unit dropdown
+									// Event listener for the unit dropdown
 									$('#statUnitSelect').on('change', function() {
 										currentUnit = $(this).val();
 										computeColumnMinMax(window.fullCSVData);
 										updateTableData();
 										updateHeaderUnits();
 									});
+
+									// Event listener for season dropdown
+									$('#yearSelect').on('change', function() {
+										currentSeason = $(this).val();
+										computeColumnMinMax(window.fullCSVData);
+										updateTableData();
+										updateHeaderUnits();
+									});
+
 
 									// Load the CSV data using Papa Parse
 									Papa.parse('assets/data/league-table-2025.csv', {
@@ -609,6 +656,13 @@
 										complete: function (results) {
 											window.fullCSVData = results.data;
 											computeColumnMinMax(window.fullCSVData);
+											// Extract unique season values from the CSV's "Year" column.
+											var years = [...new Set(window.fullCSVData.map(row => row['Year'].trim()))];
+											years.sort(); // Optional: sort the season values as needed.
+											for (var i = 0; i < years.length; i++) {
+												$("#yearSelect").append($('<option>', { value: years[i], text: years[i] }));
+											}
+											$("#yearSelect").val(currentSeason); // Set default selection
 											updateTableData();
 											updateHeaderUnits();
 										},
