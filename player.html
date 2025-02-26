@@ -54,6 +54,7 @@
 				align-items: center !important;
 				justify-content: center !important;
 			}
+			/* Add a thin gray line to the right of the specified columns */
 			#playerTable td.group-separator,
 			#playerTable th.group-separator {
 				border-right: 1px solid #0000004D !important;
@@ -456,7 +457,14 @@
 											if (!data || isNaN(data)) return '';
 											return parseFloat(data).toFixed(1);
 										}
-									}
+									},
+										// Group separators: after columns 2, 5, 7, 9, and 11
+										{ targets: [1], className: 'group-separator' },
+										{ targets: [4], className: 'group-separator' },
+										{ targets: [6], className: 'group-separator' },
+										{ targets: [8], className: 'group-separator' },
+										{ targets: [10], className: 'group-separator' },
+										{ targets: [12], className: 'group-separator' }
 								],
 								createdRow: function (row, rowData) {
 									function adjustTextColor(backgroundColor) {
