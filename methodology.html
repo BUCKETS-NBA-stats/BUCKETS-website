@@ -94,16 +94,16 @@
 									<p>BUCKETS<sup><span class="tooltip" data-tooltip="BUCKETS stands for Baseline adjUsted Categorized KrEation poinTS. We couldn't resist the sabermetric tradition of giving dubious acronyms to new advanced stats.">[1]</span></sup>
 										 is a new set of NBA stats that accounts for every point created, every possession used to create them, and the context in which those things happen. It consists of:</p>
 									<ul>
-										<li><b>PRF (Points Responsible For):</b> Points scored + assisted, including both field goals and free throws. This measures offensive <b>production</b></li>
-										<li><b>Plays:</b> Total possessions the player used while attempting to score or set up a teammate, including field goal attempts, free throw attempts, and turnovers. This measures offensive <b>volume</b> or usage</li>
-										<li><b>PC (Points Created):</b> PRF - baseline value for the play types used. This measures total offensive <b>value</b> added over the baseline</li>
-										<li><b>rORTG (relative offensive rating)</b> PC per 100 Plays. This measures offensive <b>efficiency</b></li>
+										<li><b>Points Created (PC):</b> Points scored by the player, or by a teammate they just passed to, including both field goals and free throws. PC measures offensive <b>production</b>.</li>
+										<li><b>Creation usage (cUSG %):</b> Percent of possessions the player used while attempting to create points for their team – either by attempting to score, setting up a teammate to score, or turning it over. cUsg measures offensive <b>volume</b>.</li>
+										<li><b>Relative Points Created (rPC):</b> Total Points Created minus baseline. The baseline depends on the specific types of plays the player is involved in; see more on this below. rPC measures total offensive <b>value</b> added.</li>
+										<li><b>Relative Offensive Rating (rORTG):</b> (Points Created minus baseline) per 100 plays used. rORTG measures relative <b>efficiency</b>.</li>
 									</ul>
 									<p style="margin: 0;">These stats are broken down into <u>3 offensive roles</u>:</p>
 									<ul>
-										<li><b>On-ball:</b> Creating with the ball in your hands, such as by running a pick and roll, isolating, or posting up</li>
-										<li><b>Off-ball:</b> Getting set up to score without the ball. This is subdivided into <u>Partner</u> (receiving a handoff or setting a pick and roll screen and rolling or popping), <u>Space</u> (getting the ball coming off a screen or spotting up), and <u>Crash</u> (cutting to the basket or trying for a putback)</li>
-										<li><b>Transition:</b> Pushing the ball or running the floor before the defense is set</li>
+										<li><b>On-ball:</b> Creating with the ball in your hands, such as by running a pick and roll, isolating, or posting up. Because only one player at a time can be on-ball, the baseline for these plays is based on what a <u>replacement level</u> player would provide in the same on-ball volume.</li>
+										<li><b>Off-ball:</b> Getting set up to score without the ball. This is subdivided into <u>Partner</u> (receiving a handoff or setting a pick and roll screen and rolling or popping), <u>Space</u> (getting the ball coming off a screen or spotting up), and <u>Crash</u> (cutting to the basket or trying for a putback). Because these plays are generally set up by teammates, the baseline for these plays is based on the <u>league average efficiency</u> for that play type.</li>
+										<li><b>Transition:</b> Pushing the ball or running the floor before the defense is set. Because creating more transition chances is valuable, the baseline for these plays is set on a sliding scale between league average half court and transition offensive rating, based on how many transition plays the player generates.</li>
 									</ul>
 									<p>BUCKETS stats are available as far back as the 2005-06 season, when tracking data first became reliable and widespread.</p>
 									<p>The rest of this article explains <a href="#Motivation">why we need new stats</a>, <a href="#Uses">what they are useful for</a>, <a href ="#Methodology">how they are calculated</a>, and <a href="#Limitations">what the limitations are</a>.</p>
@@ -192,9 +192,11 @@
 										</ul>	
 										<p style="margin: 0;"><b>Efficiency baseline:</b></p>	
 										<ul>
-											<li><u>League-average half court offensive rating</u> is the starting point. </li>
+											<li>We start by calculating the <u>average Points Created per on-ball play</u> for each player. </li>
 											<li>We then adjust for <u>turnover frequency</u>. A missed field goal can turn into a second chance opportunity, but a turnover cannot. Therefore, a player who turns it over less frequenlty than average is contributing to his team by allowing more opportunities for offensive rebounds, while a player who turns it over more frequently is depriving his team of these chances<sup><span class="tooltip" data-tooltip="He is also hurting his team's defense by allowing the opponents to get out in transition more, but since BUCKETS is an offensive stat it does not account for that effect">[3]</span>. </li>
-											<li>We then further adjust for the impact of <u>floor raising</u>. Every team needs on-ball possessions, but not all players are effective at this role. Players that can absorb more on-ball volume than average, even at mediocre efficiency, benefit their team by displacing worse on-ball options. Conversely, those who have below average on-ball volume hurt their teams by forcing others to absorb more on-ball possessions. Therefore, we give a boost (or penalty) to players based on the expected value of worse possessions they displace (or don't). For more on this, see <a href="floor raising.html">our article on what we call the Westbrook Theorem</a> </li>
+											<li>Next, we use this adjusted points created per play to calculate an expected <u>replacement level on-ball efficiency</u>. Because each team essentially has a fixed “pie” of on-ball possessions, this represents the expected value of the on-ball possessions that a given player is displacing. For more on how we calculate this, see <a href="floor raising.html">our article on what we call the Westbrook Theorem</a>.</li>
+											<li>This <u>replacement level is the baseline</u> that is used to calculate rPC and rORTG.</li>
+											<li>An advantage of this approach is that it accounts for the impact of <u>floor raising</u>. Every team needs on-ball possessions, but not all players are effective at this role. Players that can absorb more on-ball volume than average, even at mediocre efficiency, benefit their team by displacing worse on-ball options. Conversely, those who have below average on-ball volume hurt their teams by forcing others to absorb more on-ball possessions.</li>
 										</ul>
 									
 									<!--Off ball-->
