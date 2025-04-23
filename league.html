@@ -126,6 +126,16 @@
 							<h5>Data updated Apr 14, 2025</h5>
 							<p>Note: several notable players are missing some or all data, including Tyler Herro, Jalen Brunson, Chris Paul, Demar Derozan, Mikal Bridges, Derrick White, Fred Van Vleet </p>
 						
+							<!-- Data selector -->
+							<div id="data-dropdown" style="margin-right: 10px;">
+								<label for="dataSelect">Data:</label>
+								<select id="dataSelect">
+								<option value="overall" selected>Overall</option>
+								<option value="onball">On-ball</option>
+								<option value="offball">Off-ball</option>
+								</select>
+							</div>
+  
 
 							<!-- Drop down selector for unit -->
 							<div id="unit-dropdown">
@@ -154,8 +164,9 @@
 										<tr>
 										  <th rowspan="2">Player</th>
 										  <th rowspan="2">Tm</th>
+										  <th rowspan="2">G</th>
 										  <th rowspan="2">Rk</th>
-										  <th colspan="3">Total</th>
+										  <th colspan="4">Total</th>
 										  <th colspan="2" title="Includes ISO, PNR ball handler, Post-up, and half court playmaking plays">On-ball</th>
 										  <th colspan="2" title="Includes Roll/Pop, Handoff, Spot-Up, Off-Screen, Basket cut, and Putback plays">Off-ball</th>
 										  <th colspan="2">Transition</th>
@@ -165,6 +176,7 @@
 										  <!-- Total -->
 										  <th title="Points Created: Total points added vs baseline efficiency" class="unit-pc" data-base="PC">PC/g</th>
 										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
+										  <th title="Creation Usage %: % of on-court plays where the player scores, playmakes, or commits a turnover" class="unit-cusg" data-base="Total creation usage">cUSG%</th>
 										  <th title="Relative Offensive Rating: Points per 100 plays above baseline">rORTG</th>
 										  <!-- On-ball -->
 										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
@@ -191,6 +203,7 @@
 								var prfMinMax = {};
 								var rortgMinMax = {};
 								var pcMinMax = {}; // Store calculated min/max for Total PC/g
+								var currentData = "overall";
 								var currentUnit = "per game"; // Default is per game
 								var currentSeason = "2024-25";  // Default season is 2024-25
 
@@ -278,28 +291,33 @@
 									});
 
 
-									const formattedData = filteredData.map(row => [
-										row['Player'],                   // index 0
-										row['Tm'],                       // index 1
-										'',                              // index 2: Rank placeholder (to be updated later)
-										row[pcKeys[0]],                  // index 3: Total PC
-										row[prfKeys[0]],                 // index 4: Total PRF
-										row['Total rORTG'],              // index 5: Total rORTG
-										row[prfKeys[1]],                 // index 6: On-ball PRF
-										row[pcKeys[1]],                  // index 7: On-ball PC
-										row[prfKeys[2]],                 // index 8: Off-ball PRF
-										row[pcKeys[2]],                  // index 9: Off-ball PC
-										row[prfKeys[3]],                 // index 10: Transition PC
-										row[pcKeys[3]],                  // index 11: Transition PRF
-										row[pcKeys[4]],                  // index 12: Scoring PC
-										row[pcKeys[5]],                  // index 13: Playmaking PC
-										row[pcKeys[6]]                   // index 14: Floor raising PC
-									]);
-
+									let formattedData;
+									if (currentData === "overall") {
+										formattedData = filteredData.map(row => [
+										row.Player,            // 0
+										row.Tm,                // 1
+										row.Games,             // 2
+										'',                    // 3: Rk placeholder
+										row[ pcKeys[0] ],      // 4: Total PC
+										row[ prfKeys[0] ],     // 5: Total PRF
+										parseFloat(row['Total creation usage']),   // 6: Total cUSG%
+										row['Total rORTG'],    // 7
+										row[ prfKeys[1] ],     // 8: On-ball PRF
+										row[ pcKeys[1] ],      // 9: On-ball PC
+										row[ prfKeys[2] ],     // 10: Off-ball PRF
+										row[ pcKeys[2] ],      // 11: Off-ball PC
+										row[ prfKeys[3] ],     // 12: Transition PRF
+										row[ pcKeys[3] ],      // 13: Transition PC
+										row[ pcKeys[4] ],      // 14: Scoring
+										row[ pcKeys[5] ],      // 15: Pass
+										row[ pcKeys[6] ]       // 16: Floor
+										]);
+									}
+									// (we’ll add onball/offball branches later)
 
 									table.clear();
 									table.rows.add(formattedData);
-									table.order([3, 'desc']).draw();
+									table.order([4, 'desc']).draw();  // sort by Total PC
 								}
 
 								// Map displayed table columns to their respective CSV keys
@@ -408,6 +426,18 @@
 										}
 									});
 							
+									// cUSG%
+									const cusgKey = 'Total creation usage';
+									const cusgVals = data
+										.map(r => parseFloat(r[cusgKey]))
+										.filter(v => !isNaN(v));
+									if (cusgVals.length) {
+										prfMinMax[cusgKey] = {
+										min: Math.min(...cusgVals),
+										max: Math.max(...cusgVals)
+										};
+									}
+
 									// Calculate rORTG min and max, excluding rows with low data and additional logic
 									rortgKeys.forEach((key, i) => {
 										const columnValues = data
@@ -431,7 +461,7 @@
 										}
 									});
 							
-									console.log("PRF MinMax:", prfMinMax);
+									console.log("PRF and cUSG MinMax:", prfMinMax);
 									console.log("PC MinMax:", pcMinMax);
 									console.log("rORTG MinMax:", rortgMinMax);
 								}
@@ -508,50 +538,61 @@
 												},
 											{
 												// Rk column
-												targets: 2,
+												targets: 3,
 												orderable: false,
 												searchable: false,
 												width: "40px",
 												className: "rank-column"
 											},
 											{
-												// PC columns: indices 3, 7, 9, 11, 12, 13, 14
-												targets: [3, 7, 9, 11, 12, 13, 14],
+												// PC columns: indices [4,9,11,13,14,15,16]
+												targets: [4,9,11,13,14,15,16],
 												render: function (data, type, row) {
 													if (!data || isNaN(data)) { return ''; }
 													return parseFloat(data).toFixed(2);
 												}
 											},
 											{
-												// PRF columns: indices 4, 6, 8, 10
-												targets: [4, 6, 8, 10],
+												// PRF columns: indices [5,8,10,12]
+												targets: [5,8,10,12],
 												render: function (data, type, row) {
 													if (!data || isNaN(data)) { return ''; }
 													return parseFloat(data).toFixed(1);
 												}
 											},
+											// cUSG% column at index 6
 											{
-												// rORTG column: index 5
-												targets: [5],
+												targets: [6],      // cUSG%
+												render: function(data, type) {
+													if (type !== 'display') return data;
+													const n = parseFloat(data);
+													return isNaN(n)
+													? ''
+													: n.toFixed(1) + '%';
+												}
+											},
+											{
+												// rORTG column: index 7
+												targets: [7],
 												render: function (data, type, row) {
 													if (!data || isNaN(data)) { return ''; }
 													var num = parseFloat(data).toFixed(1);
 													return num > 0 ? '+' + num : num;
 												}
 											},
-											// Group separators: after columns 2, 5, 7, 9, and 11
-											{ targets: [2], className: 'group-separator' },
-											{ targets: [5], className: 'group-separator' },
+											// Group separators: after columns 3, 7, 9, 11, and 13
+											{ targets: [3], className: 'group-separator' },
 											{ targets: [7], className: 'group-separator' },
 											{ targets: [9], className: 'group-separator' },
-											{ targets: [11], className: 'group-separator' }
+											{ targets: [11], className: 'group-separator' },
+											{ targets: [13], className: 'group-separator' }
 										],
 											
 										createdRow: function (row, rowData) {
-											// New indices: PC: [3, 7, 9, 11, 12, 13, 14], PRF: [4, 6, 8, 10], rORTG: [5]
-											const pcIndices = [3, 7, 9, 11, 12, 13, 14];
-											const prfIndices = [4, 6, 8, 10];
-											const rortgIndices = [5];
+											// New indices: PC: [4,9,11,13,14,15,16], PRF: [5,8,10,12], rORTG: [7]
+											const pcIndices = [4,9,11,13,14,15,16];
+											const prfIndices = [5,8,10,12];
+											const rortgIndices = [7];
 
 											function adjustTextColor(backgroundColor) {
 												if (!backgroundColor || !backgroundColor.match(/\d+/g)) {
@@ -613,6 +654,22 @@
 													$('td', row).eq(index).css({ 'background-color': rortgColor, 'color': textColor });
 												}
 											});
+
+											// cUSG% gradient
+											const cusgIdx = 6;                    // column index of cUSG%
+											const cusgKey = 'Total creation usage';
+											const cusgVal = parseFloat(rowData[cusgIdx]);
+											if (prfMinMax[cusgKey] && !isNaN(cusgVal)) {
+												const c = getGradientColor(
+												cusgVal,
+												prfMinMax[cusgKey].min,
+												prfMinMax[cusgKey].max,
+												'#ffffff',
+												'#006622'
+												);
+												const textColor = adjustTextColor(c);
+												$('td', row).eq(cusgIdx).css({ 'background-color': c, 'color': textColor });
+											}
 										},
 										
 										drawCallback: function(settings) {
@@ -623,7 +680,7 @@
 											api.rows({ order: 'applied', search: 'applied' }).every(function() {
 												// Find the original (full dataset) rank by looking up the row's index in the full order array
 												var rank = fullOrder.indexOf(this.index()) + 1;
-												$(this.node()).find('td:eq(2)').html(rank);
+												$(this.node()).find('td:eq(3)').html(rank);
 											});
 										}
 
@@ -631,11 +688,21 @@
 									});
 
 									// inject drop downs
-									$('.custom-controls').append($('#season-dropdown'));
-									$('.custom-controls').append($('#unit-dropdown'));
-									$('.custom-controls').append('<div class="flex-spacer"></div>');
-									$('.custom-controls').append($('#copyLinkSeason'));
+									$('.custom-controls')
+										.append($('#data-dropdown'))
+										.append($('#season-dropdown'))
+										.append($('#unit-dropdown'))
+										.append('<div class="flex-spacer"></div>')
+										.append($('#copyLinkSeason'));
 									
+									// Event listener for the data dropdown
+									$('#dataSelect').on('change', function() {
+										currentData = $(this).val();
+										computeColumnMinMax(window.fullCSVData);
+										updateTableData();
+										updateHeaderUnits();
+									});
+
 									// Event listener for the unit dropdown
 									$('#statUnitSelect').on('change', function() {
 										currentUnit = $(this).val();
@@ -664,6 +731,8 @@
 											computeColumnMinMax(window.fullCSVData);
 											// Extract unique season values from the CSV's "Year" column.
 											var years = [...new Set(window.fullCSVData.map(row => row['Year'].trim()))];
+											console.log('Seasons found in CSV:', years);
+
 											years.sort(); // Optional: sort the season values as needed.
 											for (var i = 0; i < years.length; i++) {
 												$("#yearSelect").append($('<option>', { value: years[i], text: years[i] }));
@@ -671,6 +740,7 @@
 											$("#yearSelect").val(currentSeason); // Set default selection
 											updateTableData();
 											updateHeaderUnits();
+											
 										},
 										error: function (error) {
 											console.error("Error loading CSV file:", error);
