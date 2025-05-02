@@ -40,19 +40,16 @@
 				border-spacing: 0; /* Ensures no extra spacing between cells */
 			}
 		
-			#playerTable td:nth-child(1), /* Player column */
-			#playerTable td:nth-child(4) /* Total PC/g column */ 
+			#playerTable td:nth-child(2), /* Player column */
+			#playerTable td:nth-child(5) /* Total PC/g column */ 
 			{
 				font-weight: bold;
 			}
 
-			#playerTable th[colspan="2"] {
-    			text-align: center;
+			#playerTable th[colspan] {
+				text-align: center;
 			}
 
-			#playerTable th[colspan="3"] {
-    			text-align: center;
-			}
 
 			@media (max-width: 767px) {
 				#playerTable th:nth-child(1),
@@ -162,37 +159,70 @@
 								<table id="playerTable" class="display compact">
 									<thead>
 										<tr>
+										  <th rowspan="2">Rk</th>
 										  <th rowspan="2">Player</th>
 										  <th rowspan="2">Tm</th>
 										  <th rowspan="2">G</th>
-										  <th rowspan="2">Rk</th>
+									  
 										  <th colspan="4">Total</th>
-										  <th colspan="2" title="Includes ISO, PNR ball handler, Post-up, and half court playmaking plays">On-ball</th>
-										  <th colspan="2" title="Includes Roll/Pop, Handoff, Spot-Up, Off-Screen, Basket cut, and Putback plays">Off-ball</th>
+										  <th colspan="6" title="Includes ISO, PNR ball handler, Post-up, and half court playmaking plays">On-ball</th>
+										  <th colspan="4" title="Includes Roll/Pop, Handoff, Spot-Up, Off-Screen, Basket cut, and Putback plays">Off-ball</th>
+										  <th colspan="3" title="Roll/Pop and Handoff plays">Off-ball: Partner</th>
+										  <th colspan="3" title="Spot-Up and Off-screen plays">Off-ball: Space</th>
+										  <th colspan="3" title="Basket cut and Putback plays">Off-ball: Crash</th>
 										  <th colspan="2">Transition</th>
-										  <th colspan="3" title="Contributions to points created from scoring, playmaking, and floor-raising" class="unit-components" data-base="Components of Total PC">Components of Total PC</th>
+										  <th colspan="5" title="Contributions to points created from scoring, playmaking, and floor-raising" class="unit-components" data-base="Components of Total PC">Components of Total PC</th>
 										</tr>
 										<tr>
 										  <!-- Total -->
-										  <th title="Points Created: Total points added vs baseline efficiency" class="unit-pc" data-base="PC">PC/g</th>
-										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
-										  <th title="Creation Usage %: % of on-court plays where the player scores, playmakes, or commits a turnover" class="unit-cusg" data-base="Total creation usage">cUSG%</th>
-										  <th title="Relative Offensive Rating: Points per 100 plays above baseline">rORTG</th>
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Total PC">PC</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Total PRF">PRF</th>
+										  <th class="pct-col unit-cusg" title="Creation Usage %: Percent of on-court plays where the player scores, playmakes, or commits a turnover" data-base="Total creation usage">cUSG%</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Total rORTG">rORTG</th>
+									  
 										  <!-- On-ball -->
-										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
-										  <th title="Points Created: Total points added vs baseline efficiency. For on-ball, baseline is league average half court offensive rating" class="unit-pc" data-base="PC">PC/g</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="On-ball PRF">PRF</th>
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="On-ball PC">PC</th>
+										  <th class="pct-col unit-cusg" title="Creation Usage %: Percent of on-court plays where the player scores, playmakes, or commits a turnover" data-base="On-ball creation usage">cUSG%</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="On-ball rORTG">rORTG</th>
+										  <th class="pct-col" title="Estimated % of team's on-ball plays used" data-base="On-ball share">Share</th>
+										  <th class="pct-col" title="% of on-ball plays used for playmaking (vs. scoring)" data-base="On-ball playmaking ratio">Playmake %</th>
+									  
 										  <!-- Off-ball -->
-										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
-										  <th title="Points Created: Total points added vs baseline efficiency. For off-ball, baseline is average PPP for the play type" class="unit-pc" data-base="PC">PC/g</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Off-ball PRF">PRF</th>
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Off-ball PC">PC</th>
+										  <th class="pct-col unit-cusg" title="Creation Usage %: Percent of on-court plays where the player scores, playmakes, or commits a turnover" data-base="Off-ball creation usage">cUSG%</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Off-ball rORTG">rORTG</th>
+									  
+										  <!-- Partner -->
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Off-ball: Partner PC">PC</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Off-ball: Partner PRF">PRF</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Off-ball: Partner rORTG">rORTG</th>
+									  
+										  <!-- Space -->
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Off-ball: Space PC">PC</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Off-ball: Space PRF">PRF</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Off-ball: Space rORTG">rORTG</th>
+									  
+										  <!-- Crash -->
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Off-ball: Crash PC">PC</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Off-ball: Crash PRF">PRF</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Off-ball: Crash rORTG">rORTG</th>
+									  
 										  <!-- Transition -->
-										  <th title="Points Responsible For: Total scored and assisted points including FT" class="unit-prf" data-base="PRF">PRF/g</th>
-										  <th title="Points Created: Total points added vs baseline efficiency. For transition, baseline is set based on transition volume" class="unit-pc" data-base="PC">PC/g</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Transition PRF">PRF</th>
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Transition PC">PC</th>
+									  
 										  <!-- Components -->
-										  <th title="Scoring: Points created from scoring volume and efficiency vs. baseline">Score</th>
-										  <th title="Playmaking: Points created from playmaking volume and efficiency vs. baseline">Pass</th>
-										  <th title="Floor raising: Points created from displacing lower value on-ball possessions (with random teammates)">Floor</th>
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="Scoring PC">Score</th>
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="On-ball Scoring PC">Score</th>
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="Playmaking PC">Pass</th>
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="On-ball Playmaking PC">Pass</th>
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="Floor raising PC">Floor</th>
 										</tr>
-									  </thead>									  
+									  </thead>
+									  
+															
 									<tbody>
 										<!-- Data from CSV will be loaded here -->
 									</tbody>
@@ -202,11 +232,61 @@
 								var table;
 								var prfMinMax = {};
 								var rortgMinMax = {};
-								var pcMinMax = {}; // Store calculated min/max for Total PC/g
+								var pcMinMax = {}; 
+								var pctMinMax = {};   
 								var currentData = "overall";
 								var currentUnit = "per game"; // Default is per game
 								var currentSeason = "2024-25";  // Default season is 2024-25
 
+								const COLUMN_INDEX = {
+									Rk: 0,
+									Player: 1,
+									Tm: 2,
+									G: 3,
+
+									// Total
+									Total_PC: 4,
+									Total_PRF: 5,
+									Total_cUSG: 6,
+									Total_rORTG: 7,
+
+									// On-ball
+									Onball_PRF: 8,
+									Onball_PC: 9,
+									Onball_cUSG: 10,
+									Onball_rORTG: 11,
+									Onball_Share: 12,
+									Onball_Ratio: 13,
+
+									// Off-ball
+									Offball_PRF: 14,
+									Offball_PC: 15,
+									Offball_cUSG: 16,
+									Offball_rORTG: 17,
+
+									Partner_PC: 18,
+									Partner_PRF: 19,
+									Partner_rORTG: 20,
+
+									Space_PC: 21,
+									Space_PRF: 22,
+									Space_rORTG: 23,
+
+									Crash_PC: 24,
+									Crash_PRF: 25,
+									Crash_rORTG: 26,
+
+									Transition_PRF: 27,
+									Transition_PC: 28,
+
+									Comp_Score: 29,
+									Comp_OnballScore: 30,
+									Comp_Pass: 31,
+									Comp_OnballPass: 32,
+									Comp_Floor: 33
+								};
+
+								
 								function getUrlParameter(name) {
 									name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
 									var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -228,41 +308,28 @@
 								}
 
 								function getCurrentPCKeys() {
-									var pcUnit = convertUnitToPCUnit(currentUnit);
-									if (pcUnit === "PC/g") {
-										return [
-											'Total PC/g (floor raising adj.)',
-											'On-ball PC/g (floor raising adj.)',
-											'Off-ball PC/g',
-											'Transition PC/g',
-											'Scoring PC/g',
-											'Playmaking PC/g',
-											'Floor raising PC/g'
-										];
-									} else if (pcUnit === "PC/36") {
-										return [
-											'Total PC/36 (floor raising adj.)',
-											'On-ball PC/36 (floor raising adj.)',
-											'Off-ball PC/36',
-											'Transition PC/36',
-											'Scoring PC/36',
-											'Playmaking PC/36',
-											'Floor raising PC/36'
-										];
-									} else if (pcUnit === "PC/75") {
-										return [
-											'Total PC/75 (floor raising adj.)',
-											'On-ball PC/75 (floor raising adj.)',
-											'Off-ball PC/75',
-											'Transition PC/75',
-											'Scoring PC/75',
-											'Playmaking PC/75',
-											'Floor raising PC/75'
-										];
-									}
+									const unit = currentUnit === "per game" ? "/g" : (currentUnit === "per 36 minutes" ? "/36" : "/75");
+
+									return {
+										// Overall
+										Total: `Total PC${unit} (floor raising adj.)`,
+										Onball: `On-ball PC${unit} (floor raising adj.)`,
+										Offball: `Off-ball PC${unit}`,
+										Transition: `Transition PC${unit}`,
+
+										// Off-ball detail
+										Partner: `Off-ball: Partner PC${unit}`,
+										Space: `Off-ball: Space PC${unit}`,
+										Crash: `Off-ball: Crash PC${unit}`,
+
+										// Component scores
+										Score: `Scoring PC${unit}`,
+										OnballScore: `On-ball Scoring PC${unit}`,
+										Pass: `Playmaking PC${unit}`,
+										OnballPass: `On-ball Playmaking PC${unit}`,
+										Floor: `Floor raising PC${unit}`
+									};
 								}
-
-
 								function convertUnitToPRFUnit(unit) {
 									if (unit === "per game") return "PRF/g";
 									if (unit === "per 36 minutes") return "PRF/36";
@@ -270,55 +337,122 @@
 								}
 
 								function getCurrentPRFKeys() {
-									var prfUnit = convertUnitToPRFUnit(currentUnit);
-									return [
-										'Total ' + prfUnit,
-										'On-ball ' + prfUnit,
-										'Off-ball ' + prfUnit,
-										'Transition ' + prfUnit
-									];
+									const unit = currentUnit === "per game" ? "/g" : (currentUnit === "per 36 minutes" ? "/36" : "/75");
+
+									return {
+										Total: `Total PRF${unit}`,
+										Onball: `On-ball PRF${unit}`,
+										Offball: `Off-ball PRF${unit}`,
+										Transition: `Transition PRF${unit}`,
+										Partner: `Off-ball: Partner PRF${unit}`,
+										Space: `Off-ball: Space PRF${unit}`,
+										Crash: `Off-ball: Crash PRF${unit}`
+									};
 								}
 
-
 								function updateTableData() {
-									var pcKeys = getCurrentPCKeys();   // Returns dynamic PC column keys based on the current unit
-									var prfKeys = getCurrentPRFKeys(); // Returns dynamic PRF column keys based on the current unit
+									const pcKeys = getCurrentPCKeys();
+									const prfKeys = getCurrentPRFKeys();
 
-									var filteredData = window.fullCSVData.filter(row => {
+									const filteredData = window.fullCSVData.filter(row => {
 										const possessions = parseFloat(row['Possessions'].trim());
-										// Only include rows with sufficient possessions and matching the current season.
 										return !isNaN(possessions) && possessions >= 600 && row['Year'].trim() === currentSeason;
 									});
 
+									const formattedData = filteredData.map(row => [
+										'', // Rk
+										row.Player, // Player (string)
+										row.Tm,     // Team (string)
+										parseInt(row.Games), // Games (integer)
 
-									let formattedData;
-									if (currentData === "overall") {
-										formattedData = filteredData.map(row => [
-										row.Player,            // 0
-										row.Tm,                // 1
-										row.Games,             // 2
-										'',                    // 3: Rk placeholder
-										row[ pcKeys[0] ],      // 4: Total PC
-										row[ prfKeys[0] ],     // 5: Total PRF
-										parseFloat(row['Total creation usage']),   // 6: Total cUSG%
-										row['Total rORTG'],    // 7
-										row[ prfKeys[1] ],     // 8: On-ball PRF
-										row[ pcKeys[1] ],      // 9: On-ball PC
-										row[ prfKeys[2] ],     // 10: Off-ball PRF
-										row[ pcKeys[2] ],      // 11: Off-ball PC
-										row[ prfKeys[3] ],     // 12: Transition PRF
-										row[ pcKeys[3] ],      // 13: Transition PC
-										row[ pcKeys[4] ],      // 14: Scoring
-										row[ pcKeys[5] ],      // 15: Pass
-										row[ pcKeys[6] ]       // 16: Floor
-										]);
-									}
-									// (we’ll add onball/offball branches later)
+										parseFloat(row[pcKeys.Total]),    // PC
+										parseFloat(row[prfKeys.Total]),   // PRF
+										parseFloat(row['Total creation usage'].replace('%', '')), // Total cUSG%
+										parseFloat(row['Total rORTG']),    // Total rORTG
+
+										parseFloat(row[prfKeys.Onball]),   // On-ball PRF
+										parseFloat(row[pcKeys.Onball]),    // On-ball PC
+										parseFloat(row['On-ball creation usage'].replace('%', '')), // On-ball cUSG%
+										parseFloat(row['On-ball rORTG']),  // On-ball rORTG
+										parseFloat(row['On-ball share'].replace('%', '')),          // On-ball Share
+										parseFloat(row['On-ball playmaking ratio'].replace('%', '')), // Playmaking %
+
+										parseFloat(row[prfKeys.Offball]),  // Off-ball PRF
+										parseFloat(row[pcKeys.Offball]),   // Off-ball PC
+										parseFloat(row['Off-ball creation usage'].replace('%', '')), // Off-ball cUSG%
+										parseFloat(row['Off-ball rORTG']), // Off-ball rORTG
+
+										parseFloat(row[pcKeys.Partner]),   // Partner PC
+										parseFloat(row[prfKeys.Partner]),  // Partner PRF
+										parseFloat(row['Off-ball: Partner rORTG']), // Partner rORTG
+
+										parseFloat(row[pcKeys.Space]),     // Space PC
+										parseFloat(row[prfKeys.Space]),    // Space PRF
+										parseFloat(row['Off-ball: Space rORTG']), // Space rORTG
+
+										parseFloat(row[pcKeys.Crash]),     // Crash PC
+										parseFloat(row[prfKeys.Crash]),    // Crash PRF
+										parseFloat(row['Off-ball: Crash rORTG']), // Crash rORTG
+
+										parseFloat(row[prfKeys.Transition]), // Transition PRF
+										parseFloat(row[pcKeys.Transition]),  // Transition PC
+
+										parseFloat(row[pcKeys.Score]),       // Component: Score
+										parseFloat(row[pcKeys.OnballScore]), // Component: Onball Score
+										parseFloat(row[pcKeys.Pass]),        // Component: Pass
+										parseFloat(row[pcKeys.OnballPass]),  // Component: Onball Pass
+										parseFloat(row[pcKeys.Floor])        // Component: Floor
+									]);
+
+
+									console.log("Formatted Data sample:", formattedData.slice(0, 3));
 
 									table.clear();
 									table.rows.add(formattedData);
-									table.order([4, 'desc']).draw();  // sort by Total PC
+									table.order([4, 'desc']).draw();
+									table.columns.adjust().draw(false);
+									updateVisibleColumns();
 								}
+
+
+								function updateVisibleColumns() {
+									const showCols = {
+										overall: [
+											COLUMN_INDEX.Rk, COLUMN_INDEX.Player, COLUMN_INDEX.Tm, COLUMN_INDEX.G,
+											COLUMN_INDEX.Total_PC, COLUMN_INDEX.Total_PRF, COLUMN_INDEX.Total_cUSG, COLUMN_INDEX.Total_rORTG,
+											COLUMN_INDEX.Onball_PRF, COLUMN_INDEX.Onball_PC,
+											COLUMN_INDEX.Offball_PRF, COLUMN_INDEX.Offball_PC,
+											COLUMN_INDEX.Transition_PRF, COLUMN_INDEX.Transition_PC,
+											COLUMN_INDEX.Comp_Score, COLUMN_INDEX.Comp_Pass, COLUMN_INDEX.Comp_Floor
+										],
+										onball: [
+											COLUMN_INDEX.Rk, COLUMN_INDEX.Player, COLUMN_INDEX.Tm, COLUMN_INDEX.G,
+											COLUMN_INDEX.Onball_PC, COLUMN_INDEX.Onball_PRF, COLUMN_INDEX.Onball_cUSG, COLUMN_INDEX.Onball_rORTG,
+											COLUMN_INDEX.Onball_Share, COLUMN_INDEX.Onball_Ratio,
+											COLUMN_INDEX.Comp_OnballScore, COLUMN_INDEX.Comp_OnballPass, COLUMN_INDEX.Comp_Floor
+										],
+										offball: [
+											COLUMN_INDEX.Rk, COLUMN_INDEX.Player, COLUMN_INDEX.Tm, COLUMN_INDEX.G,
+											COLUMN_INDEX.Offball_PC, COLUMN_INDEX.Offball_PRF, COLUMN_INDEX.Offball_cUSG, COLUMN_INDEX.Offball_rORTG,
+											COLUMN_INDEX.Partner_PC, COLUMN_INDEX.Partner_PRF, COLUMN_INDEX.Partner_rORTG,
+											COLUMN_INDEX.Space_PC, COLUMN_INDEX.Space_PRF, COLUMN_INDEX.Space_rORTG,
+											COLUMN_INDEX.Crash_PC, COLUMN_INDEX.Crash_PRF, COLUMN_INDEX.Crash_rORTG
+										]
+									};
+
+									const visibleCols = showCols[currentData];
+
+									// Important: Don't destroy the column order! Just hide/show.
+									table.columns().every(function (index) {
+										const shouldBeVisible = visibleCols.includes(index);
+										table.column(index).visible(shouldBeVisible, false); // 'false' here prevents full table redraw
+									});
+
+									table.columns.adjust().draw(false); // Now batch redraw once
+								}
+
+
+
 
 								// Map displayed table columns to their respective CSV keys
 								const tableToCsvMap = {
@@ -366,15 +500,19 @@
 							
 								// Helper function for diverging gradient
 								function getDivergingGradient(value, min, max, colorLow, colorZero, colorHigh) {
-									if (value === 0) return colorZero;
-							
-									// Normalize and clamp the value
-									if (value > 0) {
-										const clampedValue = Math.min(value, max); // Clamp positive value to max
-										return getGradientColor(clampedValue, 0, max, colorZero, colorHigh);
+									if (min >= 0) {
+										// No negatives -> normal gradient from min to max
+										return getGradientColor(value, min, max, colorZero, colorHigh);
+									} else if (max <= 0) {
+										// No positives -> normal gradient from min to max (but reversed colors)
+										return getGradientColor(value, min, max, colorLow, colorZero);
 									} else {
-										const clampedValue = Math.max(value, min); // Clamp negative value to min
-										return getGradientColor(clampedValue, min, 0, colorLow, colorZero);
+										// True diverging case
+										if (value > 0) {
+											return getGradientColor(value, 0, max, colorZero, colorHigh);
+										} else {
+											return getGradientColor(value, min, 0, colorLow, colorZero);
+										}
 									}
 								}
 							
@@ -388,113 +526,259 @@
 									};
 								}
 							
-								// Compute min/max for PRF/g, rORTG, and Total PC/g
+								// Compute min/max for each column
 								function computeColumnMinMax(data) {
-									var prfKeys = getCurrentPRFKeys();
-									var pcKeys = getCurrentPCKeys();
-									const rortgKeys = tableToCsvMap.rortg;
-									const playsPerGameKeys = tableToCsvMap.playsPerGame;
-									const totalPlaysKey = 'Possessions';
-									
-									// Compute min/max for PRF columns
-									prfKeys.forEach((key, i) => {
-										const columnValues = data
-										.map(row => parseFloat(row[key]))
-										.filter(v => !isNaN(v));
-										if (columnValues.length > 0) {
-											prfMinMax[key] = {
-												min: Math.min(...columnValues),
-												max: Math.max(...columnValues)
-											};
-										}
-									});
-									
-									// Compute min/max for PC columns
-									pcKeys.forEach((key, i) => {											
-										const columnValues = data
-										.filter(row => {
-											const totalPlays = parseFloat(row[totalPlaysKey]);
-											return totalPlays >= 600;
-										})
-										.map(row => parseFloat(row[key]))
-										.filter(v => !isNaN(v));
-										if (columnValues.length > 0) {
-										pcMinMax[key] = {
-											min: Math.min(...columnValues),
-											max: Math.max(...columnValues)
-										};
-										}
-									});
-							
-									// cUSG%
-									const cusgKey = 'Total creation usage';
-									const cusgVals = data
-										.map(r => parseFloat(r[cusgKey]))
-										.filter(v => !isNaN(v));
-									if (cusgVals.length) {
-										prfMinMax[cusgKey] = {
-										min: Math.min(...cusgVals),
-										max: Math.max(...cusgVals)
-										};
-									}
+									const pcKeys = getCurrentPCKeys();
+									const prfKeys = getCurrentPRFKeys();
 
-									// Calculate rORTG min and max, excluding rows with low data and additional logic
-									rortgKeys.forEach((key, i) => {
-										const columnValues = data
+									const rortgKeys = [
+										'Total rORTG',
+										'On-ball rORTG',
+										'Off-ball rORTG',
+										'Off-ball: Partner rORTG',
+										'Off-ball: Space rORTG',
+										'Off-ball: Crash rORTG'
+									];
+
+									const playsPerGameKeys = {
+										'On-ball rORTG': 'On-ball Plays/g',
+										'Off-ball rORTG': 'Off-ball Plays/g',
+										'Off-ball: Partner rORTG': 'Off-ball Plays/g',
+										'Off-ball: Space rORTG': 'Off-ball Plays/g',
+										'Off-ball: Crash rORTG': 'Off-ball Plays/g'
+									};
+
+									const pctKeys = [
+										'Total creation usage',
+										'On-ball creation usage',
+										'Off-ball creation usage',
+										'On-ball share',
+										'On-ball playmaking ratio'
+									];
+
+									const playsPerGameKeysForPct = {
+										'On-ball share': 'On-ball Plays/g',
+										'On-ball playmaking ratio': 'On-ball Plays/g'
+									};
+
+									const possessionsKey = 'Possessions';
+
+									prfMinMax = {};
+									pcMinMax = {};
+									rortgMinMax = {};
+									pctMinMax = {};
+
+									// ---- PC columns (filter: possessions must be number and >= 600)
+									Object.values(pcKeys).forEach(key => {
+										const vals = data
 											.filter(row => {
-												const totalPlays = parseFloat(row[totalPlaysKey]); // Total possessions
-												const playsPerGame = parseFloat(row[playsPerGameKeys[i]]); // Corresponding Plays/g
-						
-												// Exclude rows with low data
-												return totalPlays >= 600 && playsPerGame >= 5;
+												const possessions = parseFloat(row[possessionsKey]);
+												return !isNaN(possessions) && possessions >= 600;
 											})
 											.map(row => parseFloat(row[key]))
-											.filter(v => !isNaN(v)); // Exclude invalid values
-						
-										if (columnValues.length > 0) {
-											rortgMinMax[key] = {
-												min: Math.min(...columnValues),
-												max: Math.max(...columnValues)
-											};
-										} else {
-											console.warn(`No valid data for rORTG column: ${key}`);
+											.filter(v => !isNaN(v));
+
+										if (vals.length > 0) {
+											pcMinMax[key] = { min: Math.min(...vals), max: Math.max(...vals) };
 										}
 									});
-							
-									console.log("PRF and cUSG MinMax:", prfMinMax);
-									console.log("PC MinMax:", pcMinMax);
-									console.log("rORTG MinMax:", rortgMinMax);
+
+									// ---- PRF columns
+									Object.values(prfKeys).forEach(key => {
+										const vals = data
+											.filter(row => {
+												const possessions = parseFloat(row[possessionsKey]);
+												return !isNaN(possessions) && possessions >= 600;
+											})
+											.map(row => parseFloat(row[key]))
+											.filter(v => !isNaN(v));
+
+										if (vals.length > 0) {
+											prfMinMax[key] = { min: Math.min(...vals), max: Math.max(...vals) };
+										}
+									});
+
+									// ---- % columns (with plays/g filter if needed)
+									pctKeys.forEach(key => {
+										const vals = data
+											.filter(row => {
+												const possessions = parseFloat(row[possessionsKey]);
+												if (isNaN(possessions) || possessions < 600) return false;
+
+												const playsKey = playsPerGameKeysForPct[key];
+												if (playsKey) {
+													const playsPerGame = parseFloat(row[playsKey]);
+													if (isNaN(playsPerGame) || playsPerGame < 5) return false;
+												}
+
+												return true;
+											})
+											.map(row => parseFloat(row[key]))
+											.filter(v => !isNaN(v));
+
+										if (vals.length) {
+											pctMinMax[key] = { min: Math.min(...vals), max: Math.max(...vals) };
+										}
+									});
+
+									// ---- rORTG columns (with plays/g filter if needed)
+									rortgKeys.forEach(key => {
+										const vals = data
+											.filter(row => {
+												const possessions = parseFloat(row[possessionsKey]);
+												if (isNaN(possessions) || possessions < 600) return false;
+
+												const playsKey = playsPerGameKeys[key];
+												if (playsKey) {
+													const playsPerGame = parseFloat(row[playsKey]);
+													if (isNaN(playsPerGame) || playsPerGame < 5) return false;
+												}
+
+												return true;
+											})
+											.map(row => parseFloat(row[key]))
+											.filter(v => !isNaN(v));
+
+										if (vals.length > 0) {
+											rortgMinMax[key] = { min: Math.min(...vals), max: Math.max(...vals) };
+										}
+									});
+
+									console.log("prfMinMax", prfMinMax);
+									console.log("pcMinMax", pcMinMax);
+									console.log("rortgMinMax", rortgMinMax);
 								}
+
+
+
+
+								function getTextContrastColor(background) {
+									if (!background || typeof background !== 'string') return '#3d4449';
+									const matches = background.match(/\d+/g);
+									if (!matches) return '#3d4449';
+									const rgb = matches.map(Number);
+									if (rgb.length < 3) return '#3d4449';
+									const luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+									return luminance > 0.5 ? '#3d4449' : '#ffffff';
+								}
+
+
 
 								function updateHeaderUnits() {
-									// Determine the suffix based on the current unit.
-									var suffix;
-									if (currentUnit === "per game") {
-										suffix = "/g";
-									} else if (currentUnit === "per 36 minutes") {
-										suffix = "/36";
-									} else if (currentUnit === "per 75 possessions") {
-										suffix = "/75";
-									}
+									const suffix = currentUnit === "per game" ? "/g"
+													: currentUnit === "per 36 minutes" ? "/36"
+													: "/75";
 
-									// Update all header cells for PC
-									$("#playerTable thead th.unit-pc").each(function() {
-										var base = $(this).attr("data-base");
-										$(this).text(base + suffix);
+									// Use short labels only
+									$("#playerTable thead th.unit-pc").text(`PC${suffix}`);
+									$("#playerTable thead th.unit-prf").text(`PRF${suffix}`);
+									$("#playerTable thead th.unit-cusg").text("cUSG%");
+
+									// Update component data columns (Score, Pass, Floor)
+									$("#playerTable thead th.unit-components").each(function () {
+										const base = $(this).attr("data-base");
+										const known = {
+											"Scoring PC": "Score",
+											"On-ball Scoring PC": "Score",
+											"Playmaking PC": "Pass",
+											"On-ball Playmaking PC": "Pass",
+											"Floor raising PC": "Floor"
+										};
+
+										if (known[base]) {
+											$(this).text(known[base]);
+										}
 									});
 
-									// Update all header cells for PRF
-									$("#playerTable thead th.unit-prf").each(function() {
-										var base = $(this).attr("data-base");
-										$(this).text(base + suffix);
-									});
+									// Update the group header manually
+									$("#playerTable thead th[data-base='Components of Total PC']").text(`Components of Total PC${suffix}`);
 
-									// Update the header cell for "Components of total PC"
-									$("#playerTable thead th.unit-components").each(function() {
-										var base = $(this).attr("data-base");
-										$(this).text(base + suffix);
+								}
+
+								function applyConditionalFormatting(api) {
+									/* refresh the lookup tables */
+									currentUnit   = $('#statUnitSelect').val();
+									currentData   = $('#dataSelect').val();
+									currentSeason = $('#yearSelect').val();
+
+									const pcKeys  = getCurrentPCKeys();
+									const prfKeys = getCurrentPRFKeys();
+
+									const gradientCols = {
+										pc: {
+											[COLUMN_INDEX.Total_PC]: pcKeys.Total,
+											[COLUMN_INDEX.Onball_PC]: pcKeys.Onball,
+											[COLUMN_INDEX.Offball_PC]: pcKeys.Offball,
+											[COLUMN_INDEX.Transition_PC]: pcKeys.Transition,
+											[COLUMN_INDEX.Partner_PC]: pcKeys.Partner,
+											[COLUMN_INDEX.Space_PC]:   pcKeys.Space,
+											[COLUMN_INDEX.Crash_PC]:   pcKeys.Crash,
+											[COLUMN_INDEX.Comp_Score]:       pcKeys.Score,
+											[COLUMN_INDEX.Comp_OnballScore]: pcKeys.OnballScore,
+											[COLUMN_INDEX.Comp_Pass]:        pcKeys.Pass,
+											[COLUMN_INDEX.Comp_OnballPass]:  pcKeys.OnballPass,
+											[COLUMN_INDEX.Comp_Floor]:       pcKeys.Floor
+										},
+										prf: {
+											[COLUMN_INDEX.Total_PRF]: prfKeys.Total,
+											[COLUMN_INDEX.Onball_PRF]: prfKeys.Onball,
+											[COLUMN_INDEX.Offball_PRF]: prfKeys.Offball,
+											[COLUMN_INDEX.Transition_PRF]: prfKeys.Transition,
+											[COLUMN_INDEX.Partner_PRF]: prfKeys.Partner,
+											[COLUMN_INDEX.Space_PRF]:   prfKeys.Space,
+											[COLUMN_INDEX.Crash_PRF]:   prfKeys.Crash
+										},
+										rortg: {
+											[COLUMN_INDEX.Total_rORTG]:   'Total rORTG',
+											[COLUMN_INDEX.Onball_rORTG]:  'On-ball rORTG',
+											[COLUMN_INDEX.Offball_rORTG]: 'Off-ball rORTG',
+											[COLUMN_INDEX.Partner_rORTG]: 'Off-ball: Partner rORTG',
+											[COLUMN_INDEX.Space_rORTG]:   'Off-ball: Space rORTG',
+											[COLUMN_INDEX.Crash_rORTG]:   'Off-ball: Crash rORTG'
+										},
+										pct: {
+											[COLUMN_INDEX.Total_cUSG]:  'Total creation usage',
+											[COLUMN_INDEX.Onball_cUSG]: 'On-ball creation usage',
+											[COLUMN_INDEX.Offball_cUSG]: 'Off-ball creation usage',
+											[COLUMN_INDEX.Onball_Share]: 'On-ball share',
+											[COLUMN_INDEX.Onball_Ratio]: 'On-ball playmaking ratio'
+										}
+									};
+
+									/* colour every cell that’s visible on this page */
+									api.rows({ page: 'current' }).every(function () {
+										const rowData = this.data();              // numeric array of all 34 cols
+										$('td', this.node()).each(function () {   // iterate visible cells
+											const realCol = api.cell(this).index().column;   // true column #
+											const value   = rowData[realCol];
+											if (value == null || isNaN(value)) return;
+
+											let color = null;
+
+											if (gradientCols.pc[realCol]   && pcMinMax[gradientCols.pc[realCol]]) {
+												const mm = pcMinMax[gradientCols.pc[realCol]];
+												color = getDivergingGradient(value, mm.min, mm.max, '#cc6600', '#ffffff', '#006622');
+											} else if (gradientCols.prf[realCol] && prfMinMax[gradientCols.prf[realCol]]) {
+												const mm = prfMinMax[gradientCols.prf[realCol]];
+												color = getGradientColor(value, mm.min, mm.max, '#ffffff', '#006622');
+											} else if (gradientCols.rortg[realCol] && rortgMinMax[gradientCols.rortg[realCol]]) {
+												const mm = rortgMinMax[gradientCols.rortg[realCol]];
+												color = getDivergingGradient(value, mm.min, mm.max, '#cc6600', '#ffffff', '#006622');
+											} else if (gradientCols.pct[realCol] && pctMinMax[gradientCols.pct[realCol]]) {
+												const mm = pctMinMax[gradientCols.pct[realCol]];
+												color = getGradientColor(value, mm.min, mm.max, '#ffffff', '#006622');
+											}
+
+											if (color) {
+												$(this).css({
+													'background-color': color,
+													'color': getTextContrastColor(color)
+												});
+											}
+										});
 									});
 								}
+
 
 								$(document).ready(function () {
 									console.log("Document ready – initializing DataTable and loading CSV data...");
@@ -506,186 +790,100 @@
 										info: false,
 										responsive: true,
 										fixedHeader: true,
-										autoWidth: true,
+										autoWidth: false,  // <-- safer false
 										ordering: true,
 										dom: "<'row top-controls'<'col-sm-6'f><'col-sm-6 custom-controls'>>rt<'row'<'col-sm-6'i><'col-sm-6'p>>",
 										columnDefs: [
 											{
-												// Player column
-												targets: 0,
+												targets: 1, // Player column
 												width: "225px",
 												className: "nowrap",
-												render: function(data, type, row) {
-													if (type === 'display') {
-														// Link to the player summary page with the player name as a parameter.
-														return `<a href="player.html?player=${encodeURIComponent(data)}">${data}</a>`;
-													}
-													return data;
+												render: function (data, type, row, meta) {
+												if (type !== 'display') return data; // ✅ only format for 'display'
+												if (!data) return ''; // ✅ safeguard if data missing
+												return `<a href="player.html?player=${encodeURIComponent(data)}">${data}</a>`;
 												}
 											},
 											{
-												// Tm (Team) column
-												targets: 1,
+												targets: 2, // Team column
 												width: "50px",
-												render: function(data, type, row) {
-													if (type === 'display') {
-														// Get the current season from the Season dropdown.
-														let season = $('#yearSelect').val() || "";
-														return `<a href="team.html?team=${encodeURIComponent(data)}&season=${encodeURIComponent(season)}">${data}</a>`;
-													}
-													return data;
+												render: function (data, type, row, meta) {
+												if (type !== 'display') return data;
+												if (!data) return '';
+												let season = $('#yearSelect').val() || "";
+												return `<a href="team.html?team=${encodeURIComponent(data)}&season=${encodeURIComponent(season)}">${data}</a>`;
 												}
-												},
+											},
 											{
-												// Rk column
-												targets: 3,
+												targets: "_all", // all others
+												render: function (data, type, row, meta) {
+												if (type !== 'display') return data;
+												if (meta.col === COLUMN_INDEX.Player || meta.col === COLUMN_INDEX.Tm) return data; // ✅ ignore Player and Tm columns here
+
+												if (data == null || data === '' || isNaN(parseFloat(data))) {
+													return '';
+												}
+												const colIdx = meta.col;
+
+												if ([COLUMN_INDEX.Total_PC, COLUMN_INDEX.Onball_PC, COLUMN_INDEX.Offball_PC, COLUMN_INDEX.Transition_PC,
+													COLUMN_INDEX.Partner_PC, COLUMN_INDEX.Space_PC, COLUMN_INDEX.Crash_PC,
+													COLUMN_INDEX.Comp_Score, COLUMN_INDEX.Comp_OnballScore, COLUMN_INDEX.Comp_Pass,
+													COLUMN_INDEX.Comp_OnballPass, COLUMN_INDEX.Comp_Floor].includes(colIdx)) {
+													return parseFloat(data).toFixed(2);
+												} else if ([COLUMN_INDEX.Total_PRF, COLUMN_INDEX.Onball_PRF, COLUMN_INDEX.Offball_PRF, COLUMN_INDEX.Transition_PRF,
+													COLUMN_INDEX.Partner_PRF, COLUMN_INDEX.Space_PRF, COLUMN_INDEX.Crash_PRF].includes(colIdx)) {
+													return parseFloat(data).toFixed(1);
+												} else if ([COLUMN_INDEX.Total_cUSG, COLUMN_INDEX.Onball_cUSG, COLUMN_INDEX.Offball_cUSG,
+													COLUMN_INDEX.Onball_Share, COLUMN_INDEX.Onball_Ratio].includes(colIdx)) {
+													return parseFloat(data).toFixed(1) + '%';
+												} else if ([COLUMN_INDEX.Total_rORTG, COLUMN_INDEX.Onball_rORTG, COLUMN_INDEX.Offball_rORTG,
+													COLUMN_INDEX.Partner_rORTG, COLUMN_INDEX.Space_rORTG, COLUMN_INDEX.Crash_rORTG].includes(colIdx)) {
+													const num = parseFloat(data).toFixed(1);
+													return num > 0 ? `+${num}` : num;
+												}
+
+												return data;
+												}
+											},
+											{
+												targets: 0,
 												orderable: false,
 												searchable: false,
 												width: "40px",
 												className: "rank-column"
 											},
-											{
-												// PC columns: indices [4,9,11,13,14,15,16]
-												targets: [4,9,11,13,14,15,16],
-												render: function (data, type, row) {
-													if (!data || isNaN(data)) { return ''; }
-													return parseFloat(data).toFixed(2);
-												}
-											},
-											{
-												// PRF columns: indices [5,8,10,12]
-												targets: [5,8,10,12],
-												render: function (data, type, row) {
-													if (!data || isNaN(data)) { return ''; }
-													return parseFloat(data).toFixed(1);
-												}
-											},
-											// cUSG% column at index 6
-											{
-												targets: [6],      // cUSG%
-												render: function(data, type) {
-													if (type !== 'display') return data;
-													const n = parseFloat(data);
-													return isNaN(n)
-													? ''
-													: n.toFixed(1) + '%';
-												}
-											},
-											{
-												// rORTG column: index 7
-												targets: [7],
-												render: function (data, type, row) {
-													if (!data || isNaN(data)) { return ''; }
-													var num = parseFloat(data).toFixed(1);
-													return num > 0 ? '+' + num : num;
-												}
-											},
-											// Group separators: after columns 3, 7, 9, 11, and 13
+											// Thin border separators for certain columns
 											{ targets: [3], className: 'group-separator' },
 											{ targets: [7], className: 'group-separator' },
-											{ targets: [9], className: 'group-separator' },
-											{ targets: [11], className: 'group-separator' },
-											{ targets: [13], className: 'group-separator' }
+											{ targets: [13], className: 'group-separator' },
+											{ targets: [17], className: 'group-separator' },
+											{ targets: [20], className: 'group-separator' },
+											{ targets: [23], className: 'group-separator' },
+											{ targets: [26], className: 'group-separator' },
+											{ targets: [28], className: 'group-separator' }
 										],
-											
-										createdRow: function (row, rowData) {
-											// New indices: PC: [4,9,11,13,14,15,16], PRF: [5,8,10,12], rORTG: [7]
-											const pcIndices = [4,9,11,13,14,15,16];
-											const prfIndices = [5,8,10,12];
-											const rortgIndices = [7];
-
-											function adjustTextColor(backgroundColor) {
-												if (!backgroundColor || !backgroundColor.match(/\d+/g)) {
-													return '#3d4449';
-												}
-												const rgb = backgroundColor.match(/\d+/g).map(Number);
-												const luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
-												return luminance > 0.5 ? '#3d4449' : '#f5f5f5';
-											}
-
-											pcIndices.forEach((index, i) => {
-												const csvKey = getCurrentPCKeys()[i];
-												const pcValue = parseFloat(rowData[index]);
-												if (pcMinMax[csvKey] && !isNaN(pcValue)) {
-													const pcColor = getDivergingGradient(
-														pcValue,
-														pcMinMax[csvKey].min,
-														pcMinMax[csvKey].max,
-														'#cc6600',
-														'#ffffff',
-														'#006622'
-													);
-													const textColor = adjustTextColor(pcColor);
-													$('td', row).eq(index).css({ 'background-color': pcColor, 'color': textColor });
-												}
-											});
-
-											prfIndices.forEach((index, i) => {
-												const csvKey = getCurrentPRFKeys()[i];
-												const prfValue = parseFloat(rowData[index]);
-												if (prfMinMax[csvKey]) {
-													const prfColor = getGradientColor(
-														prfValue,
-														prfMinMax[csvKey].min,
-														prfMinMax[csvKey].max,
-														'#ffffff',
-														'#006622'
-													);
-													const textColor = adjustTextColor(prfColor);
-													$('td', row).eq(index).css({ 'background-color': prfColor, 'color': textColor });
-												}
-											});
-
-											rortgIndices.forEach((index, i) => {
-												const csvKey = tableToCsvMap.rortg[i];
-												const playsPerGameIndex = 4 + i * 2;
-												const playsPerGame = parseFloat(rowData[playsPerGameIndex]);
-												const rortgValue = parseFloat(rowData[index]);
-												if (rortgMinMax[csvKey] && !isNaN(rortgValue) && !isNaN(playsPerGame) && playsPerGame >= 1) {
-													const rortgColor = getDivergingGradient(
-														rortgValue,
-														rortgMinMax[csvKey].min,
-														rortgMinMax[csvKey].max,
-														'#cc6600',
-														'#ffffff',
-														'#006622'
-													);
-													const textColor = adjustTextColor(rortgColor);
-													$('td', row).eq(index).css({ 'background-color': rortgColor, 'color': textColor });
-												}
-											});
-
-											// cUSG% gradient
-											const cusgIdx = 6;                    // column index of cUSG%
-											const cusgKey = 'Total creation usage';
-											const cusgVal = parseFloat(rowData[cusgIdx]);
-											if (prfMinMax[cusgKey] && !isNaN(cusgVal)) {
-												const c = getGradientColor(
-												cusgVal,
-												prfMinMax[cusgKey].min,
-												prfMinMax[cusgKey].max,
-												'#ffffff',
-												'#006622'
-												);
-												const textColor = adjustTextColor(c);
-												$('td', row).eq(cusgIdx).css({ 'background-color': c, 'color': textColor });
-											}
+										createdRow: function (row, rowData, dataIndex) {
+										// Empty for now, all formatting moved elsewhere
 										},
-										
-										drawCallback: function(settings) {
-											var api = this.api();
-											// Get the full order from the dataset ignoring filtering (but note that updateTableData() already filters by season):
-											var fullOrder = api.rows({ order: 'applied', search: 'none' }).indexes().toArray();
-											// For visible rows (using the current filtered order) update the rank
-											api.rows({ order: 'applied', search: 'applied' }).every(function() {
-												// Find the original (full dataset) rank by looking up the row's index in the full order array
-												var rank = fullOrder.indexOf(this.index()) + 1;
-												$(this.node()).find('td:eq(3)').html(rank);
-											});
-										}
+										drawCallback: function () {
+											const api = this.api();
 
-										
+											/* --- rebuild the rank numbers in column 0 --- */
+											const fullOrder = api.rows({ order: 'applied', search: 'none' }).indexes().toArray();
+											api.rows({ order: 'applied', search: 'applied' }).every(function () {
+												const rank = fullOrder.indexOf(this.index()) + 1;
+												$(this.node()).find('td:eq(0)').html(rank);
+											});
+
+											/* --- wipe any stale colours, then recolour what’s on‑screen --- */
+											api.rows({ page: 'current' }).nodes().to$()
+											.find('td')
+											.css({ 'background-color': '', 'color': '' });
+
+											applyConditionalFormatting(api);   // single, authoritative recolour pass
+										},
 									});
+
 
 									// inject drop downs
 									$('.custom-controls')
@@ -696,11 +894,13 @@
 										.append($('#copyLinkSeason'));
 									
 									// Event listener for the data dropdown
-									$('#dataSelect').on('change', function() {
+									$('#dataSelect').on('change', function () {
 										currentData = $(this).val();
 										computeColumnMinMax(window.fullCSVData);
 										updateTableData();
+										table.rows().invalidate().draw(false); 
 										updateHeaderUnits();
+										updateVisibleColumns();
 									});
 
 									// Event listener for the unit dropdown
@@ -708,7 +908,9 @@
 										currentUnit = $(this).val();
 										computeColumnMinMax(window.fullCSVData);
 										updateTableData();
+										table.rows().invalidate().draw(false); 
 										updateHeaderUnits();
+										updateVisibleColumns();
 									});
 
 									// Event listener for season dropdown
@@ -716,7 +918,9 @@
 										currentSeason = $(this).val();
 										computeColumnMinMax(window.fullCSVData);
 										updateTableData();
+										table.rows().invalidate().draw(false); 
 										updateHeaderUnits();
+										updateVisibleColumns();
 									});
 
 
@@ -739,7 +943,14 @@
 											}
 											$("#yearSelect").val(currentSeason); // Set default selection
 											updateTableData();
+											updateVisibleColumns();
 											updateHeaderUnits();
+
+											// if not found, load latest season
+											if (!$('#yearSelect').val()) {                 // default not found
+												$('#yearSelect').val(years[years.length - 1]);   // pick last (latest)
+												currentSeason = $('#yearSelect').val();
+											}
 											
 										},
 										error: function (error) {
