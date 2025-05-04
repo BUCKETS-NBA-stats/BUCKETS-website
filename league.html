@@ -238,6 +238,9 @@
 								var currentUnit = "per game"; // Default is per game
 								var currentSeason = "2024-25";  // Default season is 2024-25
 
+								/* cache  min/max per   <season>|<unit>   so we compute it once       */
+								var _minMaxCache = {};   // key → { pcMinMax, prfMinMax, pctMinMax, rortgMinMax }
+
 								const COLUMN_INDEX = {
 									Rk: 0,
 									Player: 1,
@@ -351,67 +354,75 @@
 								}
 
 								function updateTableData() {
-									const pcKeys = getCurrentPCKeys();
-									const prfKeys = getCurrentPRFKeys();
+									const pcKeys = getCurrentPCKeys(), prfKeys = getCurrentPRFKeys();
 
-									const filteredData = window.fullCSVData.filter(row => {
-										const possessions = parseFloat(row['Possessions'].trim());
-										return !isNaN(possessions) && possessions >= 600 && row['Year'].trim() === currentSeason;
-									});
-
-									const formattedData = filteredData.map(row => [
+									/* ---------- build the full 2‑D array (pure JS, fast) ---------- */
+									const rows = window.fullCSVData
+									.filter(r => parseFloat(r.Possessions) >= 600 &&
+												r.Year.trim() === currentSeason)
+									.map(r => [
 										'', // Rk
-										row.Player, // Player (string)
-										row.Tm,     // Team (string)
-										parseInt(row.Games), // Games (integer)
+										r.Player, // Player (string)
+										r.Tm,     // Team (string)
+										parseInt(r.Games), // Games (integer)
 
-										parseFloat(row[pcKeys.Total]),    // PC
-										parseFloat(row[prfKeys.Total]),   // PRF
-										parseFloat(row['Total creation usage'].replace('%', '')), // Total cUSG%
-										parseFloat(row['Total rORTG']),    // Total rORTG
+										parseFloat(r[pcKeys.Total]),    // PC
+										parseFloat(r[prfKeys.Total]),   // PRF
+										parseFloat(r['Total creation usage'].replace('%', '')), // Total cUSG%
+										parseFloat(r['Total rORTG']),    // Total rORTG
 
-										parseFloat(row[prfKeys.Onball]),   // On-ball PRF
-										parseFloat(row[pcKeys.Onball]),    // On-ball PC
-										parseFloat(row['On-ball creation usage'].replace('%', '')), // On-ball cUSG%
-										parseFloat(row['On-ball rORTG']),  // On-ball rORTG
-										parseFloat(row['On-ball share'].replace('%', '')),          // On-ball Share
-										parseFloat(row['On-ball playmaking ratio'].replace('%', '')), // Playmaking %
+										parseFloat(r[prfKeys.Onball]),   // On-ball PRF
+										parseFloat(r[pcKeys.Onball]),    // On-ball PC
+										parseFloat(r['On-ball creation usage'].replace('%', '')), // On-ball cUSG%
+										parseFloat(r['On-ball rORTG']),  // On-ball rORTG
+										parseFloat(r['On-ball share'].replace('%', '')),          // On-ball Share
+										parseFloat(r['On-ball playmaking ratio'].replace('%', '')), // Playmaking %
 
-										parseFloat(row[prfKeys.Offball]),  // Off-ball PRF
-										parseFloat(row[pcKeys.Offball]),   // Off-ball PC
-										parseFloat(row['Off-ball creation usage'].replace('%', '')), // Off-ball cUSG%
-										parseFloat(row['Off-ball rORTG']), // Off-ball rORTG
+										parseFloat(r[prfKeys.Offball]),  // Off-ball PRF
+										parseFloat(r[pcKeys.Offball]),   // Off-ball PC
+										parseFloat(r['Off-ball creation usage'].replace('%', '')), // Off-ball cUSG%
+										parseFloat(r['Off-ball rORTG']), // Off-ball rORTG
 
-										parseFloat(row[pcKeys.Partner]),   // Partner PC
-										parseFloat(row[prfKeys.Partner]),  // Partner PRF
-										parseFloat(row['Off-ball: Partner rORTG']), // Partner rORTG
+										parseFloat(r[pcKeys.Partner]),   // Partner PC
+										parseFloat(r[prfKeys.Partner]),  // Partner PRF
+										parseFloat(r['Off-ball: Partner rORTG']), // Partner rORTG
 
-										parseFloat(row[pcKeys.Space]),     // Space PC
-										parseFloat(row[prfKeys.Space]),    // Space PRF
-										parseFloat(row['Off-ball: Space rORTG']), // Space rORTG
+										parseFloat(r[pcKeys.Space]),     // Space PC
+										parseFloat(r[prfKeys.Space]),    // Space PRF
+										parseFloat(r['Off-ball: Space rORTG']), // Space rORTG
 
-										parseFloat(row[pcKeys.Crash]),     // Crash PC
-										parseFloat(row[prfKeys.Crash]),    // Crash PRF
-										parseFloat(row['Off-ball: Crash rORTG']), // Crash rORTG
+										parseFloat(r[pcKeys.Crash]),     // Crash PC
+										parseFloat(r[prfKeys.Crash]),    // Crash PRF
+										parseFloat(r['Off-ball: Crash rORTG']), // Crash rORTG
 
-										parseFloat(row[prfKeys.Transition]), // Transition PRF
-										parseFloat(row[pcKeys.Transition]),  // Transition PC
+										parseFloat(r[prfKeys.Transition]), // Transition PRF
+										parseFloat(r[pcKeys.Transition]),  // Transition PC
 
-										parseFloat(row[pcKeys.Score]),       // Component: Score
-										parseFloat(row[pcKeys.OnballScore]), // Component: Onball Score
-										parseFloat(row[pcKeys.Pass]),        // Component: Pass
-										parseFloat(row[pcKeys.OnballPass]),  // Component: Onball Pass
-										parseFloat(row[pcKeys.Floor])        // Component: Floor
+										parseFloat(r[pcKeys.Score]),       // Component: Score
+										parseFloat(r[pcKeys.OnballScore]), // Component: Onball Score
+										parseFloat(r[pcKeys.Pass]),        // Component: Pass
+										parseFloat(r[pcKeys.OnballPass]),  // Component: Onball Pass
+										parseFloat(r[pcKeys.Floor])        // Component: Floor
 									]);
 
 
-									console.log("Formatted Data sample:", formattedData.slice(0, 3));
+									table.clear().draw(false);   // flush old rows but keep structure
 
-									table.clear();
-									table.rows.add(formattedData);
-									table.order([4, 'desc']).draw();
-									table.columns.adjust().draw(false);
-									updateVisibleColumns();
+									/* ---------- stream <tr> into DataTables in chunks ---------- */
+									const CHUNK = 200;
+									let idx = 0;
+									(function addChunk () {
+										const slice = rows.slice(idx, idx + CHUNK);
+										table.rows.add(slice).draw(false);          // draw incrementally
+										idx += CHUNK;
+										if (idx < rows.length) {
+											requestAnimationFrame(addChunk);        // yield back to browser
+										} else {
+											// finished – colour everything once
+											computeColumnMinMax(window.fullCSVData);
+											colourCurrentPage(table);
+										}
+									})();
 								}
 
 
@@ -528,129 +539,38 @@
 							
 								// Compute min/max for each column
 								function computeColumnMinMax(data) {
-									const pcKeys = getCurrentPCKeys();
-									const prfKeys = getCurrentPRFKeys();
+									const cacheKey = `${currentSeason}|${currentUnit}`;
+									if (_minMaxCache[cacheKey]) {               //  ← reuse if possible
+										({ pcMinMax, prfMinMax, pctMinMax, rortgMinMax } = _minMaxCache[cacheKey]);
+										return;
+									}
 
-									const rortgKeys = [
-										'Total rORTG',
-										'On-ball rORTG',
-										'Off-ball rORTG',
-										'Off-ball: Partner rORTG',
-										'Off-ball: Space rORTG',
-										'Off-ball: Crash rORTG'
-									];
+									/* -- originals, untouched, just inside this one execution -- */
+									pcMinMax = {}; prfMinMax = {}; pctMinMax = {}; rortgMinMax = {};
+									const possKey = 'Possessions';
+									const pcKeys  = Object.values(getCurrentPCKeys());
+									const prfKeys = Object.values(getCurrentPRFKeys());
+									const pctKeys = ['Total creation usage','On-ball creation usage','Off-ball creation usage',
+													'On-ball share','On-ball playmaking ratio'];
+									const rortgKeys = ['Total rORTG','On-ball rORTG','Off-ball rORTG',
+													'Off-ball: Partner rORTG','Off-ball: Space rORTG','Off-ball: Crash rORTG'];
 
-									const playsPerGameKeys = {
-										'On-ball rORTG': 'On-ball Plays/g',
-										'Off-ball rORTG': 'Off-ball Plays/g',
-										'Off-ball: Partner rORTG': 'Off-ball Plays/g',
-										'Off-ball: Space rORTG': 'Off-ball Plays/g',
-										'Off-ball: Crash rORTG': 'Off-ball Plays/g'
+									const keep = row => parseFloat(row[possKey]) >= 600;
+
+									const fill = (keys,target) => {
+										keys.forEach(k=>{
+											const vals = data.filter(keep).map(r=>parseFloat(r[k])).filter(v=>!isNaN(v));
+											if (vals.length) target[k] = { min: Math.min(...vals), max: Math.max(...vals) };
+										});
 									};
 
-									const pctKeys = [
-										'Total creation usage',
-										'On-ball creation usage',
-										'Off-ball creation usage',
-										'On-ball share',
-										'On-ball playmaking ratio'
-									];
+									fill(pcKeys,  pcMinMax);
+									fill(prfKeys, prfMinMax);
+									fill(pctKeys, pctMinMax);
+									fill(rortgKeys, rortgMinMax);
 
-									const playsPerGameKeysForPct = {
-										'On-ball share': 'On-ball Plays/g',
-										'On-ball playmaking ratio': 'On-ball Plays/g'
-									};
-
-									const possessionsKey = 'Possessions';
-
-									prfMinMax = {};
-									pcMinMax = {};
-									rortgMinMax = {};
-									pctMinMax = {};
-
-									// ---- PC columns (filter: possessions must be number and >= 600)
-									Object.values(pcKeys).forEach(key => {
-										const vals = data
-											.filter(row => {
-												const possessions = parseFloat(row[possessionsKey]);
-												return !isNaN(possessions) && possessions >= 600;
-											})
-											.map(row => parseFloat(row[key]))
-											.filter(v => !isNaN(v));
-
-										if (vals.length > 0) {
-											pcMinMax[key] = { min: Math.min(...vals), max: Math.max(...vals) };
-										}
-									});
-
-									// ---- PRF columns
-									Object.values(prfKeys).forEach(key => {
-										const vals = data
-											.filter(row => {
-												const possessions = parseFloat(row[possessionsKey]);
-												return !isNaN(possessions) && possessions >= 600;
-											})
-											.map(row => parseFloat(row[key]))
-											.filter(v => !isNaN(v));
-
-										if (vals.length > 0) {
-											prfMinMax[key] = { min: Math.min(...vals), max: Math.max(...vals) };
-										}
-									});
-
-									// ---- % columns (with plays/g filter if needed)
-									pctKeys.forEach(key => {
-										const vals = data
-											.filter(row => {
-												const possessions = parseFloat(row[possessionsKey]);
-												if (isNaN(possessions) || possessions < 600) return false;
-
-												const playsKey = playsPerGameKeysForPct[key];
-												if (playsKey) {
-													const playsPerGame = parseFloat(row[playsKey]);
-													if (isNaN(playsPerGame) || playsPerGame < 5) return false;
-												}
-
-												return true;
-											})
-											.map(row => parseFloat(row[key]))
-											.filter(v => !isNaN(v));
-
-										if (vals.length) {
-											pctMinMax[key] = { min: Math.min(...vals), max: Math.max(...vals) };
-										}
-									});
-
-									// ---- rORTG columns (with plays/g filter if needed)
-									rortgKeys.forEach(key => {
-										const vals = data
-											.filter(row => {
-												const possessions = parseFloat(row[possessionsKey]);
-												if (isNaN(possessions) || possessions < 600) return false;
-
-												const playsKey = playsPerGameKeys[key];
-												if (playsKey) {
-													const playsPerGame = parseFloat(row[playsKey]);
-													if (isNaN(playsPerGame) || playsPerGame < 5) return false;
-												}
-
-												return true;
-											})
-											.map(row => parseFloat(row[key]))
-											.filter(v => !isNaN(v));
-
-										if (vals.length > 0) {
-											rortgMinMax[key] = { min: Math.min(...vals), max: Math.max(...vals) };
-										}
-									});
-
-									console.log("prfMinMax", prfMinMax);
-									console.log("pcMinMax", pcMinMax);
-									console.log("rortgMinMax", rortgMinMax);
+									_minMaxCache[cacheKey] = { pcMinMax, prfMinMax, pctMinMax, rortgMinMax }; // store
 								}
-
-
-
 
 								function getTextContrastColor(background) {
 									if (!background || typeof background !== 'string') return '#3d4449';
@@ -695,89 +615,115 @@
 
 								}
 
-								function applyConditionalFormatting(api) {
-									/* refresh the lookup tables */
-									currentUnit   = $('#statUnitSelect').val();
-									currentData   = $('#dataSelect').val();
-									currentSeason = $('#yearSelect').val();
+								function fullMetricKey(fam, shortKey) {
+									if (fam === 'pc') {
+										const k = getCurrentPCKeys();
+										return {
+											'Total PC'          : k.Total,
+											'On-ball PC'        : k.Onball,
+											'Off-ball PC'       : k.Offball,
+											'Transition PC'     : k.Transition,
+											'Off-ball: Partner PC' : k.Partner,
+											'Off-ball: Space PC'   : k.Space,
+											'Off-ball: Crash PC'   : k.Crash,
+											'Scoring PC'                : k.Score,
+            								'On-ball Scoring PC'        : k.OnballScore,
+            								'Playmaking PC'             : k.Pass,
+           									'On-ball Playmaking PC'     : k.OnballPass,
+            								'Floor raising PC'          : k.Floor
+										}[shortKey];
+									}
+									if (fam === 'prf') {
+										const k = getCurrentPRFKeys();
+										return {
+											'Total PRF'          : k.Total,
+											'On-ball PRF'        : k.Onball,
+											'Off-ball PRF'       : k.Offball,
+											'Transition PRF'     : k.Transition,
+											'Off-ball: Partner PRF' : k.Partner,
+											'Off-ball: Space PRF'   : k.Space,
+											'Off-ball: Crash PRF'   : k.Crash
+										}[shortKey];
+									}
+									return shortKey;             // rORTG and % already match
+								}
 
-									const pcKeys  = getCurrentPCKeys();
-									const prfKeys = getCurrentPRFKeys();
 
-									const gradientCols = {
-										pc: {
-											[COLUMN_INDEX.Total_PC]: pcKeys.Total,
-											[COLUMN_INDEX.Onball_PC]: pcKeys.Onball,
-											[COLUMN_INDEX.Offball_PC]: pcKeys.Offball,
-											[COLUMN_INDEX.Transition_PC]: pcKeys.Transition,
-											[COLUMN_INDEX.Partner_PC]: pcKeys.Partner,
-											[COLUMN_INDEX.Space_PC]:   pcKeys.Space,
-											[COLUMN_INDEX.Crash_PC]:   pcKeys.Crash,
-											[COLUMN_INDEX.Comp_Score]:       pcKeys.Score,
-											[COLUMN_INDEX.Comp_OnballScore]: pcKeys.OnballScore,
-											[COLUMN_INDEX.Comp_Pass]:        pcKeys.Pass,
-											[COLUMN_INDEX.Comp_OnballPass]:  pcKeys.OnballPass,
-											[COLUMN_INDEX.Comp_Floor]:       pcKeys.Floor
-										},
-										prf: {
-											[COLUMN_INDEX.Total_PRF]: prfKeys.Total,
-											[COLUMN_INDEX.Onball_PRF]: prfKeys.Onball,
-											[COLUMN_INDEX.Offball_PRF]: prfKeys.Offball,
-											[COLUMN_INDEX.Transition_PRF]: prfKeys.Transition,
-											[COLUMN_INDEX.Partner_PRF]: prfKeys.Partner,
-											[COLUMN_INDEX.Space_PRF]:   prfKeys.Space,
-											[COLUMN_INDEX.Crash_PRF]:   prfKeys.Crash
-										},
-										rortg: {
-											[COLUMN_INDEX.Total_rORTG]:   'Total rORTG',
-											[COLUMN_INDEX.Onball_rORTG]:  'On-ball rORTG',
-											[COLUMN_INDEX.Offball_rORTG]: 'Off-ball rORTG',
-											[COLUMN_INDEX.Partner_rORTG]: 'Off-ball: Partner rORTG',
-											[COLUMN_INDEX.Space_rORTG]:   'Off-ball: Space rORTG',
-											[COLUMN_INDEX.Crash_rORTG]:   'Off-ball: Crash rORTG'
-										},
-										pct: {
-											[COLUMN_INDEX.Total_cUSG]:  'Total creation usage',
-											[COLUMN_INDEX.Onball_cUSG]: 'On-ball creation usage',
-											[COLUMN_INDEX.Offball_cUSG]: 'Off-ball creation usage',
-											[COLUMN_INDEX.Onball_Share]: 'On-ball share',
-											[COLUMN_INDEX.Onball_Ratio]: 'On-ball playmaking ratio'
-										}
-									};
+								/* -------------------------------------------------------------- *
+								*  Colour only the rows that are on‑screen (one pass, no timeout) *
+								* -------------------------------------------------------------- */
+								function colourCurrentPage(api) {
+									const dt = api || table;          // fall‑back to global after init
+									if (!dt) return;                  // guard for extremely early calls
+									const mm = { pc: pcMinMax, prf: prfMinMax, pct: pctMinMax, r: rortgMinMax };
 
-									/* colour every cell that’s visible on this page */
-									api.rows({ page: 'current' }).every(function () {
-										const rowData = this.data();              // numeric array of all 34 cols
-										$('td', this.node()).each(function () {   // iterate visible cells
-											const realCol = api.cell(this).index().column;   // true column #
-											const value   = rowData[realCol];
-											if (value == null || isNaN(value)) return;
+									/* fast constant arrays for membership checks */
+									const pcCols  = [COLUMN_INDEX.Total_PC, COLUMN_INDEX.Onball_PC, COLUMN_INDEX.Offball_PC,
+													COLUMN_INDEX.Transition_PC, COLUMN_INDEX.Partner_PC, COLUMN_INDEX.Space_PC,
+													COLUMN_INDEX.Crash_PC, COLUMN_INDEX.Comp_Score, COLUMN_INDEX.Comp_OnballScore,
+													COLUMN_INDEX.Comp_Pass, COLUMN_INDEX.Comp_OnballPass, COLUMN_INDEX.Comp_Floor];
 
-											let color = null;
+									const prfCols = [COLUMN_INDEX.Total_PRF, COLUMN_INDEX.Onball_PRF, COLUMN_INDEX.Offball_PRF,
+													COLUMN_INDEX.Transition_PRF, COLUMN_INDEX.Partner_PRF, COLUMN_INDEX.Space_PRF,
+													COLUMN_INDEX.Crash_PRF];
 
-											if (gradientCols.pc[realCol]   && pcMinMax[gradientCols.pc[realCol]]) {
-												const mm = pcMinMax[gradientCols.pc[realCol]];
-												color = getDivergingGradient(value, mm.min, mm.max, '#cc6600', '#ffffff', '#006622');
-											} else if (gradientCols.prf[realCol] && prfMinMax[gradientCols.prf[realCol]]) {
-												const mm = prfMinMax[gradientCols.prf[realCol]];
-												color = getGradientColor(value, mm.min, mm.max, '#ffffff', '#006622');
-											} else if (gradientCols.rortg[realCol] && rortgMinMax[gradientCols.rortg[realCol]]) {
-												const mm = rortgMinMax[gradientCols.rortg[realCol]];
-												color = getDivergingGradient(value, mm.min, mm.max, '#cc6600', '#ffffff', '#006622');
-											} else if (gradientCols.pct[realCol] && pctMinMax[gradientCols.pct[realCol]]) {
-												const mm = pctMinMax[gradientCols.pct[realCol]];
-												color = getGradientColor(value, mm.min, mm.max, '#ffffff', '#006622');
-											}
+									const rCols   = [COLUMN_INDEX.Total_rORTG, COLUMN_INDEX.Onball_rORTG, COLUMN_INDEX.Offball_rORTG,
+													COLUMN_INDEX.Partner_rORTG, COLUMN_INDEX.Space_rORTG, COLUMN_INDEX.Crash_rORTG];
 
-											if (color) {
-												$(this).css({
-													'background-color': color,
-													'color': getTextContrastColor(color)
-												});
-											}
+									const pctCols = [COLUMN_INDEX.Total_cUSG, COLUMN_INDEX.Onball_cUSG, COLUMN_INDEX.Offball_cUSG,
+													COLUMN_INDEX.Onball_Share, COLUMN_INDEX.Onball_Ratio];
+
+									dt.rows({ page: 'current' }).every(function () {
+										const rowVals = this.data();            // numeric array for this row
+										$('td', this.node()).each(function () {
+											const realCol = dt.cell(this).index().column;
+											let fam = null;
+											if      (pcCols .includes(realCol)) fam = 'pc';
+											else if (prfCols.includes(realCol)) fam = 'prf';
+											else if (rCols  .includes(realCol)) fam = 'r';
+											else if (pctCols.includes(realCol)) fam = 'pct';
+											if (!fam) return;
+
+											const metricKey = fullMetricKey(fam, $(api.column(realCol).header()).attr('data-base'));
+											const range     = mm[fam][metricKey];
+
+											if (!range) return;
+
+											const val = parseFloat(rowVals[realCol]);
+											if (isNaN(val)) return;
+
+											const colour = (fam === 'pc' || fam === 'r')
+												? getDivergingGradient(val, range.min, range.max,
+																	'#cc6600', '#ffffff', '#006622')
+												: getGradientColor(val, range.min, range.max,
+																'#ffffff', '#006622');
+
+											this.style.backgroundColor = colour;
+											this.style.color = getTextContrastColor(colour);
 										});
 									});
 								}
+
+
+								/* ============================================================= */
+								/*   TEMPORARY PROFILING WRAPPERS  (remove when you’re done)     */
+								/* ============================================================= */
+								(function () {
+									// helper to wrap a global function with console.time
+									function timeWrap(fnName) {
+										const original = window[fnName];
+										window[fnName] = function (...args) {
+											console.time(fnName);
+											const out = original.apply(this, args);
+											console.timeEnd(fnName);
+											return out;
+										};
+									}
+
+									/*  ⬇⬇  add any heavy function names you want to time  ⬇⬇  */
+									['computeColumnMinMax', 'updateTableData', 'applyConditionalFormatting']
+										.forEach(timeWrap);
+								})();
 
 
 								$(document).ready(function () {
@@ -877,10 +823,10 @@
 
 											/* --- wipe any stale colours, then recolour what’s on‑screen --- */
 											api.rows({ page: 'current' }).nodes().to$()
-											.find('td')
-											.css({ 'background-color': '', 'color': '' });
+												.find('td')
+												.css({ 'background-color': '', 'color': '' });
 
-											applyConditionalFormatting(api);   // single, authoritative recolour pass
+											colourCurrentPage(api);
 										},
 									});
 
@@ -931,26 +877,28 @@
 										encoding: "UTF-8",
 										skipEmptyLines: true,
 										complete: function (results) {
+											 /* ---------- raw data ---------- */
 											window.fullCSVData = results.data;
-											computeColumnMinMax(window.fullCSVData);
-											// Extract unique season values from the CSV's "Year" column.
-											var years = [...new Set(window.fullCSVData.map(row => row['Year'].trim()))];
-											console.log('Seasons found in CSV:', years);
 
-											years.sort(); // Optional: sort the season values as needed.
-											for (var i = 0; i < years.length; i++) {
-												$("#yearSelect").append($('<option>', { value: years[i], text: years[i] }));
-											}
-											$("#yearSelect").val(currentSeason); // Set default selection
-											updateTableData();
-											updateVisibleColumns();
-											updateHeaderUnits();
+											/* ---------- build Season dropdown ---------- */
+											const years = [...new Set(window.fullCSVData.map(r => r['Year'].trim()))].sort();
 
-											// if not found, load latest season
-											if (!$('#yearSelect').val()) {                 // default not found
-												$('#yearSelect').val(years[years.length - 1]);   // pick last (latest)
-												currentSeason = $('#yearSelect').val();
+											years.forEach(y => {
+												$('#yearSelect').append($('<option>', { value: y, text: y }));
+											});
+
+											/* ---------- choose initial season ---------- */
+											if (!years.includes(currentSeason)) {
+												// “2024‑25” not in the CSV – fall back to the latest season present
+												currentSeason = years[years.length - 1];
 											}
+											$('#yearSelect').val(currentSeason);   // reflect choice in the UI
+
+											/* ---------- NOW build the table ---------- */
+											computeColumnMinMax(window.fullCSVData);  // runs once per season×unit
+											updateTableData();                        // fills the rows
+											updateVisibleColumns();                   // hides/shows correct columns
+											updateHeaderUnits();                      // fixes header suffixes
 											
 										},
 										error: function (error) {
