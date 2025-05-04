@@ -120,8 +120,8 @@
 							<!-- Table -->
 								
 							<h2>League Summary</h2>
-							<h5>Data updated Apr 14, 2025</h5>
-							<p>Note: several notable players are missing some or all data, including Tyler Herro, Jalen Brunson, Chris Paul, Demar Derozan, Mikal Bridges, Derrick White, Fred Van Vleet </p>
+							<h5>Data updated Apr 18, 2025</h5>
+							<p>Notable players with missing data: In 2024-25: Herro, Brunson, Derrick White, Draymond Green. In 2023-24: Tatum, Lillard, Irving, Sabonis, Klay, Bam, Mobley, Paul George, Dejounte Murray </p>
 						
 							<!-- Data selector -->
 							<div id="data-dropdown" style="margin-right: 10px;">
@@ -353,7 +353,18 @@
 									};
 								}
 
-								function updateTableData() {
+								/* -------------------------------------------------------------- *
+								*    updateTableData  —  incremental row build with hash‑skip    *
+								* -------------------------------------------------------------- */
+								let _lastDataKey = '';      // remembers the data combination already displayed
+								function updateTableData () {
+									/* ---------- identify this exact dataset ---------- */
+									const dataKey = `${currentSeason}|${currentUnit}|${currentData}`;
+									if (dataKey === _lastDataKey) {          // nothing new to build
+										colourCurrentPage(table);            // just recolour visible page
+										return;
+									}
+									_lastDataKey = dataKey;
 									const pcKeys = getCurrentPCKeys(), prfKeys = getCurrentPRFKeys();
 
 									/* ---------- build the full 2‑D array (pure JS, fast) ---------- */
@@ -409,18 +420,21 @@
 									table.clear().draw(false);   // flush old rows but keep structure
 
 									/* ---------- stream <tr> into DataTables in chunks ---------- */
-									const CHUNK = 200;
+									/* ---------- staged chunk sizes: 50 → 100 → 150 → 200 ---------- */
+									const firstChunks = [50, 100, 150];      // feel free to tweak
 									let idx = 0;
+
 									(function addChunk () {
-										const slice = rows.slice(idx, idx + CHUNK);
-										table.rows.add(slice).draw(false);          // draw incrementally
-										idx += CHUNK;
+										const chunkSize = firstChunks.length ? firstChunks.shift() : 200;
+										const slice = rows.slice(idx, idx + chunkSize);
+										table.rows.add(slice).draw(false);
+										idx += chunkSize;
+
 										if (idx < rows.length) {
-											requestAnimationFrame(addChunk);        // yield back to browser
+											requestAnimationFrame(addChunk); // yield to keep UI responsive
 										} else {
-											// finished – colour everything once
-											computeColumnMinMax(window.fullCSVData);
-											colourCurrentPage(table);
+											computeColumnMinMax(window.fullCSVData); // only once per dataset
+											colourCurrentPage(table);                // colour everything
 										}
 									})();
 								}
