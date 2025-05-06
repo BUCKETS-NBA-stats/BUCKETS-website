@@ -51,14 +51,31 @@
 			}
 
 
-			@media (max-width: 767px) {
-				#playerTable th:nth-child(1),
-				#playerTable td:nth-child(1) {
-					white-space: normal !important;
-					word-wrap: break-word;
+			/* ---------- desktop ≥ 768 px  – fixed 225 px one‑liner ---------- */
+			@media (min-width: 768px) {
+				#playerTable col:nth-child(2),
+				#playerTable th:nth-child(2),
+				#playerTable td:nth-child(2) {
+					width: 225px;
+					white-space: nowrap;
 				}
 			}
 
+			/* ---------- mobile ≤ 767 px  – auto width + wrapping ---------- */
+			@media (max-width: 767px) {
+				#playerTable col:nth-child(2),
+				#playerTable th:nth-child(2),
+				#playerTable td:nth-child(2) {
+					width: auto !important;        /* overrides anything inline */
+					white-space: normal !important;
+					/* word-wrap: break-word; */
+				}
+
+				/* neutralise the “nowrap” class DataTables adds */
+				#playerTable .nowrap {
+					white-space: normal !important;
+				}
+			}
 
 			.select2-selection__clear {
     			line-height: 1 !important;
@@ -97,6 +114,7 @@
 			#main {
 				overflow-x: auto;
 			}
+			
 		</style>
 	</head>
 	<body class="is-preload">
@@ -756,7 +774,6 @@
 										columnDefs: [
 											{
 												targets: 1, // Player column
-												width: "225px",
 												className: "nowrap",
 												render: function (data, type, row, meta) {
 												if (type !== 'display') return data; // ✅ only format for 'display'
