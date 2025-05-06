@@ -63,15 +63,19 @@
 
 			/* ---------- mobile ≤ 767 px  – auto width + wrapping ---------- */
 			@media (max-width: 767px) {
+				#playerTable {
+					table-layout: auto;          /* let browser recalc column widths */
+				}
+
+				/* Player column – our previous rule, no break‑word */
 				#playerTable col:nth-child(2),
 				#playerTable th:nth-child(2),
 				#playerTable td:nth-child(2) {
-					width: auto !important;        /* overrides anything inline */
+					width: auto !important;
 					white-space: normal !important;
-					/* word-wrap: break-word; */
 				}
 
-				/* neutralise the “nowrap” class DataTables adds */
+				/* neutralise DataTables’ nowrap class */
 				#playerTable .nowrap {
 					white-space: normal !important;
 				}
