@@ -255,7 +255,9 @@
 								var pctMinMax = {};   
 								var currentData = "overall";
 								var currentUnit = "per game"; // Default is per game
-								var currentPlayer = "Lebron James";  // Default player is Lebron
+								const DEFAULT_PLAYER = 'LeBron James';   // exact spelling that’s in CSV
+								let   currentPlayer  = DEFAULT_PLAYER;   // initialise with the default
+
 								let _building = false; // Throttle flag
 
 								/* cache  min/max per   <season>|<unit>   so we compute it once       */
@@ -372,10 +374,10 @@
 								}
 
 								const urlPlayer = getUrlParameter('player');
-								if (urlPlayer) {
-									currentPlayer = urlPlayer;
-									$("#playerSelect").val(urlPlayer);
+								if (urlPlayer && urlPlayer.trim() !== '') {
+									currentPlayer = urlPlayer.trim();   // override only if the param exists
 								}
+
 
 								function convertUnitToPCUnit(unit) {
 									if (unit === "per game") return "PC/g";
@@ -978,11 +980,16 @@
 											const players = [...new Set(fullCSVData.map(r => r.Player).filter(Boolean))].sort();
 											players.forEach(p => $('#playerSelect').append($('<option>',{value:p,text:p})));
 
-											// Activate Select2
-											$('#playerSelect').select2({ placeholder:'Select a player', allowClear:true });
+											// make sure the current player actually exists in the dropdown
+											if (!players.includes(currentPlayer)) {
+											currentPlayer = DEFAULT_PLAYER;     // fall back if URL player not in CSV
+											}
 
-											// Pre‑select if the URL supplied ?player=
-											if (currentPlayer) $('#playerSelect').val(currentPlayer).trigger('change');
+											// Activate Select2
+											$('#playerSelect')
+												.val(currentPlayer)  // pre‑select the option
+												.select2({ placeholder:'Select a player', allowClear:true })
+												.trigger('change');  // ensures the table builds immediately
 
 											/* ---------- NOW build the table ---------- */
 											computeColumnMinMax(window.fullCSVData);  // runs once per season×unit
