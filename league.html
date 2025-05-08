@@ -379,6 +379,19 @@
 								*    updateTableData  —  incremental row build with hash‑skip    *
 								* -------------------------------------------------------------- */
 								let _lastDataKey = '';      // remembers the data combination already displayed
+								
+								/* -------------------------------------------------- *
+								*  which column should the table be sorted on?       *
+								* -------------------------------------------------- */
+								function getDefaultSortColumn () {
+									switch (currentData) {
+										case 'onball':  return COLUMN_INDEX.Onball_PC;   // col 9
+										case 'offball': return COLUMN_INDEX.Offball_PC;  // col 15
+										default:        return COLUMN_INDEX.Total_PC;    // col 4  (overall)
+									}
+								}
+
+								
 								function updateTableData () {
 									/* ---------- identify this exact dataset ---------- */
 									const dataKey = `${currentSeason}|${currentUnit}|${currentData}`;
@@ -455,8 +468,11 @@
 										if (idx < rows.length) {
 											requestAnimationFrame(addChunk); // yield to keep UI responsive
 										} else {
-											computeColumnMinMax(window.fullCSVData); // only once per dataset
-											colourCurrentPage(table);                // colour everything
+											// final chunk just went in – now sort, then colour
+											table.order([ getDefaultSortColumn(), 'desc' ]).draw(false);
+
+											computeColumnMinMax(window.fullCSVData);
+											colourCurrentPage(table);
 										}
 									})();
 								}
@@ -757,7 +773,7 @@
 									}
 
 									/*  ⬇⬇  add any heavy function names you want to time  ⬇⬇  */
-									['computeColumnMinMax', 'updateTableData', 'applyConditionalFormatting']
+									['computeColumnMinMax', 'updateTableData', 'colourCurrentPage']
 										.forEach(timeWrap);
 								})();
 
