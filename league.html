@@ -259,6 +259,7 @@
 								var currentData = "overall";
 								var currentUnit = "per game"; // Default is per game
 								var currentSeason = "2024-25";  // Default season is 2024-25
+								let _building = false; // Throttle flag
 
 								/* cache  min/max per   <season>|<unit>   so we compute it once       */
 								var _minMaxCache = {};   // key → { pcMinMax, prfMinMax, pctMinMax, rortgMinMax }
@@ -310,6 +311,61 @@
 									Comp_OnballPass: 32,
 									Comp_Floor: 33
 								};
+
+								/* =============================================================== *
+								*  Column‑meta map, rebuilt whenever   unit | data‑view | season  *
+								*  changes.  mapByCol[i]  →  { fam:'pc'|'prf'|'pct'|'r', key:'…' } *
+								* =============================================================== */
+								let mapByCol = [];               // will hold 34 entries
+
+								function rebuildColumnMap () {
+
+									/* ----- short‑hand helpers ----------------------------------- */
+									const PC  = getCurrentPCKeys();      // long keys for this unit
+									const PRF = getCurrentPRFKeys();
+
+									const add = (col, fam, key) => mapByCol[col] = { fam, key };
+
+									mapByCol = Array(34).fill(null);     // reset
+
+									/* ----- PC family (diverging green ↔ orange) ------------------ */
+									add(COLUMN_INDEX.Total_PC      ,'pc', PC.Total);
+									add(COLUMN_INDEX.Onball_PC     ,'pc', PC.Onball);
+									add(COLUMN_INDEX.Offball_PC    ,'pc', PC.Offball);
+									add(COLUMN_INDEX.Transition_PC ,'pc', PC.Transition);
+									add(COLUMN_INDEX.Partner_PC    ,'pc', PC.Partner);
+									add(COLUMN_INDEX.Space_PC      ,'pc', PC.Space);
+									add(COLUMN_INDEX.Crash_PC      ,'pc', PC.Crash);
+									add(COLUMN_INDEX.Comp_Score        ,'pc', PC.Score);
+									add(COLUMN_INDEX.Comp_OnballScore  ,'pc', PC.OnballScore);
+									add(COLUMN_INDEX.Comp_Pass         ,'pc', PC.Pass);
+									add(COLUMN_INDEX.Comp_OnballPass   ,'pc', PC.OnballPass);
+									add(COLUMN_INDEX.Comp_Floor        ,'pc', PC.Floor);
+
+									/* ----- PRF family (simple  white ➜ green) -------------------- */
+									add(COLUMN_INDEX.Total_PRF     ,'prf', PRF.Total);
+									add(COLUMN_INDEX.Onball_PRF    ,'prf', PRF.Onball);
+									add(COLUMN_INDEX.Offball_PRF   ,'prf', PRF.Offball);
+									add(COLUMN_INDEX.Transition_PRF,'prf', PRF.Transition);
+									add(COLUMN_INDEX.Partner_PRF   ,'prf', PRF.Partner);
+									add(COLUMN_INDEX.Space_PRF     ,'prf', PRF.Space);
+									add(COLUMN_INDEX.Crash_PRF     ,'prf', PRF.Crash);
+
+									/* ----- rORTG diverging family -------------------------------- */
+									add(COLUMN_INDEX.Total_rORTG   ,'r', 'Total rORTG');
+									add(COLUMN_INDEX.Onball_rORTG  ,'r', 'On-ball rORTG');
+									add(COLUMN_INDEX.Offball_rORTG ,'r', 'Off-ball rORTG');
+									add(COLUMN_INDEX.Partner_rORTG ,'r', 'Off-ball: Partner rORTG');
+									add(COLUMN_INDEX.Space_rORTG   ,'r', 'Off-ball: Space rORTG');
+									add(COLUMN_INDEX.Crash_rORTG   ,'r', 'Off-ball: Crash rORTG');
+
+									/* ----- % family ---------------------------------------------- */
+									add(COLUMN_INDEX.Total_cUSG    ,'pct','Total creation usage');
+									add(COLUMN_INDEX.Onball_cUSG   ,'pct','On-ball creation usage');
+									add(COLUMN_INDEX.Offball_cUSG  ,'pct','Off-ball creation usage');
+									add(COLUMN_INDEX.Onball_Share  ,'pct','On-ball share');
+									add(COLUMN_INDEX.Onball_Ratio  ,'pct','On-ball playmaking ratio');
+								}
 
 								
 								function getUrlParameter(name) {
@@ -395,17 +451,14 @@
 								function updateTableData () {
 									/* ---------- identify this exact dataset ---------- */
 									const dataKey = `${currentSeason}|${currentUnit}|${currentData}`;
-									if (dataKey === _lastDataKey) {          // nothing new to build
-										colourCurrentPage(table);            // just recolour visible page
-										return;
-									}
+									if (dataKey === _lastDataKey) { colourCurrentPage(table); return; }
 									_lastDataKey = dataKey;
+
 									const pcKeys = getCurrentPCKeys(), prfKeys = getCurrentPRFKeys();
 
-									/* ---------- build the full 2‑D array (pure JS, fast) ---------- */
+									/* ---------- build the full 2‑D array (same as before) ---------- */
 									const rows = window.fullCSVData
-									.filter(r => parseFloat(r.Possessions) >= 1000 &&
-												r.Year.trim() === currentSeason)
+										.filter(r => parseFloat(r.Possessions) >= 1000 && r.Year.trim() === currentSeason)
 									.map(r => [
 										'', // Rk
 										r.Player, // Player (string)
@@ -452,27 +505,24 @@
 									]);
 
 
-									table.clear().draw(false);   // flush old rows but keep structure
+									 /* ---------- pour rows in chunks, but redraw only once ---------- */
+									_building = true;                // tell draw handler to pause
+									table.clear().draw(false);       // flush but keep structure
 
-									/* ---------- stream <tr> into DataTables in chunks ---------- */
-									/* ---------- staged chunk sizes: 50 → 100 → 150 → 200 ---------- */
-									const firstChunks = [50, 100, 150];      // feel free to tweak
+									const firstChunks = [50,100,150];
 									let idx = 0;
 
 									(function addChunk () {
-										const chunkSize = firstChunks.length ? firstChunks.shift() : 200;
-										const slice = rows.slice(idx, idx + chunkSize);
+										const slice = rows.slice(idx, idx + (firstChunks.length ? firstChunks.shift() : 200));
 										table.rows.add(slice).draw(false);
-										idx += chunkSize;
+										idx += slice.length;
 
 										if (idx < rows.length) {
-											requestAnimationFrame(addChunk); // yield to keep UI responsive
+											requestAnimationFrame(addChunk);
 										} else {
-											// final chunk just went in – now sort, then colour
-											table.order([ getDefaultSortColumn(), 'desc' ]).draw(false);
-
-											computeColumnMinMax(window.fullCSVData);
-											colourCurrentPage(table);
+											table.order([ getDefaultSortColumn(), 'desc' ]);
+											_building = false;       // allow colouring again
+											table.draw(false);       // single final redraw
 										}
 									})();
 								}
@@ -703,56 +753,51 @@
 
 								/* -------------------------------------------------------------- *
 								*  Colour only the rows that are on‑screen (one pass, no timeout) *
-								* -------------------------------------------------------------- */
-								function colourCurrentPage(api) {
-									const dt = api || table;          // fall‑back to global after init
-									if (!dt) return;                  // guard for extremely early calls
+								* -------------------------------------------------------------- */						
+								function colourCurrentPage (api) {
+									api = api || table;
+									if (!api) return;
+
+									/* 1) which original columns are currently visible? */
+									const visibleMask = api.settings()[0].aoColumns.map(c => c.bVisible);
+
+									/*    build an array that says:  “visible cell #i  ⇒  real col #j”   */
+									const realColForVisibleCell = [];
+									for (let j = 0; j < visibleMask.length; j++) {
+										if (visibleMask[j]) realColForVisibleCell.push(j);
+									}
+
+									/* 2) short‑cuts to the min/max maps */
 									const mm = { pc: pcMinMax, prf: prfMinMax, pct: pctMinMax, r: rortgMinMax };
 
-									/* fast constant arrays for membership checks */
-									const pcCols  = [COLUMN_INDEX.Total_PC, COLUMN_INDEX.Onball_PC, COLUMN_INDEX.Offball_PC,
-													COLUMN_INDEX.Transition_PC, COLUMN_INDEX.Partner_PC, COLUMN_INDEX.Space_PC,
-													COLUMN_INDEX.Crash_PC, COLUMN_INDEX.Comp_Score, COLUMN_INDEX.Comp_OnballScore,
-													COLUMN_INDEX.Comp_Pass, COLUMN_INDEX.Comp_OnballPass, COLUMN_INDEX.Comp_Floor];
+									/* 3) loop rows → cells, using the mapping above (zero jQuery) */
+									api.rows({ page: 'current' }).every(function () {
 
-									const prfCols = [COLUMN_INDEX.Total_PRF, COLUMN_INDEX.Onball_PRF, COLUMN_INDEX.Offball_PRF,
-													COLUMN_INDEX.Transition_PRF, COLUMN_INDEX.Partner_PRF, COLUMN_INDEX.Space_PRF,
-													COLUMN_INDEX.Crash_PRF];
+										const vals  = this.data();            // data array
+										const cells = this.node().cells;      // only the *visible* <td> elements
 
-									const rCols   = [COLUMN_INDEX.Total_rORTG, COLUMN_INDEX.Onball_rORTG, COLUMN_INDEX.Offball_rORTG,
-													COLUMN_INDEX.Partner_rORTG, COLUMN_INDEX.Space_rORTG, COLUMN_INDEX.Crash_rORTG];
+										for (let vis = 0; vis < cells.length; vis++) {
 
-									const pctCols = [COLUMN_INDEX.Total_cUSG, COLUMN_INDEX.Onball_cUSG, COLUMN_INDEX.Offball_cUSG,
-													COLUMN_INDEX.Onball_Share, COLUMN_INDEX.Onball_Ratio];
+											const real = realColForVisibleCell[vis]; // original column index
+											const meta = mapByCol[real];             // { fam, key } or null
+											if (!meta) continue;
 
-									dt.rows({ page: 'current' }).every(function () {
-										const rowVals = this.data();            // numeric array for this row
-										$('td', this.node()).each(function () {
-											const realCol = dt.cell(this).index().column;
-											let fam = null;
-											if      (pcCols .includes(realCol)) fam = 'pc';
-											else if (prfCols.includes(realCol)) fam = 'prf';
-											else if (rCols  .includes(realCol)) fam = 'r';
-											else if (pctCols.includes(realCol)) fam = 'pct';
-											if (!fam) return;
+											const range = mm[ meta.fam ][ meta.key ];
+											if (!range) continue;
 
-											const metricKey = fullMetricKey(fam, $(api.column(realCol).header()).attr('data-base'));
-											const range     = mm[fam][metricKey];
+											const v = parseFloat(vals[real]);        // use *real* column index
+											if (isNaN(v)) continue;
 
-											if (!range) return;
+											const colour = (meta.fam === 'pc' || meta.fam === 'r')
+												? getDivergingGradient(v, range.min, range.max,
+																		'#cc6600', '#ffffff', '#006622')
+												: getGradientColor   (v, range.min, range.max,
+																		'#ffffff', '#006622');
 
-											const val = parseFloat(rowVals[realCol]);
-											if (isNaN(val)) return;
-
-											const colour = (fam === 'pc' || fam === 'r')
-												? getDivergingGradient(val, range.min, range.max,
-																	'#cc6600', '#ffffff', '#006622')
-												: getGradientColor(val, range.min, range.max,
-																'#ffffff', '#006622');
-
-											this.style.backgroundColor = colour;
-											this.style.color = getTextContrastColor(colour);
-										});
+											const td = cells[vis];
+											td.style.backgroundColor = colour;
+											td.style.color           = getTextContrastColor(colour);
+										}
 									});
 								}
 
@@ -783,6 +828,7 @@
 
 									// Initialize the DataTable
 									table = $('#playerTable').DataTable({
+										deferRender: true,
 										paging: false,
 										searching: true,
 										info: false,
@@ -861,24 +907,26 @@
 										],
 										createdRow: function (row, rowData, dataIndex) {
 										// Empty for now, all formatting moved elsewhere
-										},
-										drawCallback: function () {
-											const api = this.api();
+										}										
+									});
 
-											/* --- rebuild the rank numbers in column 0 --- */
-											const fullOrder = api.rows({ order: 'applied', search: 'none' }).indexes().toArray();
-											api.rows({ order: 'applied', search: 'applied' }).every(function () {
-												const rank = fullOrder.indexOf(this.index()) + 1;
-												$(this.node()).find('td:eq(0)').html(rank);
-											});
+									table.on('draw', function () {
+										if (_building) return;           // skip intermediate chunks
 
-											/* --- wipe any stale colours, then recolour what’s on‑screen --- */
-											api.rows({ page: 'current' }).nodes().to$()
-												.find('td')
-												.css({ 'background-color': '', 'color': '' });
+										const api = table;
 
-											colourCurrentPage(api);
-										},
+										/* --- rebuild rank numbers --- */
+										const fullOrder = api.rows({ order:'applied', search:'none' }).indexes().toArray();
+										api.rows({ order:'applied', search:'applied' }).every(function () {
+											const rank = fullOrder.indexOf(this.index()) + 1;
+											$(this.node()).find('td:eq(0)').html(rank);
+										});
+
+										/* --- wipe + colour the current page --- */
+										api.rows({ page:'current' }).nodes().to$()
+										.find('td').css({ 'background-color':'', 'color':'' });
+
+										colourCurrentPage(api);
 									});
 
 
@@ -894,6 +942,7 @@
 									$('#dataSelect').on('change', function () {
 										currentData = $(this).val();
 										computeColumnMinMax(window.fullCSVData);
+										rebuildColumnMap();
 										updateTableData();
 										table.rows().invalidate().draw(false); 
 										updateHeaderUnits();
@@ -904,6 +953,7 @@
 									$('#statUnitSelect').on('change', function() {
 										currentUnit = $(this).val();
 										computeColumnMinMax(window.fullCSVData);
+										rebuildColumnMap();
 										updateTableData();
 										table.rows().invalidate().draw(false); 
 										updateHeaderUnits();
@@ -914,6 +964,7 @@
 									$('#yearSelect').on('change', function() {
 										currentSeason = $(this).val();
 										computeColumnMinMax(window.fullCSVData);
+										rebuildColumnMap();
 										updateTableData();
 										table.rows().invalidate().draw(false); 
 										updateHeaderUnits();
@@ -947,6 +998,7 @@
 
 											/* ---------- NOW build the table ---------- */
 											computeColumnMinMax(window.fullCSVData);  // runs once per season×unit
+											rebuildColumnMap();
 											updateTableData();                        // fills the rows
 											updateVisibleColumns();                   // hides/shows correct columns
 											updateHeaderUnits();                      // fixes header suffixes
@@ -978,7 +1030,8 @@
 								// Update the table data based on the current unit
 								$('#statUnitSelect').on('change', function() {
 									currentUnit = $(this).val();
-									
+									rebuildColumnMap();
+
 									// Recalculate min/max for the new PC and PRF columns.
 									computeColumnMinMax(window.fullCSVData);
 									
