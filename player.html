@@ -843,7 +843,7 @@
 										dom: "<'row top-controls'<'col-sm-6'f><'col-sm-6 custom-controls'>>rt<'row'<'col-sm-6'i><'col-sm-6'p>>",
 										columnDefs: [
 											{
-												targets : 0,                // Season column
+												targets : COLUMN_INDEX.Season,     // 0
 												className : 'season-col',
 												render : function (data, type, row) {
 													if (type === 'sort' || type === 'type') {
@@ -855,13 +855,22 @@
 												}
 											},
 											{
-												targets: 1, // Team column
-												width: "50px",
-												render: function (data, type, row, meta) {
-												if (type !== 'display') return data;
-												if (!data) return '';
-												let season = $('#yearSelect').val() || "";
-												return `<a href="team.html?team=${encodeURIComponent(data)}&season=${encodeURIComponent(season)}">${data}</a>`;
+												targets : COLUMN_INDEX.Tm,          // 1
+												width   : '50px',
+												render  : function (data, type, row) {
+
+													// keep the raw value for sorting / filtering
+													if (type !== 'display') return data;
+													if (!data) return '';
+
+													/* grab the season string from column 0 of this row
+													`row[COLUMN_INDEX.Season]` currently contains
+													'<a href="…">2020‑21</a>'  →  we just need '2020‑21'            */
+													let season = row[COLUMN_INDEX.Season]
+																.replace(/<[^>]*>/g, '')   // strip any HTML tags
+																.trim();
+
+													return `<a href="team.html?team=${encodeURIComponent(data)}&season=${encodeURIComponent(season)}">${data}</a>`;
 												}
 											},
 											{
