@@ -1,0 +1,1105 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>2025 playoffs</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<title>2025 playoffs</title>
+		
+		<!-- jquery-->
+		<script src="assets/js/jquery.min.js"></script>
+ 	   
+		<!-- Select2-->
+		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+    	<!-- DataTables CSS -->
+		<link rel="stylesheet" href="https://cdn.datatables.net/v/dt/dt-2.1.8/date-1.5.4/fh-4.0.1/sb-1.8.1/datatables.min.css">
+
+		<!-- DataTables JS -->
+		<script src="https://cdn.datatables.net/v/dt/dt-2.1.8/date-1.5.4/fh-4.0.1/sb-1.8.1/datatables.min.js"></script>
+
+		<!-- Papa Parse CSV parser -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+		<!-- Select2 CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+		<style>
+			/* Table styling */
+			#playerTable {
+				width: 100%;
+				table-layout: fixed;
+				overflow: hidden;
+				border-collapse: separate !important;
+				border-spacing: 0; /* Ensures no extra spacing between cells */
+			}
+		
+			#playerTable td:nth-child(2), /* Player column */
+			#playerTable td:nth-child(5) /* Total PC/g column */ 
+			{
+				font-weight: bold;
+			}
+
+			#playerTable th[colspan] {
+				text-align: center;
+			}
+
+
+			/* ---------- desktop ≥ 768 px  – fixed 225 px one‑liner ---------- */
+			@media (min-width: 768px) {
+				#playerTable col:nth-child(2),
+				#playerTable th:nth-child(2),
+				#playerTable td:nth-child(2) {
+					width: 225px;
+					white-space: nowrap;
+				}
+			}
+
+			/* ---------- mobile ≤ 767 px  – auto width + wrapping ---------- */
+			@media (max-width: 767px) {
+				#playerTable {
+					table-layout: auto;          /* let browser recalc column widths */
+				}
+
+				/* Player column – our previous rule, no break‑word */
+				#playerTable col:nth-child(2),
+				#playerTable th:nth-child(2),
+				#playerTable td:nth-child(2) {
+					width: auto !important;
+					white-space: normal !important;
+				}
+
+				/* neutralise DataTables’ nowrap class */
+				#playerTable .nowrap {
+					white-space: normal !important;
+				}
+			}
+
+			.select2-selection__clear {
+    			line-height: 1 !important;
+				padding-left: 10px !important;
+				width: 40px !important;
+				padding-right: 10px !important;
+				align-items: center !important;
+    			justify-content: center !important;
+			}
+
+			/* Add a thin gray line to the right of the specified columns */
+			#playerTable td.group-separator,
+			#playerTable th.group-separator {
+				border-right: 1px solid #0000004D !important;
+			}
+
+			/* Custom controls */
+			.custom-controls {
+				display: flex;
+				width: 100%;  /* Ensure the container spans full width if needed */
+				align-items: center;
+			}
+			.flex-spacer {
+				flex-grow: 1;
+			}
+			
+			#copyLinkSeason {
+				margin-left: auto;
+			}
+			.top-controls {
+    			margin-bottom: 20px; /* Adjust the value as needed */
+			}
+			
+
+			/* Optional: make sure the main content doesn’t overflow the sidebar */
+			#main {
+				overflow-x: auto;
+			}
+			
+		</style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+								<header id="header">
+									<a href="index.html" class="logo"><strong>BUCKETS</strong> NBA Stats</a>
+									<ul class="icons">
+										<li><a href="twitter.com" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+										<li><a href="mailto:BUCKETS.stat@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+									</ul>
+								</header>
+
+							<!-- Table -->
+								
+							<h2>2025 playoffs</h2>
+							<h5>Data updated June 1, 2025</h5>
+					
+						
+							<!-- Data selector -->
+							<div id="data-dropdown" style="margin-right: 10px;">
+								<label for="dataSelect">Data:</label>
+								<select id="dataSelect">
+								<option value="overall" selected>Overall</option>
+								<option value="onball">On-ball</option>
+								<option value="offball">Off-ball</option>
+								</select>
+							</div>
+  
+
+							<!-- Drop down selector for unit -->
+							<div id="unit-dropdown">
+								<label for="statUnitSelect">Units:</label>
+								<select id="statUnitSelect">
+									<option value="per game" selected>per game</option>
+									<option value="per 36 minutes">per 36 minutes</option>
+									<option value="per 75 possessions">per 75 possessions</option>
+								</select>
+							</div>
+
+							<div id="season-dropdown" style="margin-right: 10px;">
+								<label for="yearSelect">Season: </label>
+								<select id="yearSelect">
+								  <!-- Options will be populated dynamically from CSV -->
+								</select>
+							</div>
+							<button id="copyLinkSeason">Copy Link</button>
+							  
+
+
+							<!-- Table for DataTables -->
+							<div class="table-container" style="overflow-x: auto;">
+								<table id="playerTable" class="display compact">
+									<thead>
+										<tr>
+										  <th rowspan="2">Rk</th>
+										  <th rowspan="2">Player</th>
+										  <th rowspan="2">Tm</th>
+										  <th rowspan="2">G</th>
+									  
+										  <th colspan="4">Total</th>
+										  <th colspan="6" title="Includes ISO, PNR ball handler, Post-up, and half court playmaking plays">On-ball</th>
+										  <th colspan="4" title="Includes Roll/Pop, Handoff, Spot-Up, Off-Screen, Basket cut, and Putback plays">Off-ball</th>
+										  <th colspan="3" title="Roll/Pop and Handoff plays">Off-ball: Partner</th>
+										  <th colspan="3" title="Spot-Up and Off-screen plays">Off-ball: Space</th>
+										  <th colspan="3" title="Basket cut and Putback plays">Off-ball: Crash</th>
+										  <th colspan="2">Transition</th>
+										  <th colspan="5" title="Contributions to points created from scoring, playmaking, and floor-raising" class="unit-components" data-base="Components of Total PC">Components of Total PC</th>
+										</tr>
+										<tr>
+										  <!-- Total -->
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Total PC">PC</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Total PRF">PRF</th>
+										  <th class="pct-col unit-cusg" title="Creation Usage %: Percent of on-court plays where the player scores, playmakes, or commits a turnover" data-base="Total creation usage">cUSG%</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Total rORTG">rORTG</th>
+									  
+										  <!-- On-ball -->
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="On-ball PRF">PRF</th>
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="On-ball PC">PC</th>
+										  <th class="pct-col unit-cusg" title="Creation Usage %: Percent of on-court plays where the player scores, playmakes, or commits a turnover" data-base="On-ball creation usage">cUSG%</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="On-ball rORTG">rORTG</th>
+										  <th class="pct-col" title="Estimated % of team's on-ball plays used" data-base="On-ball share">Share</th>
+										  <th class="pct-col" title="% of on-ball plays used for playmaking (vs. scoring)" data-base="On-ball playmaking ratio">Playmake %</th>
+									  
+										  <!-- Off-ball -->
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Off-ball PRF">PRF</th>
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Off-ball PC">PC</th>
+										  <th class="pct-col unit-cusg" title="Creation Usage %: Percent of on-court plays where the player scores, playmakes, or commits a turnover" data-base="Off-ball creation usage">cUSG%</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Off-ball rORTG">rORTG</th>
+									  
+										  <!-- Partner -->
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Off-ball: Partner PC">PC</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Off-ball: Partner PRF">PRF</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Off-ball: Partner rORTG">rORTG</th>
+									  
+										  <!-- Space -->
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Off-ball: Space PC">PC</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Off-ball: Space PRF">PRF</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Off-ball: Space rORTG">rORTG</th>
+									  
+										  <!-- Crash -->
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Off-ball: Crash PC">PC</th>
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Off-ball: Crash PRF">PRF</th>
+										  <th class="rortg-col" title="Relative Offensive Rating: Points above baseline per 100 plays used" data-base="Off-ball: Crash rORTG">rORTG</th>
+									  
+										  <!-- Transition -->
+										  <th class="prf-col unit-prf" title="Points Responsible For: Total scored and assisted points including FT" data-base="Transition PRF">PRF</th>
+										  <th class="pc-col unit-pc" title="Points created: Total points added vs. baseline efficiency" data-base="Transition PC">PC</th>
+									  
+										  <!-- Components -->
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="Scoring PC">Score</th>
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="On-ball Scoring PC">Score</th>
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="Playmaking PC">Pass</th>
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="On-ball Playmaking PC">Pass</th>
+										  <th class="pc-col unit-components" title="Points created: Total points added vs. baseline efficiency" data-base="Floor raising PC">Floor</th>
+										</tr>
+									  </thead>
+									  
+															
+									<tbody>
+										<!-- Data from CSV will be loaded here -->
+									</tbody>
+								</table>
+							</div>
+							<script>
+								var table;
+								var prfMinMax = {};
+								var rortgMinMax = {};
+								var pcMinMax = {}; 
+								var pctMinMax = {};   
+								var currentData = "overall";
+								var currentUnit = "per game"; // Default is per game
+								var currentSeason = "2024-25";  // Default season is 2024-25
+								let _building = false; // Throttle flag
+
+								/* cache  min/max per   <season>|<unit>   so we compute it once       */
+								var _minMaxCache = {};   // key → { pcMinMax, prfMinMax, pctMinMax, rortgMinMax }
+
+								const COLUMN_INDEX = {
+									Rk: 0,
+									Player: 1,
+									Tm: 2,
+									G: 3,
+
+									// Total
+									Total_PC: 4,
+									Total_PRF: 5,
+									Total_cUSG: 6,
+									Total_rORTG: 7,
+
+									// On-ball
+									Onball_PRF: 8,
+									Onball_PC: 9,
+									Onball_cUSG: 10,
+									Onball_rORTG: 11,
+									Onball_Share: 12,
+									Onball_Ratio: 13,
+
+									// Off-ball
+									Offball_PRF: 14,
+									Offball_PC: 15,
+									Offball_cUSG: 16,
+									Offball_rORTG: 17,
+
+									Partner_PC: 18,
+									Partner_PRF: 19,
+									Partner_rORTG: 20,
+
+									Space_PC: 21,
+									Space_PRF: 22,
+									Space_rORTG: 23,
+
+									Crash_PC: 24,
+									Crash_PRF: 25,
+									Crash_rORTG: 26,
+
+									Transition_PRF: 27,
+									Transition_PC: 28,
+
+									Comp_Score: 29,
+									Comp_OnballScore: 30,
+									Comp_Pass: 31,
+									Comp_OnballPass: 32,
+									Comp_Floor: 33
+								};
+
+								/* =============================================================== *
+								*  Column‑meta map, rebuilt whenever   unit | data‑view | season  *
+								*  changes.  mapByCol[i]  →  { fam:'pc'|'prf'|'pct'|'r', key:'…' } *
+								* =============================================================== */
+								let mapByCol = [];               // will hold 34 entries
+
+								function rebuildColumnMap () {
+
+									/* ----- short‑hand helpers ----------------------------------- */
+									const PC  = getCurrentPCKeys();      // long keys for this unit
+									const PRF = getCurrentPRFKeys();
+
+									const add = (col, fam, key) => mapByCol[col] = { fam, key };
+
+									mapByCol = Array(34).fill(null);     // reset
+
+									/* ----- PC family (diverging green ↔ orange) ------------------ */
+									add(COLUMN_INDEX.Total_PC      ,'pc', PC.Total);
+									add(COLUMN_INDEX.Onball_PC     ,'pc', PC.Onball);
+									add(COLUMN_INDEX.Offball_PC    ,'pc', PC.Offball);
+									add(COLUMN_INDEX.Transition_PC ,'pc', PC.Transition);
+									add(COLUMN_INDEX.Partner_PC    ,'pc', PC.Partner);
+									add(COLUMN_INDEX.Space_PC      ,'pc', PC.Space);
+									add(COLUMN_INDEX.Crash_PC      ,'pc', PC.Crash);
+									add(COLUMN_INDEX.Comp_Score        ,'pc', PC.Score);
+									add(COLUMN_INDEX.Comp_OnballScore  ,'pc', PC.OnballScore);
+									add(COLUMN_INDEX.Comp_Pass         ,'pc', PC.Pass);
+									add(COLUMN_INDEX.Comp_OnballPass   ,'pc', PC.OnballPass);
+									add(COLUMN_INDEX.Comp_Floor        ,'pc', PC.Floor);
+
+									/* ----- PRF family (simple  white ➜ green) -------------------- */
+									add(COLUMN_INDEX.Total_PRF     ,'prf', PRF.Total);
+									add(COLUMN_INDEX.Onball_PRF    ,'prf', PRF.Onball);
+									add(COLUMN_INDEX.Offball_PRF   ,'prf', PRF.Offball);
+									add(COLUMN_INDEX.Transition_PRF,'prf', PRF.Transition);
+									add(COLUMN_INDEX.Partner_PRF   ,'prf', PRF.Partner);
+									add(COLUMN_INDEX.Space_PRF     ,'prf', PRF.Space);
+									add(COLUMN_INDEX.Crash_PRF     ,'prf', PRF.Crash);
+
+									/* ----- rORTG diverging family -------------------------------- */
+									add(COLUMN_INDEX.Total_rORTG   ,'r', 'Total rORTG');
+									add(COLUMN_INDEX.Onball_rORTG  ,'r', 'On-ball rORTG');
+									add(COLUMN_INDEX.Offball_rORTG ,'r', 'Off-ball rORTG');
+									add(COLUMN_INDEX.Partner_rORTG ,'r', 'Off-ball: Partner rORTG');
+									add(COLUMN_INDEX.Space_rORTG   ,'r', 'Off-ball: Space rORTG');
+									add(COLUMN_INDEX.Crash_rORTG   ,'r', 'Off-ball: Crash rORTG');
+
+									/* ----- % family ---------------------------------------------- */
+									add(COLUMN_INDEX.Total_cUSG    ,'pct','Total creation usage');
+									add(COLUMN_INDEX.Onball_cUSG   ,'pct','On-ball creation usage');
+									add(COLUMN_INDEX.Offball_cUSG  ,'pct','Off-ball creation usage');
+									add(COLUMN_INDEX.Onball_Share  ,'pct','On-ball share');
+									add(COLUMN_INDEX.Onball_Ratio  ,'pct','On-ball playmaking ratio');
+								}
+
+								
+								function getUrlParameter(name) {
+									name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+									var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+									var results = regex.exec(window.location.search);
+									return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+								}
+
+								var urlSeason = getUrlParameter('season');
+								if (urlSeason) {
+									currentSeason = urlSeason;
+									$("#yearSelect").val(urlSeason);
+								}
+
+
+								function convertUnitToPCUnit(unit) {
+									if (unit === "per game") return "PC/g";
+									if (unit === "per 36 minutes") return "PC/36";
+									if (unit === "per 75 possessions") return "PC/75";
+								}
+
+								function getCurrentPCKeys() {
+									const unit = currentUnit === "per game" ? "/g" : (currentUnit === "per 36 minutes" ? "/36" : "/75");
+
+									return {
+										// Overall
+										Total: `Total PC${unit} (floor raising adj.)`,
+										Onball: `On-ball PC${unit} (floor raising adj.)`,
+										Offball: `Off-ball PC${unit}`,
+										Transition: `Transition PC${unit}`,
+
+										// Off-ball detail
+										Partner: `Off-ball: Partner PC${unit}`,
+										Space: `Off-ball: Space PC${unit}`,
+										Crash: `Off-ball: Crash PC${unit}`,
+
+										// Component scores
+										Score: `Scoring PC${unit}`,
+										OnballScore: `On-ball Scoring PC${unit}`,
+										Pass: `Playmaking PC${unit}`,
+										OnballPass: `On-ball Playmaking PC${unit}`,
+										Floor: `Floor raising PC${unit}`
+									};
+								}
+								function convertUnitToPRFUnit(unit) {
+									if (unit === "per game") return "PRF/g";
+									if (unit === "per 36 minutes") return "PRF/36";
+									if (unit === "per 75 possessions") return "PRF/75";
+								}
+
+								function getCurrentPRFKeys() {
+									const unit = currentUnit === "per game" ? "/g" : (currentUnit === "per 36 minutes" ? "/36" : "/75");
+
+									return {
+										Total: `Total PRF${unit}`,
+										Onball: `On-ball PRF${unit}`,
+										Offball: `Off-ball PRF${unit}`,
+										Transition: `Transition PRF${unit}`,
+										Partner: `Off-ball: Partner PRF${unit}`,
+										Space: `Off-ball: Space PRF${unit}`,
+										Crash: `Off-ball: Crash PRF${unit}`
+									};
+								}
+
+								/* -------------------------------------------------------------- *
+								*    updateTableData  —  incremental row build with hash‑skip    *
+								* -------------------------------------------------------------- */
+								let _lastDataKey = '';      // remembers the data combination already displayed
+								
+								/* -------------------------------------------------- *
+								*  which column should the table be sorted on?       *
+								* -------------------------------------------------- */
+								function getDefaultSortColumn () {
+									switch (currentData) {
+										case 'onball':  return COLUMN_INDEX.Onball_PC;   // col 9
+										case 'offball': return COLUMN_INDEX.Offball_PC;  // col 15
+										default:        return COLUMN_INDEX.Total_PC;    // col 4  (overall)
+									}
+								}
+
+								
+								function updateTableData () {
+									/* ---------- identify this exact dataset ---------- */
+									const dataKey = `${currentSeason}|${currentUnit}|${currentData}`;
+									if (dataKey === _lastDataKey) { colourCurrentPage(table); return; }
+									_lastDataKey = dataKey;
+
+									const pcKeys = getCurrentPCKeys(), prfKeys = getCurrentPRFKeys();
+
+									/* ---------- build the full 2‑D array (same as before) ---------- */
+									const rows = window.fullCSVData
+										.filter(r => parseFloat(r.Possessions) >= 300 && r.Year.trim() === currentSeason)
+									.map(r => [
+										'', // Rk
+										r.Player, // Player (string)
+										r.Tm,     // Team (string)
+										parseInt(r.Games), // Games (integer)
+
+										parseFloat(r[pcKeys.Total]),    // PC
+										parseFloat(r[prfKeys.Total]),   // PRF
+										parseFloat(r['Total creation usage'].replace('%', '')), // Total cUSG%
+										parseFloat(r['Total rORTG']),    // Total rORTG
+
+										parseFloat(r[prfKeys.Onball]),   // On-ball PRF
+										parseFloat(r[pcKeys.Onball]),    // On-ball PC
+										parseFloat(r['On-ball creation usage'].replace('%', '')), // On-ball cUSG%
+										parseFloat(r['On-ball rORTG']),  // On-ball rORTG
+										parseFloat(r['On-ball share'].replace('%', '')),          // On-ball Share
+										parseFloat(r['On-ball playmaking ratio'].replace('%', '')), // Playmaking %
+
+										parseFloat(r[prfKeys.Offball]),  // Off-ball PRF
+										parseFloat(r[pcKeys.Offball]),   // Off-ball PC
+										parseFloat(r['Off-ball creation usage'].replace('%', '')), // Off-ball cUSG%
+										parseFloat(r['Off-ball rORTG']), // Off-ball rORTG
+
+										parseFloat(r[pcKeys.Partner]),   // Partner PC
+										parseFloat(r[prfKeys.Partner]),  // Partner PRF
+										parseFloat(r['Off-ball: Partner rORTG']), // Partner rORTG
+
+										parseFloat(r[pcKeys.Space]),     // Space PC
+										parseFloat(r[prfKeys.Space]),    // Space PRF
+										parseFloat(r['Off-ball: Space rORTG']), // Space rORTG
+
+										parseFloat(r[pcKeys.Crash]),     // Crash PC
+										parseFloat(r[prfKeys.Crash]),    // Crash PRF
+										parseFloat(r['Off-ball: Crash rORTG']), // Crash rORTG
+
+										parseFloat(r[prfKeys.Transition]), // Transition PRF
+										parseFloat(r[pcKeys.Transition]),  // Transition PC
+
+										parseFloat(r[pcKeys.Score]),       // Component: Score
+										parseFloat(r[pcKeys.OnballScore]), // Component: Onball Score
+										parseFloat(r[pcKeys.Pass]),        // Component: Pass
+										parseFloat(r[pcKeys.OnballPass]),  // Component: Onball Pass
+										parseFloat(r[pcKeys.Floor])        // Component: Floor
+									]);
+
+
+									 /* ---------- pour rows in chunks, but redraw only once ---------- */
+									_building = true;                // tell draw handler to pause
+									table.clear().draw(false);       // flush but keep structure
+
+									const firstChunks = [50,100,150];
+									let idx = 0;
+
+									(function addChunk () {
+										const slice = rows.slice(idx, idx + (firstChunks.length ? firstChunks.shift() : 200));
+										table.rows.add(slice).draw(false);
+										idx += slice.length;
+
+										if (idx < rows.length) {
+											requestAnimationFrame(addChunk);
+										} else {
+											table.order([ getDefaultSortColumn(), 'desc' ]);
+											_building = false;       // allow colouring again
+											table.draw(false);       // single final redraw
+										}
+									})();
+								}
+
+
+								function updateVisibleColumns() {
+									const showCols = {
+										overall: [
+											COLUMN_INDEX.Rk, COLUMN_INDEX.Player, COLUMN_INDEX.Tm, COLUMN_INDEX.G,
+											COLUMN_INDEX.Total_PC, COLUMN_INDEX.Total_PRF, COLUMN_INDEX.Total_cUSG, COLUMN_INDEX.Total_rORTG,
+											COLUMN_INDEX.Onball_PRF, COLUMN_INDEX.Onball_PC,
+											COLUMN_INDEX.Offball_PRF, COLUMN_INDEX.Offball_PC,
+											COLUMN_INDEX.Transition_PRF, COLUMN_INDEX.Transition_PC,
+											COLUMN_INDEX.Comp_Score, COLUMN_INDEX.Comp_Pass, COLUMN_INDEX.Comp_Floor
+										],
+										onball: [
+											COLUMN_INDEX.Rk, COLUMN_INDEX.Player, COLUMN_INDEX.Tm, COLUMN_INDEX.G,
+											COLUMN_INDEX.Onball_PC, COLUMN_INDEX.Onball_PRF, COLUMN_INDEX.Onball_cUSG, COLUMN_INDEX.Onball_rORTG,
+											COLUMN_INDEX.Onball_Share, COLUMN_INDEX.Onball_Ratio,
+											COLUMN_INDEX.Comp_OnballScore, COLUMN_INDEX.Comp_OnballPass, COLUMN_INDEX.Comp_Floor
+										],
+										offball: [
+											COLUMN_INDEX.Rk, COLUMN_INDEX.Player, COLUMN_INDEX.Tm, COLUMN_INDEX.G,
+											COLUMN_INDEX.Offball_PC, COLUMN_INDEX.Offball_PRF, COLUMN_INDEX.Offball_cUSG, COLUMN_INDEX.Offball_rORTG,
+											COLUMN_INDEX.Partner_PC, COLUMN_INDEX.Partner_PRF, COLUMN_INDEX.Partner_rORTG,
+											COLUMN_INDEX.Space_PC, COLUMN_INDEX.Space_PRF, COLUMN_INDEX.Space_rORTG,
+											COLUMN_INDEX.Crash_PC, COLUMN_INDEX.Crash_PRF, COLUMN_INDEX.Crash_rORTG
+										]
+									};
+
+									const visibleCols = showCols[currentData];
+
+									// Important: Don't destroy the column order! Just hide/show.
+									table.columns().every(function (index) {
+										const shouldBeVisible = visibleCols.includes(index);
+										table.column(index).visible(shouldBeVisible, false); // 'false' here prevents full table redraw
+									});
+
+									table.columns.adjust().draw(false); // Now batch redraw once
+								}
+
+
+
+
+								// Map displayed table columns to their respective CSV keys
+								const tableToCsvMap = {
+									prf: [
+										'Total PRF/g', 
+										'On-ball PRF/g', 
+										'Off-ball PRF/g', 
+										'Transition PRF/g'
+									],
+									pc: [
+										'Total PC/g (floor raising adj.)', 
+										'On-ball PC/g (floor raising adj.)', 
+										'Off-ball PC/g', 
+										'Transition PC/g',
+										'Scoring PC/g',
+										'Playmaking PC/g',
+										'Floor raising PC/g'
+									],
+									rortg: [
+										'Total rORTG', 
+										'On-ball rORTG', 
+										'Off-ball rORTG', 
+										'Transition rORTG'
+									],
+									playsPerGame: [
+										'Total Plays/g',
+										'On-ball Plays/g',
+										'Off-ball Plays/g',
+										'Transition Plays/g'
+									]
+								};
+
+							
+								// Helper function for linear gradient
+								function getGradientColor(value, min, max, colorStart, colorEnd) {
+									let ratio = (value - min) / (max - min); // Normalize to [0, 1]
+									ratio = Math.max(0, Math.min(1, ratio)); // Clamp ratio between 0 and 1
+									const start = hexToRgb(colorStart);
+									const end = hexToRgb(colorEnd);
+									const r = Math.round(start.r + ratio * (end.r - start.r));
+									const g = Math.round(start.g + ratio * (end.g - start.g));
+									const b = Math.round(start.b + ratio * (end.b - start.b));
+									return `rgb(${r}, ${g}, ${b})`;
+								}
+							
+								// Helper function for diverging gradient
+								function getDivergingGradient(value, min, max, colorLow, colorZero, colorHigh) {
+									if (min >= 0) {
+										// No negatives -> normal gradient from min to max
+										return getGradientColor(value, min, max, colorZero, colorHigh);
+									} else if (max <= 0) {
+										// No positives -> normal gradient from min to max (but reversed colors)
+										return getGradientColor(value, min, max, colorLow, colorZero);
+									} else {
+										// True diverging case
+										if (value > 0) {
+											return getGradientColor(value, 0, max, colorZero, colorHigh);
+										} else {
+											return getGradientColor(value, min, 0, colorLow, colorZero);
+										}
+									}
+								}
+							
+								// Convert hex to RGB
+								function hexToRgb(hex) {
+									const bigint = parseInt(hex.slice(1), 16);
+									return {
+										r: (bigint >> 16) & 255,
+										g: (bigint >> 8) & 255,
+										b: bigint & 255
+									};
+								}
+							
+								// Compute min/max for each column
+								function computeColumnMinMax(data) {
+									const cacheKey = `${currentSeason}|${currentUnit}`;
+									if (_minMaxCache[cacheKey]) {               //  ← reuse if possible
+										({ pcMinMax, prfMinMax, pctMinMax, rortgMinMax } = _minMaxCache[cacheKey]);
+										return;
+									}
+
+									/* -- originals, untouched, just inside this one execution -- */
+									pcMinMax = {}; prfMinMax = {}; pctMinMax = {}; rortgMinMax = {};
+									const possKey = 'Possessions';
+									const pcKeys  = Object.values(getCurrentPCKeys());
+									const prfKeys = Object.values(getCurrentPRFKeys());
+									const pctKeys = ['Total creation usage','On-ball creation usage','Off-ball creation usage',
+													'On-ball share','On-ball playmaking ratio'];
+									const rortgKeys = ['Total rORTG','On-ball rORTG','Off-ball rORTG',
+													'Off-ball: Partner rORTG','Off-ball: Space rORTG','Off-ball: Crash rORTG'];
+
+									const keep = row => parseFloat(row[possKey]) >= 200;
+
+									const fill = (keys,target) => {
+										keys.forEach(k=>{
+											const vals = data.filter(keep).map(r=>parseFloat(r[k])).filter(v=>!isNaN(v));
+											if (vals.length) target[k] = { min: Math.min(...vals), max: Math.max(...vals) };
+										});
+									};
+
+									fill(pcKeys,  pcMinMax);
+									fill(prfKeys, prfMinMax);
+									fill(pctKeys, pctMinMax);
+									fill(rortgKeys, rortgMinMax);
+
+									_minMaxCache[cacheKey] = { pcMinMax, prfMinMax, pctMinMax, rortgMinMax }; // store
+								}
+
+								function getTextContrastColor(background) {
+									if (!background || typeof background !== 'string') return '#3d4449';
+									const matches = background.match(/\d+/g);
+									if (!matches) return '#3d4449';
+									const rgb = matches.map(Number);
+									if (rgb.length < 3) return '#3d4449';
+									const luminance = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+									return luminance > 0.5 ? '#3d4449' : '#ffffff';
+								}
+
+
+
+								function updateHeaderUnits() {
+									const suffix = currentUnit === "per game" ? "/g"
+													: currentUnit === "per 36 minutes" ? "/36"
+													: "/75";
+
+									// Use short labels only
+									$("#playerTable thead th.unit-pc").text(`PC${suffix}`);
+									$("#playerTable thead th.unit-prf").text(`PRF${suffix}`);
+									$("#playerTable thead th.unit-cusg").text("cUSG%");
+
+									// Update component data columns (Score, Pass, Floor)
+									$("#playerTable thead th.unit-components").each(function () {
+										const base = $(this).attr("data-base");
+										const known = {
+											"Scoring PC": "Score",
+											"On-ball Scoring PC": "Score",
+											"Playmaking PC": "Pass",
+											"On-ball Playmaking PC": "Pass",
+											"Floor raising PC": "Floor"
+										};
+
+										if (known[base]) {
+											$(this).text(known[base]);
+										}
+									});
+
+									// Update the group header manually
+									$("#playerTable thead th[data-base='Components of Total PC']").text(`Components of Total PC${suffix}`);
+
+								}
+
+								function fullMetricKey(fam, shortKey) {
+									if (fam === 'pc') {
+										const k = getCurrentPCKeys();
+										return {
+											'Total PC'          : k.Total,
+											'On-ball PC'        : k.Onball,
+											'Off-ball PC'       : k.Offball,
+											'Transition PC'     : k.Transition,
+											'Off-ball: Partner PC' : k.Partner,
+											'Off-ball: Space PC'   : k.Space,
+											'Off-ball: Crash PC'   : k.Crash,
+											'Scoring PC'                : k.Score,
+            								'On-ball Scoring PC'        : k.OnballScore,
+            								'Playmaking PC'             : k.Pass,
+           									'On-ball Playmaking PC'     : k.OnballPass,
+            								'Floor raising PC'          : k.Floor
+										}[shortKey];
+									}
+									if (fam === 'prf') {
+										const k = getCurrentPRFKeys();
+										return {
+											'Total PRF'          : k.Total,
+											'On-ball PRF'        : k.Onball,
+											'Off-ball PRF'       : k.Offball,
+											'Transition PRF'     : k.Transition,
+											'Off-ball: Partner PRF' : k.Partner,
+											'Off-ball: Space PRF'   : k.Space,
+											'Off-ball: Crash PRF'   : k.Crash
+										}[shortKey];
+									}
+									return shortKey;             // rORTG and % already match
+								}
+
+
+								/* -------------------------------------------------------------- *
+								*  Colour only the rows that are on‑screen (one pass, no timeout) *
+								* -------------------------------------------------------------- */						
+								function colourCurrentPage (api) {
+									api = api || table;
+									if (!api) return;
+
+									/* 1) which original columns are currently visible? */
+									const visibleMask = api.settings()[0].aoColumns.map(c => c.bVisible);
+
+									/*    build an array that says:  “visible cell #i  ⇒  real col #j”   */
+									const realColForVisibleCell = [];
+									for (let j = 0; j < visibleMask.length; j++) {
+										if (visibleMask[j]) realColForVisibleCell.push(j);
+									}
+
+									/* 2) short‑cuts to the min/max maps */
+									const mm = { pc: pcMinMax, prf: prfMinMax, pct: pctMinMax, r: rortgMinMax };
+
+									/* 3) loop rows → cells, using the mapping above (zero jQuery) */
+									api.rows({ page: 'current' }).every(function () {
+
+										const vals  = this.data();            // data array
+										const cells = this.node().cells;      // only the *visible* <td> elements
+
+										for (let vis = 0; vis < cells.length; vis++) {
+
+											const real = realColForVisibleCell[vis]; // original column index
+											const meta = mapByCol[real];             // { fam, key } or null
+											if (!meta) continue;
+
+											const range = mm[ meta.fam ][ meta.key ];
+											if (!range) continue;
+
+											const v = parseFloat(vals[real]);        // use *real* column index
+											if (isNaN(v)) continue;
+
+											const colour = (meta.fam === 'pc' || meta.fam === 'r')
+												? getDivergingGradient(v, range.min, range.max,
+																		'#cc6600', '#ffffff', '#006622')
+												: getGradientColor   (v, range.min, range.max,
+																		'#ffffff', '#006622');
+
+											const td = cells[vis];
+											td.style.backgroundColor = colour;
+											td.style.color           = getTextContrastColor(colour);
+										}
+									});
+								}
+
+
+								/* ============================================================= */
+								/*   TEMPORARY PROFILING WRAPPERS  (remove when you’re done)     */
+								/* ============================================================= */
+								(function () {
+									// helper to wrap a global function with console.time
+									function timeWrap(fnName) {
+										const original = window[fnName];
+										window[fnName] = function (...args) {
+											console.time(fnName);
+											const out = original.apply(this, args);
+											console.timeEnd(fnName);
+											return out;
+										};
+									}
+
+									/*  ⬇⬇  add any heavy function names you want to time  ⬇⬇  */
+									['computeColumnMinMax', 'updateTableData', 'colourCurrentPage']
+										.forEach(timeWrap);
+								})();
+
+
+								$(document).ready(function () {
+									console.log("Document ready – initializing DataTable and loading CSV data...");
+
+									// Initialize the DataTable
+									table = $('#playerTable').DataTable({
+										deferRender: true,
+										paging: false,
+										searching: true,
+										info: false,
+										responsive: true,
+										fixedHeader: true,
+										autoWidth: false,  // <-- safer false
+										ordering: true,
+										dom: "<'row top-controls'<'col-sm-6'f><'col-sm-6 custom-controls'>>rt<'row'<'col-sm-6'i><'col-sm-6'p>>",
+										columnDefs: [
+											{
+												targets: 1, // Player column
+												className: "nowrap",
+												render: function (data, type, row, meta) {
+												if (type !== 'display') return data; // ✅ only format for 'display'
+												if (!data) return ''; // ✅ safeguard if data missing
+												return `<a href="player.html?player=${encodeURIComponent(data)}">${data}</a>`;
+												}
+											},
+											{
+												targets: 2, // Team column
+												width: "50px",
+												render: function (data, type, row, meta) {
+												if (type !== 'display') return data;
+												if (!data) return '';
+												let season = $('#yearSelect').val() || "";
+												return `<a href="team.html?team=${encodeURIComponent(data)}&season=${encodeURIComponent(season)}">${data}</a>`;
+												}
+											},
+											{
+												targets: "_all", // all others
+												render: function (data, type, row, meta) {
+												if (type !== 'display') return data;
+												if (meta.col === COLUMN_INDEX.Player || meta.col === COLUMN_INDEX.Tm) return data; // ✅ ignore Player and Tm columns here
+
+												if (data == null || data === '' || isNaN(parseFloat(data))) {
+													return '';
+												}
+												const colIdx = meta.col;
+
+												if ([COLUMN_INDEX.Total_PC, COLUMN_INDEX.Onball_PC, COLUMN_INDEX.Offball_PC, COLUMN_INDEX.Transition_PC,
+													COLUMN_INDEX.Partner_PC, COLUMN_INDEX.Space_PC, COLUMN_INDEX.Crash_PC,
+													COLUMN_INDEX.Comp_Score, COLUMN_INDEX.Comp_OnballScore, COLUMN_INDEX.Comp_Pass,
+													COLUMN_INDEX.Comp_OnballPass, COLUMN_INDEX.Comp_Floor].includes(colIdx)) {
+													return parseFloat(data).toFixed(2);
+												} else if ([COLUMN_INDEX.Total_PRF, COLUMN_INDEX.Onball_PRF, COLUMN_INDEX.Offball_PRF, COLUMN_INDEX.Transition_PRF,
+													COLUMN_INDEX.Partner_PRF, COLUMN_INDEX.Space_PRF, COLUMN_INDEX.Crash_PRF].includes(colIdx)) {
+													return parseFloat(data).toFixed(1);
+												} else if ([COLUMN_INDEX.Total_cUSG, COLUMN_INDEX.Onball_cUSG, COLUMN_INDEX.Offball_cUSG,
+													COLUMN_INDEX.Onball_Share, COLUMN_INDEX.Onball_Ratio].includes(colIdx)) {
+													return parseFloat(data).toFixed(1) + '%';
+												} else if ([COLUMN_INDEX.Total_rORTG, COLUMN_INDEX.Onball_rORTG, COLUMN_INDEX.Offball_rORTG,
+													COLUMN_INDEX.Partner_rORTG, COLUMN_INDEX.Space_rORTG, COLUMN_INDEX.Crash_rORTG].includes(colIdx)) {
+													const num = parseFloat(data).toFixed(1);
+													return num > 0 ? `+${num}` : num;
+												}
+
+												return data;
+												}
+											},
+											{
+												targets: 0,
+												orderable: false,
+												searchable: false,
+												width: "40px",
+												className: "rank-column"
+											},
+											// Thin border separators for certain columns
+											{ targets: [3], className: 'group-separator' },
+											{ targets: [7], className: 'group-separator' },
+											{ targets: [13], className: 'group-separator' },
+											{ targets: [17], className: 'group-separator' },
+											{ targets: [20], className: 'group-separator' },
+											{ targets: [23], className: 'group-separator' },
+											{ targets: [26], className: 'group-separator' },
+											{ targets: [28], className: 'group-separator' }
+										],
+										createdRow: function (row, rowData, dataIndex) {
+										// Empty for now, all formatting moved elsewhere
+										}										
+									});
+
+									table.on('draw', function () {
+										if (_building) return;           // skip intermediate chunks
+
+										const api = table;
+
+										/* --- rebuild rank numbers --- */
+										const fullOrder = api.rows({ order:'applied', search:'none' }).indexes().toArray();
+										api.rows({ order:'applied', search:'applied' }).every(function () {
+											const rank = fullOrder.indexOf(this.index()) + 1;
+											$(this.node()).find('td:eq(0)').html(rank);
+										});
+
+										/* --- wipe + colour the current page --- */
+										api.rows({ page:'current' }).nodes().to$()
+										.find('td').css({ 'background-color':'', 'color':'' });
+
+										colourCurrentPage(api);
+									});
+
+
+									// inject drop downs
+									$('.custom-controls')
+										.append($('#data-dropdown'))
+										.append($('#season-dropdown'))
+										.append($('#unit-dropdown'))
+										.append('<div class="flex-spacer"></div>')
+										.append($('#copyLinkSeason'));
+									
+									// Event listener for the data dropdown
+									$('#dataSelect').on('change', function () {
+										currentData = $(this).val();
+										computeColumnMinMax(window.fullCSVData);
+										rebuildColumnMap();
+										updateTableData();
+										table.rows().invalidate().draw(false); 
+										updateHeaderUnits();
+										updateVisibleColumns();
+									});
+
+									// Event listener for the unit dropdown
+									$('#statUnitSelect').on('change', function() {
+										currentUnit = $(this).val();
+										computeColumnMinMax(window.fullCSVData);
+										rebuildColumnMap();
+										updateTableData();
+										table.rows().invalidate().draw(false); 
+										updateHeaderUnits();
+										updateVisibleColumns();
+									});
+
+									// Event listener for season dropdown
+									$('#yearSelect').on('change', function() {
+										currentSeason = $(this).val();
+										computeColumnMinMax(window.fullCSVData);
+										rebuildColumnMap();
+										updateTableData();
+										table.rows().invalidate().draw(false); 
+										updateHeaderUnits();
+										updateVisibleColumns();
+									});
+
+
+									// Load the CSV data using Papa Parse
+									Papa.parse('assets/data/2025-playoffs.csv', {
+										download: true,
+										header: true,
+										encoding: "UTF-8",
+										skipEmptyLines: true,
+										complete: function (results) {
+											 /* ---------- raw data ---------- */
+											window.fullCSVData = results.data;
+
+											/* ---------- build Season dropdown ---------- */
+											const years = [...new Set(window.fullCSVData.map(r => r['Year'].trim()))].sort();
+
+											years.forEach(y => {
+												$('#yearSelect').append($('<option>', { value: y, text: y }));
+											});
+
+											/* ---------- choose initial season ---------- */
+											if (!years.includes(currentSeason)) {
+												// “2024‑25” not in the CSV – fall back to the latest season present
+												currentSeason = years[years.length - 1];
+											}
+											$('#yearSelect').val(currentSeason);   // reflect choice in the UI
+
+											/* ---------- NOW build the table ---------- */
+											computeColumnMinMax(window.fullCSVData);  // runs once per season×unit
+											rebuildColumnMap();
+											updateTableData();                        // fills the rows
+											updateVisibleColumns();                   // hides/shows correct columns
+											updateHeaderUnits();                      // fixes header suffixes
+											
+										},
+										error: function (error) {
+											console.error("Error loading CSV file:", error);
+										}
+									});
+
+									// Create page link to share the current season selection
+									$('#copyLinkSeason').on('click', function(){
+										var season = $('#yearSelect').val();
+										if (!season) {
+											alert("Please select a season.");
+											return;
+										}
+										// Build a full URL using the current origin and the target page name.
+										var baseUrl = window.location.origin + "/league.html";
+										var url = baseUrl + "?season=" + encodeURIComponent(season);
+										navigator.clipboard.writeText(url).then(function(){
+											alert("Link copied: " + url);
+										}, function(err){
+											console.error("Could not copy text: ", err);
+										});
+									});
+								});
+																
+								// Update the table data based on the current unit
+								$('#statUnitSelect').on('change', function() {
+									currentUnit = $(this).val();
+									rebuildColumnMap();
+
+									// Recalculate min/max for the new PC and PRF columns.
+									computeColumnMinMax(window.fullCSVData);
+									
+									// Rebuild the table with the new keys.
+									updateTableData();
+								});
+								
+							</script>
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+				<div id="sidebar">
+					<div class="inner">
+
+						<!-- Menu -->
+						<nav id="menu">
+							<header class="major">
+								<h2>Menu</h2>
+							</header>
+							<ul>
+								<li><a href="index.html">Homepage</a></li>
+								<li>
+									<span class="opener">Stats</span>
+									<ul>
+										<li><a href="player career.html">Player Career</a></li>
+										<li><a href="player season.html">Player Season</a></li>
+										<li><a href="team summary.html">Team Summary</a></li>
+										<li><a href="league table.html">League Leaderboards</a></li>
+										<li><a href="bubble chart.html">League Custom charts</a></li>
+										<li><a href="all time peaks.html">All-time Peaks</a></li>
+									</ul>
+								</li>
+								<li>
+									<span class="opener">Insights</span>
+									<ul>
+										<li><a href="floor raising.html">The Westbrook Theorem</a></li>
+										<li><a href="#">More coming soon</a></li>
+									</ul>
+								</li>
+								<li><a href="methodology.html">Our stats explained</a></li>
+							</ul>
+						</nav>
+						
+						<!-- Section -->
+						<section>
+							<header class="major">
+								<h2>Get in touch</h2>
+							</header>
+							<ul class="contact">
+								<li class="icon solid fa-envelope"><a href="mailto:BUCKETS.stat@gmail.com">BUCKETS.stat@gmail.com</a></li>
+							</ul>
+						</section>
+						
+						<!-- Footer -->
+						<footer id="footer">
+							<p class="copyright">&copy; 2024 BUCKETS NBA Stats. All rights reserved. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+						</footer>
+					</div>
+				</div>
+			</div>
+
+			<!-- Scripts -->
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+
+	</body>
+</html>
