@@ -143,6 +143,7 @@
 								
 							<h2>2025 playoffs</h2>
 							<h5>Data updated June 1, 2025</h5>
+							<p>Minimum 250 possessions played</p>
 					
 						
 							<!-- Data selector -->
@@ -458,7 +459,7 @@
 
 									/* ---------- build the full 2‑D array (same as before) ---------- */
 									const rows = window.fullCSVData
-										.filter(r => parseFloat(r.Possessions) >= 300 && r.Year.trim() === currentSeason)
+										.filter(r => parseFloat(r.Possessions) >= 250 && r.Year.trim() === currentSeason)
 									.map(r => [
 										'', // Rk
 										r.Player, // Player (string)
@@ -657,7 +658,7 @@
 									const rortgKeys = ['Total rORTG','On-ball rORTG','Off-ball rORTG',
 													'Off-ball: Partner rORTG','Off-ball: Space rORTG','Off-ball: Crash rORTG'];
 
-									const keep = row => parseFloat(row[possKey]) >= 200;
+									const keep = row => parseFloat(row[possKey]) >= 250;
 
 									const fill = (keys,target) => {
 										keys.forEach(k=>{

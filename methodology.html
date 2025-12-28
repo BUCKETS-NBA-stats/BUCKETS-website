@@ -97,7 +97,7 @@
 										<li><b>Points Created (PC)</b>: how many points a player directly creates to by scoring or seeting up teammates. This includes all points scored by the player, or by a teammate they just passed to, including both field goals and free throws.</li>
 										<li><b>Creation usage (cUSG %)</b>: the share of his team's possessions a player used while attempting to create. This includes all possessions that end with the player attempting a shot or free throw, passing to a teammate who immediately attempts a shot or free throw, or turning it over.</li>
 										<li><b>Relative Offensive Rating (rORTG):</b> how efficiently a player created points, given the types of plays he used. Each type of play has a specific baseline that accounts for how its difficulty and value in the offense - see more on this below.</li>
-										<li><b>Relative Points Created (rPC):</b> how many more points the player created than expected, given his efficiency and volume. This is our measure of <u>total offensive value added</u>.</li>
+										<li><b>Relative Points Created (Pts+):</b> how many more points the player created than expected, given his efficiency and volume. This is our measure of <u>total offensive value added</u>.</li>
 									</ul>
 									<p style="margin: 0;">These stats are broken down into <u>3 offensive roles</u>:</p>
 									<ul>
@@ -195,7 +195,7 @@
 											<li>We start by calculating the <u>average Points Created per on-ball play</u> for each player. </li>
 											<li>We then adjust for <u>turnover frequency</u>. A missed field goal can turn into a second chance opportunity, but a turnover cannot. Therefore, a player who turns it over less frequenlty than average is contributing to his team by allowing more opportunities for offensive rebounds, while a player who turns it over more frequently is depriving his team of these chances<sup><span class="tooltip" data-tooltip="He is also hurting his team's defense by allowing the opponents to get out in transition more, but since BUCKETS is an offensive stat it does not account for that effect">[3]</span>. </li>
 											<li>Next, we use this adjusted points created per play to calculate an expected <u>replacement level on-ball efficiency</u>. Because each team essentially has a fixed “pie” of on-ball possessions, this represents the expected value of the on-ball possessions that a given player is displacing. For more on how we calculate this, see <a href="floor raising.html">our article on what we call the Westbrook Theorem</a>.</li>
-											<li>This <u>replacement level is the baseline</u> that is used to calculate rPC and rORTG.</li>
+											<li>This <u>replacement level is the baseline</u> that is used to calculate Pts+ and rORTG.</li>
 											<li>An advantage of this approach is that it accounts for the impact of <u>floor raising</u>. Every team needs on-ball possessions, but not all players are effective at this role. Players that can absorb more on-ball volume than average, even at mediocre efficiency, benefit their team by displacing worse on-ball options. Conversely, those who have below average on-ball volume hurt their teams by forcing others to absorb more on-ball possessions.</li>
 										</ul>
 									
