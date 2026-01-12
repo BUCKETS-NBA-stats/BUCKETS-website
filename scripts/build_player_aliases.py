@@ -74,7 +74,24 @@ def main() -> None:
     alias_rows = []
 
     for f in files:
-        df = pd.read_csv(f, dtype=str, keep_default_na=False, na_filter=False)
+        encodings_to_try = ["utf-8", "utf-8-sig", "cp1252", "latin1"]
+
+        last_err = None
+        for enc in encodings_to_try:
+            try:
+                df = pd.read_csv(
+                    f,
+                    encoding=enc,
+                    dtype=str,
+                    keep_default_na=False,
+                    na_filter=False,
+                )
+                break
+            except UnicodeDecodeError as e:
+                last_err = e
+        else:
+            raise SystemExit(f"Could not decode Name Fixer CSV {f.name}. Last error: {last_err}")
+
 
         if master_col not in df.columns:
             raise SystemExit(f"{f.name} is missing required master column: '{master_col}'")
