@@ -1,12 +1,9 @@
 # scripts/local/update.ps1
 # Runs: pull -> ingest -> stage -> validate -> commit+push (if changed)
+# Uses config from: config\buckets.json
 # Writes logs to: logs\update.log
 
 $ErrorActionPreference = "Stop"
-
-# ===== CONFIG =====
-$Season = "2025-26"
-$SeasonType = "Regular Season"
 
 $RepoRoot = (Get-Location).Path
 
@@ -20,14 +17,6 @@ function Write-Log($msg) {
   "$ts  $msg" | Tee-Object -FilePath $LogFile -Append
 }
 
-function Run-Step($label, $command) {
-  Write-Log $label
-  & $command
-  if ($LASTEXITCODE -ne 0) {
-    throw "Step failed (exit code $LASTEXITCODE): $label"
-  }
-}
-
 New-Item -ItemType Directory -Force -Path $LockDir | Out-Null
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 
@@ -38,6 +27,19 @@ if (Test-Path $LockFile) {
 
 try {
   New-Item -ItemType File -Path $LockFile -Force | Out-Null
+
+  # ----- Load config -----
+  $ConfigPath = Join-Path $RepoRoot "config\buckets.json"
+  if (!(Test-Path $ConfigPath)) {
+    throw "Missing config file: $ConfigPath"
+  }
+  $cfg = Get-Content $ConfigPath -Raw | ConvertFrom-Json
+
+  $Season = $cfg.current_season
+  $SeasonType = $cfg.default_season_type
+
+  if (-not $Season) { throw "config current_season is blank" }
+  if (-not $SeasonType) { throw "config default_season_type is blank" }
 
   Write-Log "=== Starting update ==="
   Write-Log "RepoRoot: $RepoRoot"

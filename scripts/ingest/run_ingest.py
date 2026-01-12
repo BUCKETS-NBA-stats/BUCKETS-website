@@ -8,6 +8,8 @@ from typing import Callable, TypeVar
 import pandas as pd
 from nba_api.stats.endpoints import leaguedashplayerstats, leaguedashptstats
 
+from scripts.ingest.nba_policy import validate_player_totals_df
+
 T = TypeVar("T")
 
 
@@ -43,28 +45,43 @@ def with_retries(fn: Callable[[], T], label: str, attempts: int = 5) -> T:
 
 
 def fetch_traditional_totals(season: str, season_type: str) -> pd.DataFrame:
+    """
+    NBA traditional dashboard (player-level by nature), Totals, unfiltered.
+    """
     def _call() -> pd.DataFrame:
         resp = leaguedashplayerstats.LeagueDashPlayerStats(
             season=season,
             season_type_all_star=season_type,
-            per_mode_detailed="Totals",
+            per_mode_detailed="Totals",  # <-- totals
+            # We rely on defaults for "no filters" (blank/0 values),
+            # and we do NOT set any filters like TeamID, LastNGames, Month, etc.
         )
         return resp.get_data_frames()[0]
 
-    return with_retries(_call, "NBA traditional totals", attempts=5)
+    df = with_retries(_call, "NBA traditional totals", attempts=5)
+    validate_player_totals_df(df, "nba_traditional_totals", min_rows=150)
+    return df
 
 
 def fetch_passing_totals(season: str, season_type: str) -> pd.DataFrame:
+    """
+    NBA player tracking -> Passing, Totals, PLAYER-level.
+    Key requirement: player_or_team="Player"
+    """
     def _call() -> pd.DataFrame:
         resp = leaguedashptstats.LeagueDashPtStats(
             season=season,
             season_type_all_star=season_type,
-            per_mode_simple="Totals",
+            per_mode_simple="Totals",     # <-- totals
             pt_measure_type="Passing",
+            player_or_team="Player",      # <-- player-level
+            # No filters
         )
         return resp.get_data_frames()[0]
 
-    return with_retries(_call, "NBA passing totals", attempts=5)
+    df = with_retries(_call, "NBA passing totals", attempts=5)
+    validate_player_totals_df(df, "nba_passing_totals", min_rows=150)
+    return df
 
 
 def main() -> int:
@@ -120,6 +137,11 @@ def main() -> int:
         "raw_dir": out_dir.replace("\\", "/"),
         "raw_files": manifest_files,
         "ok": True,
+        "policy": {
+            "level": "player",
+            "mode": "totals",
+            "filters": "none",
+        },
     }
 
     with open(os.path.join("reports", "ingest_manifest.json"), "w", encoding="utf-8") as f:
