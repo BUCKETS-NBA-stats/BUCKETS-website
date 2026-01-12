@@ -20,6 +20,14 @@ function Write-Log($msg) {
   "$ts  $msg" | Tee-Object -FilePath $LogFile -Append
 }
 
+function Run-Step($label, $command) {
+  Write-Log $label
+  & $command
+  if ($LASTEXITCODE -ne 0) {
+    throw "Step failed (exit code $LASTEXITCODE): $label"
+  }
+}
+
 New-Item -ItemType Directory -Force -Path $LockDir | Out-Null
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 
@@ -50,15 +58,20 @@ try {
   git checkout main | Out-Null
   git pull | Out-Null
 
+  # ---- Ingest / Stage / Validate (stop immediately if any fails) ----
   Write-Log "Running ingest..."
   & $VenvPython scripts/ingest/run_ingest.py --season $Season --season-type $SeasonType
+  if ($LASTEXITCODE -ne 0) { throw "Ingest failed (exit code $LASTEXITCODE)." }
 
   Write-Log "Building staging..."
   & $VenvPython scripts/stage/build_stage_season.py --season $Season --season-type $SeasonType
+  if ($LASTEXITCODE -ne 0) { throw "Stage build failed (exit code $LASTEXITCODE)." }
 
   Write-Log "Validating staging..."
   & $VenvPython scripts/qa/validate_stage_season.py --season $Season --season-type $SeasonType
+  if ($LASTEXITCODE -ne 0) { throw "Stage validation failed (exit code $LASTEXITCODE)." }
 
+  # ---- Commit only if changed ----
   Write-Log "Checking for changes to commit..."
   git add assets/data/staging reports
 
