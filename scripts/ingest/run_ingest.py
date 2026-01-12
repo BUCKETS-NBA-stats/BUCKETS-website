@@ -55,11 +55,6 @@ def fetch_traditional_totals(season: str, season_type: str) -> pd.DataFrame:
 
 
 def fetch_passing_totals(season: str, season_type: str) -> pd.DataFrame:
-    """
-    This corresponds to the NBA.com player tracking passing dashboard.
-    nba_api endpoint: LeagueDashPtStats
-    We request player-tracking 'Passing' measure type.
-    """
     def _call() -> pd.DataFrame:
         resp = leaguedashptstats.LeagueDashPtStats(
             season=season,
@@ -72,23 +67,7 @@ def fetch_passing_totals(season: str, season_type: str) -> pd.DataFrame:
     return with_retries(_call, "NBA passing totals", attempts=5)
 
 
-def fetch_touches_totals(season: str, season_type: str) -> pd.DataFrame:
-    """
-    NBA.com player tracking touches dashboard.
-    """
-    def _call() -> pd.DataFrame:
-        resp = leaguedashptstats.LeagueDashPtStats(
-            season=season,
-            season_type_all_star=season_type,
-            per_mode_simple="Totals",
-            pt_measure_type="Touches",
-        )
-        return resp.get_data_frames()[0]
-
-    return with_retries(_call, "NBA touches totals", attempts=5)
-
-
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--season", required=True, help='e.g. "2025-26"')
     parser.add_argument("--season-type", required=True, help='e.g. "Regular Season"')
@@ -100,49 +79,54 @@ def main() -> None:
 
     out_dir = os.path.join("assets", "data", "raw", season, season_type_slug)
     ensure_dir(out_dir)
+    ensure_dir("reports")
+
+    sources = [
+        {
+            "id": "nba_traditional_totals",
+            "filename": "nba_traditional_totals.parquet",
+            "fetch": lambda: fetch_traditional_totals(season, season_type),
+        },
+        {
+            "id": "nba_passing_totals",
+            "filename": "nba_passing_totals.parquet",
+            "fetch": lambda: fetch_passing_totals(season, season_type),
+        },
+    ]
 
     manifest_files = []
 
-    # 1) Traditional totals
-    df_trad = fetch_traditional_totals(season, season_type)
-    path_trad = os.path.join(out_dir, "nba_traditional_totals.parquet")
-    atomic_write_parquet(df_trad, path_trad)
-    manifest_files.append(("nba_traditional_totals", path_trad, df_trad))
-
-    # 2) Passing totals
-    df_pass = fetch_passing_totals(season, season_type)
-    path_pass = os.path.join(out_dir, "nba_passing_totals.parquet")
-    atomic_write_parquet(df_pass, path_pass)
-    manifest_files.append(("nba_passing_totals", path_pass, df_pass))
-
-    # 3) Touches totals
-    df_touch = fetch_touches_totals(season, season_type)
-    path_touch = os.path.join(out_dir, "nba_touches_totals.parquet")
-    atomic_write_parquet(df_touch, path_touch)
-    manifest_files.append(("nba_touches_totals", path_touch, df_touch))
-
-    ensure_dir("reports")
-    manifest = {
-        "generated_at_utc": utc_now_iso(),
-        "season": season,
-        "season_type": season_type,
-        "raw_files": [
+    for src in sources:
+        fid = src["id"]
+        fpath = os.path.join(out_dir, src["filename"])
+        df = src["fetch"]()
+        atomic_write_parquet(df, fpath)
+        manifest_files.append(
             {
                 "id": fid,
                 "path": fpath.replace("\\", "/"),
                 "rows": int(df.shape[0]),
                 "cols": int(df.shape[1]),
+                "ok": True,
+                "error": None,
             }
-            for (fid, fpath, df) in manifest_files
-        ],
+        )
+        print(f"[OK] Wrote {fid}: {fpath} ({df.shape[0]} rows, {df.shape[1]} cols)")
+
+    manifest = {
+        "generated_at_utc": utc_now_iso(),
+        "season": season,
+        "season_type": season_type,
+        "raw_dir": out_dir.replace("\\", "/"),
+        "raw_files": manifest_files,
+        "ok": True,
     }
+
     with open(os.path.join("reports", "ingest_manifest.json"), "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
-    print("Wrote raw NBA files:")
-    for (fid, fpath, df) in manifest_files:
-        print(f" - {fid}: {fpath} ({df.shape[0]} rows, {df.shape[1]} cols)")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
