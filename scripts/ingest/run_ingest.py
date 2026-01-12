@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import sys
 import time
 from datetime import datetime, timezone
 from typing import Callable, TypeVar
@@ -8,7 +9,12 @@ from typing import Callable, TypeVar
 import pandas as pd
 from nba_api.stats.endpoints import leaguedashplayerstats, leaguedashptstats
 
-from scripts.ingest.nba_policy import validate_player_totals_df
+# --- Make repo root importable so we can import scripts/ingest/nba_policy.py ---
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+
+from scripts.ingest.nba_policy import validate_player_totals_df  # noqa: E402
 
 T = TypeVar("T")
 
@@ -45,16 +51,11 @@ def with_retries(fn: Callable[[], T], label: str, attempts: int = 5) -> T:
 
 
 def fetch_traditional_totals(season: str, season_type: str) -> pd.DataFrame:
-    """
-    NBA traditional dashboard (player-level by nature), Totals, unfiltered.
-    """
     def _call() -> pd.DataFrame:
         resp = leaguedashplayerstats.LeagueDashPlayerStats(
             season=season,
             season_type_all_star=season_type,
-            per_mode_detailed="Totals",  # <-- totals
-            # We rely on defaults for "no filters" (blank/0 values),
-            # and we do NOT set any filters like TeamID, LastNGames, Month, etc.
+            per_mode_detailed="Totals",
         )
         return resp.get_data_frames()[0]
 
@@ -64,18 +65,13 @@ def fetch_traditional_totals(season: str, season_type: str) -> pd.DataFrame:
 
 
 def fetch_passing_totals(season: str, season_type: str) -> pd.DataFrame:
-    """
-    NBA player tracking -> Passing, Totals, PLAYER-level.
-    Key requirement: player_or_team="Player"
-    """
     def _call() -> pd.DataFrame:
         resp = leaguedashptstats.LeagueDashPtStats(
             season=season,
             season_type_all_star=season_type,
-            per_mode_simple="Totals",     # <-- totals
+            per_mode_simple="Totals",
             pt_measure_type="Passing",
-            player_or_team="Player",      # <-- player-level
-            # No filters
+            player_or_team="Player",
         )
         return resp.get_data_frames()[0]
 
@@ -137,11 +133,7 @@ def main() -> int:
         "raw_dir": out_dir.replace("\\", "/"),
         "raw_files": manifest_files,
         "ok": True,
-        "policy": {
-            "level": "player",
-            "mode": "totals",
-            "filters": "none",
-        },
+        "policy": {"level": "player", "mode": "totals", "filters": "none"},
     }
 
     with open(os.path.join("reports", "ingest_manifest.json"), "w", encoding="utf-8") as f:
