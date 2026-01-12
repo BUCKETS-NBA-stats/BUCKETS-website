@@ -1,3 +1,4 @@
+pip-system-certs
 pandas
 pyarrow
 pyyaml
