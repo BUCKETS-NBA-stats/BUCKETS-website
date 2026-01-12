@@ -1,0 +1,86 @@
+name: Check BUCKETS refresh freshness
+
+on:
+  schedule:
+    # Runs daily at 12:30 UTC (6:30 AM Central during standard time).
+    # Exact time isn't important; it's just a daily check.
+    - cron: "30 12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read refresh status
+        id: read
+        run: |
+          if [ ! -f reports/refresh_status.json ]; then
+            echo "missing=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "missing=false" >> $GITHUB_OUTPUT
+          echo "last_refresh_utc=$(python -c "import json; print(json.load(open('reports/refresh_status.json'))['last_refresh_utc'])")" >> $GITHUB_OUTPUT
+
+      - name: Open/Update issue if refresh_status is missing
+        if: steps.read.outputs.missing == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "BUCKETS refresh missing: reports/refresh_status.json";
+            const body =
+              "I couldn't find `reports/refresh_status.json` in the repo.\n\n" +
+              "Fix: run the local updater once and push:\n" +
+              "- PowerShell: `powershell -ExecutionPolicy Bypass -File .\\scripts\\local\\update.ps1`";
+
+            const { owner, repo } = context.repo;
+            const issues = await github.rest.issues.listForRepo({ owner, repo, state: "open" });
+            const existing = issues.data.find(i => i.title === title);
+
+            if (existing) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body });
+            } else {
+              await github.rest.issues.create({ owner, repo, title, body });
+            }
+
+      - name: Check staleness threshold and open/close issue
+        if: steps.read.outputs.missing == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const last = new Date("${{ steps.read.outputs.last_refresh_utc }}");
+            const now = new Date();
+            const ageHours = (now - last) / (1000 * 60 * 60);
+
+            // Daily job runs at ~4am CT; give it slack for "PC was off" and retry windows.
+            const thresholdHours = 36;
+
+            const title = "BUCKETS refresh is stale";
+            const body =
+              `Last refresh (UTC): ${last.toISOString()}\n` +
+              `Current time (UTC): ${now.toISOString()}\n` +
+              `Age: ${ageHours.toFixed(1)} hours (threshold ${thresholdHours}h)\n\n` +
+              `Fix: turn on your PC + internet, or run:\n` +
+              `- PowerShell: powershell -ExecutionPolicy Bypass -File .\\scripts\\local\\update.ps1\n`;
+
+            const { owner, repo } = context.repo;
+            const issues = await github.rest.issues.listForRepo({ owner, repo, state: "open" });
+            const existing = issues.data.find(i => i.title === title);
+
+            if (ageHours > thresholdHours) {
+              if (existing) {
+                await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body });
+              } else {
+                await github.rest.issues.create({ owner, repo, title, body });
+              }
+            } else {
+              if (existing) {
+                await github.rest.issues.update({ owner, repo, issue_number: existing.number, state: "closed" });
+              }
+            }
