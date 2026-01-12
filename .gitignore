@@ -1,0 +1,13 @@
+# --- BUCKETS automation ignores ---
+
+# Raw pulls should never be committed (these can be large and frequently changing)
+assets/data/raw/
+
+# Local locks and logs (machine-specific)
+scripts/local/.lock/
+logs/
+
+# Python junk
+__pycache__/
+*.pyc
+.venv/
