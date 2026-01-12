@@ -1,10 +1,14 @@
 import argparse
 import json
 import os
+import time
 from datetime import datetime, timezone
+from typing import Callable, TypeVar
 
 import pandas as pd
 from nba_api.stats.endpoints import leaguedashplayerstats
+
+T = TypeVar("T")
 
 
 def utc_now_iso() -> str:
@@ -21,13 +25,38 @@ def atomic_write_parquet(df: pd.DataFrame, out_path: str) -> None:
     os.replace(tmp_path, out_path)  # atomic replace
 
 
+def with_retries(fn: Callable[[], T], label: str, attempts: int = 5) -> T:
+    """
+    Simple exponential backoff retry helper.
+    Attempts: 1..attempts
+    Sleep: 2s, 4s, 8s, 16s (etc)
+    """
+    last_err: Exception | None = None
+    for i in range(1, attempts + 1):
+        try:
+            return fn()
+        except Exception as e:
+            last_err = e
+            if i == attempts:
+                break
+            wait = 2 ** i
+            print(f"[WARN] {label} failed (attempt {i}/{attempts}): {e}")
+            print(f"[WARN] Waiting {wait}s then retrying...")
+            time.sleep(wait)
+    assert last_err is not None
+    raise last_err
+
+
 def fetch_nba_traditional_totals(season: str, season_type: str) -> pd.DataFrame:
-    resp = leaguedashplayerstats.LeagueDashPlayerStats(
-        season=season,
-        season_type_all_star=season_type,
-        per_mode_detailed="Totals",
-    )
-    return resp.get_data_frames()[0]
+    def _call() -> pd.DataFrame:
+        resp = leaguedashplayerstats.LeagueDashPlayerStats(
+            season=season,
+            season_type_all_star=season_type,
+            per_mode_detailed="Totals",
+        )
+        return resp.get_data_frames()[0]
+
+    return with_retries(_call, label="NBA leaguedashplayerstats (Totals)", attempts=5)
 
 
 def main() -> None:
@@ -45,28 +74,4 @@ def main() -> None:
 
     df = fetch_nba_traditional_totals(season=season, season_type=season_type)
 
-    out_path = os.path.join(out_dir, "nba_traditional_totals.parquet")
-    atomic_write_parquet(df, out_path)
-
-    ensure_dir("reports")
-    manifest = {
-        "generated_at_utc": utc_now_iso(),
-        "season": season,
-        "season_type": season_type,
-        "raw_files": [
-            {
-                "id": "nba_traditional_totals",
-                "path": out_path.replace("\\", "/"),
-                "rows": int(df.shape[0]),
-                "cols": int(df.shape[1]),
-            }
-        ],
-    }
-    with open(os.path.join("reports", "ingest_manifest.json"), "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2)
-
-    print(f"Wrote raw NBA traditional totals: {out_path} ({df.shape[0]} rows, {df.shape[1]} cols)")
-
-
-if __name__ == "__main__":
-    main()
+    out_path = os.path.join(out_dir, "nba_traditional_total
