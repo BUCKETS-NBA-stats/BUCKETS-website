@@ -1,27 +1,18 @@
 {
-  "generated_at_utc": "2026-01-12T10:00:10.519103+00:00",
+  "generated_at_utc": "2026-01-13T10:01:39.283827+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
   "sources": [
     {
       "source_prefix": "nba_pass__",
-      "missing_player_ids": [
-        1629021
-      ],
+      "missing_player_ids": [],
       "carried_forward_player_ids": [],
-      "not_found_in_prev_player_ids": [
-        1629021
-      ],
+      "not_found_in_prev_player_ids": [],
       "carried_forward_count": 0,
-      "missing_count": 1
+      "missing_count": 0
     }
   ],
-  "impacted_players": [
-    {
-      "PLAYER_ID": 1629021,
-      "Player": "Moritz Wagner"
-    }
-  ],
+  "impacted_players": [],
   "notes": "If a player is missing from a secondary table today, we carry forward their last available values from the previous staging snapshot."
 }
