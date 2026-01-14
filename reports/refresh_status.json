@@ -1,13 +1,13 @@
 {
-  "last_refresh_utc": "2026-01-13T10:01:39.285813+00:00",
+  "last_refresh_utc": "2026-01-14T10:00:19.373816+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
-  "rows": 508,
+  "rows": 509,
   "cols": 88,
   "ok": true,
   "carry_forward": {
-    "nba_pass__missing": 0,
+    "nba_pass__missing": 1,
     "nba_pass__carried_forward": 0
   }
 }
