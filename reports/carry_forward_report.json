@@ -1,16 +1,20 @@
 {
-  "generated_at_utc": "2026-03-29T19:34:05.169997+00:00",
+  "generated_at_utc": "2026-03-29T20:04:55.559781+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
   "sources": [
     {
       "source_prefix": "nba_pass__",
-      "missing_player_ids": [],
+      "missing_player_ids": [
+        1642380
+      ],
       "carried_forward_player_ids": [],
-      "not_found_in_prev_player_ids": [],
+      "not_found_in_prev_player_ids": [
+        1642380
+      ],
       "carried_forward_count": 0,
-      "missing_count": 0
+      "missing_count": 1
     },
     {
       "source_prefix": "nba_pt_",
@@ -118,6 +122,7 @@
         1642362,
         1642367,
         1642368,
+        1642380,
         1642384,
         1642389,
         1642396,
@@ -270,6 +275,7 @@
         1642362,
         1642367,
         1642368,
+        1642380,
         1642384,
         1642389,
         1642396,
@@ -318,7 +324,7 @@
         1643257
       ],
       "carried_forward_count": 0,
-      "missing_count": 149
+      "missing_count": 150
     },
     {
       "source_prefix": "pbp__",
@@ -371,6 +377,7 @@
         1642282,
         1642362,
         1642368,
+        1642380,
         1642389,
         1642400,
         1642402,
@@ -446,6 +453,7 @@
         1642282,
         1642362,
         1642368,
+        1642380,
         1642389,
         1642400,
         1642402,
@@ -472,10 +480,15 @@
         1643257
       ],
       "carried_forward_count": 0,
-      "missing_count": 72
+      "missing_count": 73
     }
   ],
-  "impacted_players": [],
+  "impacted_players": [
+    {
+      "PLAYER_ID": 1642380,
+      "Player": "Adama Bal"
+    }
+  ],
   "pbp_unmatched_names": [],
   "notes": "If a player is missing from a secondary table today, we carry forward their last available values from the previous staging snapshot."
 }
