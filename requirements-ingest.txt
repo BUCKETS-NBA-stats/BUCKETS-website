@@ -4,3 +4,4 @@ pyarrow
 pyyaml
 requests
 nba_api
+beautifulsoup4

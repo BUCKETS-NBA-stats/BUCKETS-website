@@ -1,10 +1,10 @@
 {
-  "checked_at_utc": "2026-01-14T10:00:22.640354+00:00",
+  "checked_at_utc": "2026-03-29T19:34:06.305641+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
-  "rows": 509,
-  "cols": 88,
+  "rows": 572,
+  "cols": 438,
   "ok": true,
   "problems": []
 }

@@ -67,6 +67,28 @@ def main() -> None:
                 f"This usually means team-level or error payload merged incorrectly."
             )
 
+    # Ensure play-type merge occurred
+    pt_cols = [c for c in df.columns if c.startswith("nba_pt_")]
+    if not pt_cols:
+        problems.append("No nba_pt_* columns found. Play-type data did not merge into staging.")
+    elif int(df[pt_cols].isna().all(axis=1).sum()) > 0.9 * n:
+        problems.append(
+            f"Play-type columns exist but are missing for almost everyone "
+            f"({int(df[pt_cols].isna().all(axis=1).sum())}/{n}). "
+            f"This usually means the play-type endpoint returned unexpected data."
+        )
+
+    # Ensure PBPStats merge occurred
+    pbp_cols = [c for c in df.columns if c.startswith("pbp__")]
+    if not pbp_cols:
+        problems.append("No pbp__* columns found. PBPStats data did not merge into staging.")
+    elif int(df[pbp_cols].isna().all(axis=1).sum()) > 0.9 * n:
+        problems.append(
+            f"PBPStats columns exist but are missing for almost everyone "
+            f"({int(df[pbp_cols].isna().all(axis=1).sum())}/{n}). "
+            f"This usually means the name join failed entirely."
+        )
+
     # Player name sanity
     if "Player" in df.columns:
         blank_pct = float((df["Player"].astype(str).str.strip() == "").mean())

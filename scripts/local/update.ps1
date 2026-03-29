@@ -65,6 +65,18 @@ try {
   & $VenvPython scripts/ingest/run_ingest.py --season $Season --season-type $SeasonType
   if ($LASTEXITCODE -ne 0) { throw "Ingest failed (exit code $LASTEXITCODE)." }
 
+  Write-Log "Running play-type ingest..."
+  & $VenvPython scripts/ingest/nba_playtypes.py --season $Season --season-type $SeasonType
+  if ($LASTEXITCODE -ne 0) { throw "Play-type ingest failed (exit code $LASTEXITCODE)." }
+
+  Write-Log "Running PBPStats ingest..."
+  & $VenvPython scripts/ingest/nba_pbpstats.py --season $Season --season-type $SeasonType
+  if ($LASTEXITCODE -ne 0) { throw "PBPStats ingest failed (exit code $LASTEXITCODE)." }
+
+  Write-Log "Running CTG league averages ingest..."
+  & $VenvPython scripts/ingest/ctg_league_avgs.py --season $Season --season-type $SeasonType
+  if ($LASTEXITCODE -ne 0) { throw "CTG league averages ingest failed (exit code $LASTEXITCODE)." }
+
   Write-Log "Building staging..."
   & $VenvPython scripts/stage/build_stage_season.py --season $Season --season-type $SeasonType
   if ($LASTEXITCODE -ne 0) { throw "Stage build failed (exit code $LASTEXITCODE)." }
