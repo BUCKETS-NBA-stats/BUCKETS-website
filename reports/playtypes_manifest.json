@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-03-29T20:03:28.973206+00:00",
+  "generated_at_utc": "2026-03-30T13:58:19.341928+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "raw_dir": "assets/data/raw/2025-26/regular",
@@ -7,7 +7,7 @@
     {
       "id": "nba_playtypes",
       "path": "assets/data/raw/2025-26/regular/nba_playtypes.parquet",
-      "rows": 3221,
+      "rows": 3226,
       "cols": 24,
       "ok": true,
       "error": null

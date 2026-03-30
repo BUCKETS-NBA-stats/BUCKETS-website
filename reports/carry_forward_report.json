@@ -1,20 +1,16 @@
 {
-  "generated_at_utc": "2026-03-29T20:04:55.559781+00:00",
+  "generated_at_utc": "2026-03-30T13:58:44.197017+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
   "sources": [
     {
       "source_prefix": "nba_pass__",
-      "missing_player_ids": [
-        1642380
-      ],
+      "missing_player_ids": [],
       "carried_forward_player_ids": [],
-      "not_found_in_prev_player_ids": [
-        1642380
-      ],
+      "not_found_in_prev_player_ids": [],
       "carried_forward_count": 0,
-      "missing_count": 1
+      "missing_count": 0
     },
     {
       "source_prefix": "nba_pt_",
@@ -483,12 +479,7 @@
       "missing_count": 73
     }
   ],
-  "impacted_players": [
-    {
-      "PLAYER_ID": 1642380,
-      "Player": "Adama Bal"
-    }
-  ],
+  "impacted_players": [],
   "pbp_unmatched_names": [],
   "notes": "If a player is missing from a secondary table today, we carry forward their last available values from the previous staging snapshot."
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-03-29T20:02:28.240426+00:00",
+  "generated_at_utc": "2026-03-30T13:58:13.543216+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "raw_dir": "assets/data/raw/2025-26/regular",
@@ -15,7 +15,7 @@
     {
       "id": "nba_passing_totals",
       "path": "assets/data/raw/2025-26/regular/nba_passing_totals.parquet",
-      "rows": 572,
+      "rows": 573,
       "cols": 18,
       "ok": true,
       "error": null
