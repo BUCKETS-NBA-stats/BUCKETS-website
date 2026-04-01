@@ -1,16 +1,20 @@
 {
-  "generated_at_utc": "2026-03-31T09:02:27.399788+00:00",
+  "generated_at_utc": "2026-04-01T09:02:31.604937+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
   "sources": [
     {
       "source_prefix": "nba_pass__",
-      "missing_player_ids": [],
+      "missing_player_ids": [
+        1630828
+      ],
       "carried_forward_player_ids": [],
-      "not_found_in_prev_player_ids": [],
+      "not_found_in_prev_player_ids": [
+        1630828
+      ],
       "carried_forward_count": 0,
-      "missing_count": 0
+      "missing_count": 1
     },
     {
       "source_prefix": "nba_pt_",
@@ -57,6 +61,7 @@
         1630644,
         1630649,
         1630658,
+        1630828,
         1630846,
         1631102,
         1631103,
@@ -210,6 +215,7 @@
         1630644,
         1630649,
         1630658,
+        1630828,
         1630846,
         1631102,
         1631103,
@@ -320,7 +326,7 @@
         1643257
       ],
       "carried_forward_count": 0,
-      "missing_count": 150
+      "missing_count": 151
     },
     {
       "source_prefix": "pbp__",
@@ -343,6 +349,7 @@
         1630644,
         1630649,
         1630658,
+        1630828,
         1630846,
         1631102,
         1631111,
@@ -392,14 +399,16 @@
         1642935,
         1642938,
         1642951,
-        1642967,
+        1642955,
         1643024,
         1643047,
         1643133,
         1643141,
         1643257
       ],
-      "carried_forward_player_ids": [],
+      "carried_forward_player_ids": [
+        1642955
+      ],
       "not_found_in_prev_player_ids": [
         201959,
         202066,
@@ -419,6 +428,7 @@
         1630644,
         1630649,
         1630658,
+        1630828,
         1630846,
         1631102,
         1631111,
@@ -468,18 +478,22 @@
         1642935,
         1642938,
         1642951,
-        1642967,
         1643024,
         1643047,
         1643133,
         1643141,
         1643257
       ],
-      "carried_forward_count": 0,
-      "missing_count": 73
+      "carried_forward_count": 1,
+      "missing_count": 74
     }
   ],
-  "impacted_players": [],
+  "impacted_players": [
+    {
+      "PLAYER_ID": 1630828,
+      "Player": "Alex Antetokounmpo"
+    }
+  ],
   "pbp_unmatched_names": [],
   "notes": "If a player is missing from a secondary table today, we carry forward their last available values from the previous staging snapshot."
 }
