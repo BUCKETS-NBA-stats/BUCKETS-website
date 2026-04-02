@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-01T09:02:31.604937+00:00",
+  "generated_at_utc": "2026-04-02T09:03:04.834735+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
@@ -7,11 +7,11 @@
     {
       "source_prefix": "nba_pass__",
       "missing_player_ids": [
-        1630828
+        1631351
       ],
       "carried_forward_player_ids": [],
       "not_found_in_prev_player_ids": [
-        1630828
+        1631351
       ],
       "carried_forward_count": 0,
       "missing_count": 1
@@ -80,6 +80,7 @@
         1631216,
         1631223,
         1631247,
+        1631351,
         1631451,
         1631457,
         1631466,
@@ -234,6 +235,7 @@
         1631216,
         1631223,
         1631247,
+        1631351,
         1631451,
         1631457,
         1631466,
@@ -326,7 +328,7 @@
         1643257
       ],
       "carried_forward_count": 0,
-      "missing_count": 151
+      "missing_count": 152
     },
     {
       "source_prefix": "pbp__",
@@ -359,6 +361,7 @@
         1631210,
         1631211,
         1631223,
+        1631351,
         1631457,
         1641725,
         1641732,
@@ -438,6 +441,7 @@
         1631210,
         1631211,
         1631223,
+        1631351,
         1631457,
         1641725,
         1641732,
@@ -485,13 +489,13 @@
         1643257
       ],
       "carried_forward_count": 1,
-      "missing_count": 74
+      "missing_count": 75
     }
   ],
   "impacted_players": [
     {
-      "PLAYER_ID": 1630828,
-      "Player": "Alex Antetokounmpo"
+      "PLAYER_ID": 1631351,
+      "Player": "Lucas Williamson"
     }
   ],
   "pbp_unmatched_names": [],
