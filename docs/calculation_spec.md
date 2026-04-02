@@ -84,7 +84,7 @@ These depend on the data and are computed at specific points in the pipeline. Li
 ### Turnovers PBP
 **Source:** PBPStats
 **Key columns:** Player, Turnovers, LiveBallTurnovers, DeadBallTurnovers, BadPassTurnovers, BadPassOutOfBoundsTurnovers
-**Computed column:** ScoringShareOfTOV = `(Turnovers - LiveBallTurnovers - DeadBallTurnovers) / Turnovers`
+**Computed column:** ScoringShareOfTOV = `(Turnovers - BadPassTurnovers - BadPassOutOfBoundsTurnovers) / Turnovers`
 **Provides:** Playmaking TOVs for Passing (BadPass + BadPassOOB); ScoringShareOfTOV ratio for playtype scoring
 
 ### BBI stuff
