@@ -1,20 +1,16 @@
 {
-  "generated_at_utc": "2026-04-02T09:03:04.834735+00:00",
+  "generated_at_utc": "2026-04-03T09:02:11.438481+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
   "sources": [
     {
       "source_prefix": "nba_pass__",
-      "missing_player_ids": [
-        1631351
-      ],
+      "missing_player_ids": [],
       "carried_forward_player_ids": [],
-      "not_found_in_prev_player_ids": [
-        1631351
-      ],
+      "not_found_in_prev_player_ids": [],
       "carried_forward_count": 0,
-      "missing_count": 1
+      "missing_count": 0
     },
     {
       "source_prefix": "nba_pt_",
@@ -26,7 +22,6 @@
         202687,
         203482,
         203486,
-        203552,
         203648,
         203967,
         204060,
@@ -61,6 +56,7 @@
         1630644,
         1630649,
         1630658,
+        1630811,
         1630828,
         1630846,
         1631102,
@@ -172,7 +168,9 @@
         1643158,
         1643257
       ],
-      "carried_forward_player_ids": [],
+      "carried_forward_player_ids": [
+        1630811
+      ],
       "not_found_in_prev_player_ids": [
         200768,
         201145,
@@ -181,7 +179,6 @@
         202687,
         203482,
         203486,
-        203552,
         203648,
         203967,
         204060,
@@ -327,7 +324,7 @@
         1643158,
         1643257
       ],
-      "carried_forward_count": 0,
+      "carried_forward_count": 1,
       "missing_count": 152
     },
     {
@@ -342,6 +339,7 @@
         1628420,
         1628964,
         1628998,
+        1629312,
         1629610,
         1629634,
         1629646,
@@ -376,14 +374,13 @@
         1641810,
         1641813,
         1641815,
-        1641890,
         1641998,
         1642260,
         1642280,
         1642282,
         1642362,
         1642368,
-        1642380,
+        1642384,
         1642389,
         1642400,
         1642402,
@@ -410,6 +407,8 @@
         1643257
       ],
       "carried_forward_player_ids": [
+        1629312,
+        1642384,
         1642955
       ],
       "not_found_in_prev_player_ids": [
@@ -456,14 +455,12 @@
         1641810,
         1641813,
         1641815,
-        1641890,
         1641998,
         1642260,
         1642280,
         1642282,
         1642362,
         1642368,
-        1642380,
         1642389,
         1642400,
         1642402,
@@ -488,16 +485,11 @@
         1643141,
         1643257
       ],
-      "carried_forward_count": 1,
+      "carried_forward_count": 3,
       "missing_count": 75
     }
   ],
-  "impacted_players": [
-    {
-      "PLAYER_ID": 1631351,
-      "Player": "Lucas Williamson"
-    }
-  ],
+  "impacted_players": [],
   "pbp_unmatched_names": [],
   "notes": "If a player is missing from a secondary table today, we carry forward their last available values from the previous staging snapshot."
 }
