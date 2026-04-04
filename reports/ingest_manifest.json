@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-03T09:01:41.509826+00:00",
+  "generated_at_utc": "2026-04-04T09:02:10.371128+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "raw_dir": "assets/data/raw/2025-26/regular",
@@ -7,7 +7,7 @@
     {
       "id": "nba_traditional_totals",
       "path": "assets/data/raw/2025-26/regular/nba_traditional_totals.parquet",
-      "rows": 575,
+      "rows": 578,
       "cols": 67,
       "ok": true,
       "error": null

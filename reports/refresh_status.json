@@ -1,17 +1,17 @@
 {
-  "last_refresh_utc": "2026-04-03T09:02:11.439349+00:00",
+  "last_refresh_utc": "2026-04-04T09:02:29.019858+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
-  "rows": 575,
+  "rows": 578,
   "cols": 438,
   "ok": true,
   "carry_forward": {
-    "nba_pass__missing": 0,
+    "nba_pass__missing": 3,
     "nba_pass__carried_forward": 0,
-    "nba_pt__missing": 152,
+    "nba_pt__missing": 155,
     "nba_pt__carried_forward": 1,
-    "pbp__missing": 75,
+    "pbp__missing": 78,
     "pbp__carried_forward": 3
   }
 }
