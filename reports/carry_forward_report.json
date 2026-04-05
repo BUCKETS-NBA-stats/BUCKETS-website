@@ -1,24 +1,16 @@
 {
-  "generated_at_utc": "2026-04-04T09:02:29.018891+00:00",
+  "generated_at_utc": "2026-04-05T09:01:53.935865+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
   "sources": [
     {
       "source_prefix": "nba_pass__",
-      "missing_player_ids": [
-        1630286,
-        1641727,
-        1643253
-      ],
+      "missing_player_ids": [],
       "carried_forward_player_ids": [],
-      "not_found_in_prev_player_ids": [
-        1630286,
-        1641727,
-        1643253
-      ],
+      "not_found_in_prev_player_ids": [],
       "carried_forward_count": 0,
-      "missing_count": 3
+      "missing_count": 0
     },
     {
       "source_prefix": "nba_pt_",
@@ -394,6 +386,7 @@
         1642260,
         1642280,
         1642282,
+        1642357,
         1642362,
         1642368,
         1642384,
@@ -404,7 +397,6 @@
         1642434,
         1642443,
         1642468,
-        1642504,
         1642855,
         1642884,
         1642886,
@@ -425,6 +417,7 @@
       ],
       "carried_forward_player_ids": [
         1629312,
+        1642357,
         1642384,
         1642955
       ],
@@ -487,7 +480,6 @@
         1642434,
         1642443,
         1642468,
-        1642504,
         1642855,
         1642884,
         1642886,
@@ -505,24 +497,11 @@
         1643253,
         1643257
       ],
-      "carried_forward_count": 3,
+      "carried_forward_count": 4,
       "missing_count": 78
     }
   ],
-  "impacted_players": [
-    {
-      "PLAYER_ID": 1630286,
-      "Player": "Trevon Scott"
-    },
-    {
-      "PLAYER_ID": 1641727,
-      "Player": "Dariq Whitehead"
-    },
-    {
-      "PLAYER_ID": 1643253,
-      "Player": "Toby Okani"
-    }
-  ],
+  "impacted_players": [],
   "pbp_unmatched_names": [],
   "notes": "If a player is missing from a secondary table today, we carry forward their last available values from the previous staging snapshot."
 }
