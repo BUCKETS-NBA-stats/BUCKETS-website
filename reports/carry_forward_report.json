@@ -1,16 +1,27 @@
 {
-  "generated_at_utc": "2026-04-07T09:02:19.256837+00:00",
+  "generated_at_utc": "2026-04-08T09:02:05.105800+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
   "sources": [
     {
       "source_prefix": "nba_pass__",
-      "missing_player_ids": [],
-      "carried_forward_player_ids": [],
-      "not_found_in_prev_player_ids": [],
-      "carried_forward_count": 0,
-      "missing_count": 0
+      "missing_player_ids": [
+        1630286,
+        1641727,
+        1642490,
+        1643253
+      ],
+      "carried_forward_player_ids": [
+        1630286,
+        1641727,
+        1643253
+      ],
+      "not_found_in_prev_player_ids": [
+        1642490
+      ],
+      "carried_forward_count": 3,
+      "missing_count": 4
     },
     {
       "source_prefix": "nba_pt_",
@@ -50,7 +61,6 @@
         1630548,
         1630574,
         1630587,
-        1630604,
         1630621,
         1630625,
         1630639,
@@ -110,7 +120,6 @@
         1641890,
         1641998,
         1642066,
-        1642260,
         1642280,
         1642282,
         1642352,
@@ -135,6 +144,7 @@
         1642443,
         1642449,
         1642468,
+        1642490,
         1642502,
         1642504,
         1642855,
@@ -210,7 +220,6 @@
         1630548,
         1630574,
         1630587,
-        1630604,
         1630621,
         1630625,
         1630639,
@@ -269,7 +278,6 @@
         1641890,
         1641998,
         1642066,
-        1642260,
         1642280,
         1642282,
         1642352,
@@ -294,6 +302,7 @@
         1642443,
         1642449,
         1642468,
+        1642490,
         1642502,
         1642504,
         1642855,
@@ -331,7 +340,7 @@
         1643257
       ],
       "carried_forward_count": 1,
-      "missing_count": 155
+      "missing_count": 154
     },
     {
       "source_prefix": "pbp__",
@@ -339,6 +348,7 @@
         201569,
         201959,
         202066,
+        203552,
         203967,
         1627746,
         1628365,
@@ -353,6 +363,7 @@
         1630286,
         1630621,
         1630625,
+        1630644,
         1630649,
         1630658,
         1630828,
@@ -364,11 +375,10 @@
         1631205,
         1631210,
         1631211,
+        1631216,
         1631223,
-        1631351,
         1631457,
         1641725,
-        1641727,
         1641732,
         1641752,
         1641753,
@@ -397,6 +407,7 @@
         1642434,
         1642443,
         1642468,
+        1642490,
         1642855,
         1642884,
         1642886,
@@ -412,12 +423,14 @@
         1643047,
         1643133,
         1643141,
-        1643253,
         1643257
       ],
       "carried_forward_player_ids": [
         201569,
+        203552,
         1629312,
+        1630644,
+        1631216,
         1641752,
         1642357,
         1642384,
@@ -451,10 +464,8 @@
         1631210,
         1631211,
         1631223,
-        1631351,
         1631457,
         1641725,
-        1641727,
         1641732,
         1641753,
         1641761,
@@ -480,6 +491,7 @@
         1642434,
         1642443,
         1642468,
+        1642490,
         1642855,
         1642884,
         1642886,
@@ -494,14 +506,30 @@
         1643047,
         1643133,
         1643141,
-        1643253,
         1643257
       ],
-      "carried_forward_count": 6,
-      "missing_count": 78
+      "carried_forward_count": 9,
+      "missing_count": 79
     }
   ],
-  "impacted_players": [],
+  "impacted_players": [
+    {
+      "PLAYER_ID": 1630286,
+      "Player": "Trevon Scott"
+    },
+    {
+      "PLAYER_ID": 1641727,
+      "Player": "Dariq Whitehead"
+    },
+    {
+      "PLAYER_ID": 1642490,
+      "Player": "Josh Oduro"
+    },
+    {
+      "PLAYER_ID": 1643253,
+      "Player": "Toby Okani"
+    }
+  ],
   "pbp_unmatched_names": [],
   "notes": "If a player is missing from a secondary table today, we carry forward their last available values from the previous staging snapshot."
 }
