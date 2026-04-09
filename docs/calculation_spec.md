@@ -27,6 +27,7 @@ Season-specific values sourced from Cleaning the Glass. The numbers below are 20
 |------|-------|-------------|
 | PCT_FT_AST_NO_SHOT | 0.2 | Fraction of FT assists without a shot attempt |
 | LG_AVG_PP_FT_AST | 1.7 | Average points per FT assist |
+| PCT_AST_PTS_IN_PA | computed per season | Fraction of AST PTS Created from ≤1 dribble shots (computed per season from tracking shot data) |
 | LG_AVG_PPPA | `= SUM(Playmaking Pts) / SUM(Playmaking Plays ex TOV)` | League average points per playmaking action (computed from data) |
 | PADDING_VOLUME | 100 | Pseudo-observations for padded PPPA |
 | HC_CLAMP_MAX | 0.86859 | Upper bound for half-court scoring % |
@@ -66,6 +67,7 @@ These depend on the data and are computed at specific points in the pipeline. Li
 | TR_OVERALL_TOV_RATE | `= SUM(Transition TOV Total) / SUM(Transition Poss)` | Phase 2 |
 | TR_AVG_PLAYS | `= mean(Transition Scoring Plays)` | Phase 2 |
 | TR_PPP_RATIO | `= TR_AVG_PPP / CTG_HC_PPP` | Phase 2 |
+| PCT_AST_PTS_IN_PA | See docs/pct_ast_pts_in_pa_spec.md | Computed after: staging + tracking shots ingest |
 
 ---
 
@@ -127,9 +129,11 @@ These depend on the data and are computed at specific points in the pipeline. Li
 | Name | Formula | Description |
 |------|---------|-------------|
 | xTOVs | `Poss * Lg Avg On-ball TOV rate` | Expected turnovers |
-| Scoring PPP baseline | `max(CTG_HC_PPP, tab_avg_scoring_ppp)` | Higher of league avg and tab avg |
+| Scoring PPP baseline | `max(CTG_HC_PPP, tab_avg_scoring_ppp)` for most playtypes; `CTG_HC_PPP` for Putbacks (offrebound) | Higher of league avg and tab avg (Putbacks exception: see note) |
 | TOV penalty | `(Scoring TOVs - xTOVs) * CTG_TOV_PENALTY` | Excess scoring TOVs vs expected, penalized |
 | PAB | `PTS + TOV penalty - (Scoring PPP baseline * Scoring Plays)` | Points Above Baseline |
+
+**Putbacks baseline exception:** For the `offrebound` playtype (Putbacks), the scoring PPP baseline is `CTG_HC_PPP` rather than `max(CTG_HC_PPP, tab_avg_scoring_ppp)`. Second-chance scoring is valued relative to the general half-court baseline because the team already "used" a possession on the missed shot — the putback opportunity is measured against what any half-court play would produce, not against what putbacks typically produce.
 
 **Outputs used downstream:** PTS, Scoring Plays, PAB, Scoring TOVs — per player per playtype.
 
@@ -183,9 +187,9 @@ The most complex phase. Computes playmaking value, decomposes into HC vs Transit
 | HC Playmaking TOVs | `Playmaking TOVs - Transition Playmaking TOVs` | Half-court playmaking turnovers | 3a |
 | FT assist | `AST_Adj - AST - Secondary_AST` | Free-throw assists | 3a |
 | Playmaking Plays ex TOV | `Potential_AST + FT assist * PCT_FT_AST_NO_SHOT` | Playmaking plays excluding turnovers | 3a |
-| Playmaking Pts | `AST_PTS_Created + FT assist * LG_AVG_PP_FT_AST` | Total playmaking points | 3a |
+| Playmaking Pts | `AST_PTS_Created * PCT_AST_PTS_IN_PA + FT assist * LG_AVG_PP_FT_AST` | Total playmaking points (PCT_AST_PTS_IN_PA corrects for assists on 2+ dribble shots which are excluded from Potential AST) | 3a |
 | Actual PPPA | `Playmaking Pts / Playmaking Plays ex TOV` | Actual points per playmaking action | 3a |
-| PPPA (padded) | `(LG_AVG_PPPA * PADDING_VOLUME + Playmaking Pts) / (Playmaking Plays ex TOV + Playmaking TOVs)` | Stabilized PPPA estimate | 3a |
+| PPPA (padded) | `(LG_AVG_PPPA * PADDING_VOLUME + Playmaking Pts) / (Playmaking Plays ex TOV + PADDING_VOLUME)` | Stabilized PPPA estimate | 3a |
 | OBS plays | `SUM(Scoring Plays from ISO + PNRBH + Post-UP)` | On-ball scoring plays | 3a |
 | HC scoring plays | `OBS plays + Spot-Up + Handoffs + Open Rim + Off-Screen + Putbacks + Misc Scoring Plays` | All half-court scoring plays | 3a |
 | Total Scoring Plays | `HC scoring plays + Transition scoring plays` | | 3a |
@@ -399,6 +403,7 @@ All gated by the corresponding "Has data?" flag — null if no data for that cat
 Lg Avg On-ball TOV rate creates a cross-phase dependency: it needs Phase 1 Scoring TOVs/Plays AND Phase 3's clamped regression outputs. But Phase 1's xTOVs needs Lg Avg On-ball TOV rate. The solution is to split Phases 1 and 3:
 
 ```
+ 0.  compute_pct_ast_pts.py — compute PCT_AST_PTS_IN_PA (runs after staging validation, before build_season.py)
  1.  Load raw data
  2.  Phase 1a:  Standard playtype scoring — partial
                (TOV Total, Scoring TOVs, Scoring Plays only; no xTOVs or PAB yet)

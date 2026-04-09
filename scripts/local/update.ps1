@@ -77,6 +77,10 @@ try {
   & $VenvPython scripts/ingest/ctg_league_avgs.py --season $Season --season-type $SeasonType
   if ($LASTEXITCODE -ne 0) { throw "CTG league averages ingest failed (exit code $LASTEXITCODE)." }
 
+  Write-Log "Running tracking shots ingest..."
+  & $VenvPython scripts/ingest/nba_tracking_shots.py --season $Season --season-type $SeasonType
+  if ($LASTEXITCODE -ne 0) { throw "Tracking shots ingest failed (exit code $LASTEXITCODE)." }
+
   Write-Log "Building staging..."
   & $VenvPython scripts/stage/build_stage_season.py --season $Season --season-type $SeasonType
   if ($LASTEXITCODE -ne 0) { throw "Stage build failed (exit code $LASTEXITCODE)." }
@@ -84,6 +88,10 @@ try {
   Write-Log "Validating staging..."
   & $VenvPython scripts/qa/validate_stage_season.py --season $Season --season-type $SeasonType
   if ($LASTEXITCODE -ne 0) { throw "Stage validation failed (exit code $LASTEXITCODE)." }
+
+  Write-Log "Computing PCT_AST_PTS_IN_PA..."
+  & $VenvPython scripts/calculate/compute_pct_ast_pts.py --season $Season --season-type $SeasonType
+  if ($LASTEXITCODE -ne 0) { throw "PCT_AST_PTS_IN_PA computation failed (exit code $LASTEXITCODE)." }
 
   # ---- Commit only if changed ----
   Write-Log "Checking for changes to commit..."
