@@ -1,27 +1,16 @@
 {
-  "generated_at_utc": "2026-04-08T09:02:05.105800+00:00",
+  "generated_at_utc": "2026-04-09T09:02:40.898621+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
   "sources": [
     {
       "source_prefix": "nba_pass__",
-      "missing_player_ids": [
-        1630286,
-        1641727,
-        1642490,
-        1643253
-      ],
-      "carried_forward_player_ids": [
-        1630286,
-        1641727,
-        1643253
-      ],
-      "not_found_in_prev_player_ids": [
-        1642490
-      ],
-      "carried_forward_count": 3,
-      "missing_count": 4
+      "missing_player_ids": [],
+      "carried_forward_player_ids": [],
+      "not_found_in_prev_player_ids": [],
+      "carried_forward_count": 0,
+      "missing_count": 0
     },
     {
       "source_prefix": "nba_pt_",
@@ -142,10 +131,8 @@
         1642419,
         1642434,
         1642443,
-        1642449,
         1642468,
         1642490,
-        1642502,
         1642504,
         1642855,
         1642863,
@@ -300,10 +287,8 @@
         1642419,
         1642434,
         1642443,
-        1642449,
         1642468,
         1642490,
-        1642502,
         1642504,
         1642855,
         1642863,
@@ -340,7 +325,7 @@
         1643257
       ],
       "carried_forward_count": 1,
-      "missing_count": 154
+      "missing_count": 152
     },
     {
       "source_prefix": "pbp__",
@@ -348,11 +333,11 @@
         201569,
         201959,
         202066,
-        203552,
         203967,
         1627746,
         1628365,
         1628420,
+        1628449,
         1628964,
         1628998,
         1629312,
@@ -427,7 +412,7 @@
       ],
       "carried_forward_player_ids": [
         201569,
-        203552,
+        1628449,
         1629312,
         1630644,
         1631216,
@@ -512,24 +497,7 @@
       "missing_count": 79
     }
   ],
-  "impacted_players": [
-    {
-      "PLAYER_ID": 1630286,
-      "Player": "Trevon Scott"
-    },
-    {
-      "PLAYER_ID": 1641727,
-      "Player": "Dariq Whitehead"
-    },
-    {
-      "PLAYER_ID": 1642490,
-      "Player": "Josh Oduro"
-    },
-    {
-      "PLAYER_ID": 1643253,
-      "Player": "Toby Okani"
-    }
-  ],
+  "impacted_players": [],
   "pbp_unmatched_names": [],
   "notes": "If a player is missing from a secondary table today, we carry forward their last available values from the previous staging snapshot."
 }
