@@ -1,0 +1,534 @@
+{
+  "generated_at": "2026-04-08T21:53:05.056243",
+  "seasons": {
+    "2013-14": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": false,
+          "err": "- Duplicate PLAYER_ID values found (should be unique per season snapshot)."
+        }
+      },
+      "failed_step": "validate_stage",
+      "rows": 483,
+      "cols": 443,
+      "pct_ast": "n/a",
+      "overall_ok": false
+    },
+    "2014-15": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 492,
+      "cols": 443,
+      "pct_ast": "0.8339",
+      "overall_ok": true
+    },
+    "2015-16": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 476,
+      "cols": 443,
+      "pct_ast": "0.8355",
+      "overall_ok": true
+    },
+    "2016-17": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 486,
+      "cols": 443,
+      "pct_ast": "0.8388",
+      "overall_ok": true
+    },
+    "2017-18": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 541,
+      "cols": 443,
+      "pct_ast": "0.8590",
+      "overall_ok": true
+    },
+    "2018-19": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 531,
+      "cols": 441,
+      "pct_ast": "0.8427",
+      "overall_ok": true
+    },
+    "2019-20": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 529,
+      "cols": 441,
+      "pct_ast": "0.8209",
+      "overall_ok": true
+    },
+    "2020-21": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 541,
+      "cols": 441,
+      "pct_ast": "0.8223",
+      "overall_ok": true
+    },
+    "2021-22": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 605,
+      "cols": 441,
+      "pct_ast": "0.8221",
+      "overall_ok": true
+    },
+    "2022-23": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 539,
+      "cols": 443,
+      "pct_ast": "0.8143",
+      "overall_ok": true
+    },
+    "2023-24": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 572,
+      "cols": 443,
+      "pct_ast": "0.7984",
+      "overall_ok": true
+    },
+    "2024-25": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 569,
+      "cols": 442,
+      "pct_ast": "0.8141",
+      "overall_ok": true
+    },
+    "2025-26": {
+      "steps": {
+        "run_ingest": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_playtypes": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_pbpstats": {
+          "ok": true,
+          "err": ""
+        },
+        "ctg_league_avgs": {
+          "ok": true,
+          "err": ""
+        },
+        "nba_tracking_shots": {
+          "ok": true,
+          "err": ""
+        },
+        "build_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "validate_stage": {
+          "ok": true,
+          "err": ""
+        },
+        "compute_pct_ast": {
+          "ok": true,
+          "err": ""
+        }
+      },
+      "failed_step": null,
+      "rows": 579,
+      "cols": 438,
+      "pct_ast": "0.8040",
+      "overall_ok": true
+    }
+  }
+}
