@@ -93,9 +93,17 @@ try {
   & $VenvPython scripts/calculate/compute_pct_ast_pts.py --season $Season --season-type $SeasonType
   if ($LASTEXITCODE -ne 0) { throw "PCT_AST_PTS_IN_PA computation failed (exit code $LASTEXITCODE)." }
 
+  Write-Log "Building season calculations..."
+  & $VenvPython scripts/calculate/build_season.py --season $Season --season-type $SeasonType
+  if ($LASTEXITCODE -ne 0) { throw "build_season failed (exit code $LASTEXITCODE)." }
+
+  Write-Log "Building master combined CSV..."
+  & $VenvPython scripts/build_master.py
+  if ($LASTEXITCODE -ne 0) { throw "build_master failed (exit code $LASTEXITCODE)." }
+
   # ---- Commit only if changed ----
   Write-Log "Checking for changes to commit..."
-  git add assets/data/staging reports
+  git add assets/data/staging assets/data/season assets/data/league-table-combined.csv reports
 
   $diff = git diff --cached --name-only
   if (-not $diff) {
