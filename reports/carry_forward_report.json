@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-09T09:02:40.898621+00:00",
+  "generated_at_utc": "2026-04-10T09:03:22.294550+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
@@ -131,6 +131,7 @@
         1642419,
         1642434,
         1642443,
+        1642449,
         1642468,
         1642490,
         1642504,
@@ -169,7 +170,8 @@
         1643257
       ],
       "carried_forward_player_ids": [
-        1630811
+        1630811,
+        1642449
       ],
       "not_found_in_prev_player_ids": [
         200768,
@@ -324,8 +326,8 @@
         1643253,
         1643257
       ],
-      "carried_forward_count": 1,
-      "missing_count": 152
+      "carried_forward_count": 2,
+      "missing_count": 153
     },
     {
       "source_prefix": "pbp__",

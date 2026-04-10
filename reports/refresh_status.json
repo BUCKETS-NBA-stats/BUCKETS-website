@@ -1,5 +1,5 @@
 {
-  "last_refresh_utc": "2026-04-09T09:02:40.899515+00:00",
+  "last_refresh_utc": "2026-04-10T09:03:22.295424+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
@@ -9,8 +9,8 @@
   "carry_forward": {
     "nba_pass__missing": 0,
     "nba_pass__carried_forward": 0,
-    "nba_pt__missing": 152,
-    "nba_pt__carried_forward": 1,
+    "nba_pt__missing": 153,
+    "nba_pt__carried_forward": 2,
     "pbp__missing": 79,
     "pbp__carried_forward": 9
   }
