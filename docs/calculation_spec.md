@@ -29,7 +29,7 @@ Season-specific values sourced from Cleaning the Glass. The numbers below are 20
 | LG_AVG_PP_FT_AST | 1.7 | Average points per FT assist |
 | PCT_AST_PTS_IN_PA | computed per season | Fraction of AST PTS Created from ≤1 dribble shots (computed per season from tracking shot data) |
 | LG_AVG_PPPA | `= SUM(Playmaking Pts) / SUM(Playmaking Plays ex TOV)` | League average points per playmaking action (computed from data) |
-| PADDING_VOLUME | 100 | Pseudo-observations for padded PPPA |
+| PADDING_VOLUME | 400 | Pseudo-observations for padded PPPA |
 | HC_CLAMP_MAX | 0.86859 | Upper bound for half-court scoring % |
 | HC_CLAMP_MIN | 0.7234 | Lower bound for half-court scoring % |
 

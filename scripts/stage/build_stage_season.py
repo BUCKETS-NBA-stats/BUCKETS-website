@@ -139,33 +139,43 @@ def resolve_pbp_names(
     pbp_lookup: dict[str, str],
 ) -> tuple[pd.DataFrame, list[str]]:
     """
-    Add PLAYER_ID to a PBPStats DataFrame by resolving player names:
-      1. Normalize PBP 'Name' → pbp_key via _make_player_key
-      2. Look up pbp_key in pbp_lookup → player_key (fallback: use pbp_key directly)
-      3. Build {player_key: PLAYER_ID} from the current staging df
-      4. Map player_key → PLAYER_ID
+    Add PLAYER_ID to a PBPStats DataFrame.
+
+    Primary path: use EntityId directly (PBPStats EntityId == NBA.com PLAYER_ID).
+    Fallback: name-based resolution via player_aliases.csv for any row with null EntityId.
     Returns (df_with_player_id, list_of_unmatched_names).
     """
     df_pbp = df_pbp.copy()
-    df_pbp["_pbp_key"] = df_pbp["Name"].apply(
-        lambda n: _make_player_key(str(n)) if pd.notna(n) else ""
-    )
-    df_pbp["_player_key"] = df_pbp["_pbp_key"].map(pbp_lookup)
-    # Fallback: if no alias entry, use the normalized name directly as player_key
-    df_pbp["_player_key"] = df_pbp["_player_key"].fillna(df_pbp["_pbp_key"])
 
-    # Build player_key → PLAYER_ID map from staging (Player column is display name)
-    staging_df = staging_df.copy()
-    staging_df["_player_key"] = staging_df["Player"].apply(
-        lambda n: _make_player_key(str(n)) if pd.notna(n) else ""
-    )
-    key_to_pid = (
-        staging_df.dropna(subset=["PLAYER_ID"])
-        .set_index("_player_key")["PLAYER_ID"]
-        .to_dict()
-    )
+    if "EntityId" in df_pbp.columns:
+        # EntityId is the NBA.com PLAYER_ID — use it directly, casting to Int64 to match trad data
+        df_pbp["PLAYER_ID"] = pd.to_numeric(df_pbp["EntityId"], errors="coerce").astype("Int64")
+        needs_name_resolve = df_pbp["PLAYER_ID"].isna()
+    else:
+        df_pbp["PLAYER_ID"] = pd.NA
+        needs_name_resolve = pd.Series([True] * len(df_pbp), index=df_pbp.index)
 
-    df_pbp["PLAYER_ID"] = df_pbp["_player_key"].map(key_to_pid)
+    # Name-based fallback for any rows that still lack a PLAYER_ID
+    if needs_name_resolve.any():
+        df_fallback = df_pbp[needs_name_resolve].copy()
+        df_fallback["_pbp_key"] = df_fallback["Name"].apply(
+            lambda n: _make_player_key(str(n)) if pd.notna(n) else ""
+        )
+        df_fallback["_player_key"] = df_fallback["_pbp_key"].map(pbp_lookup)
+        df_fallback["_player_key"] = df_fallback["_player_key"].fillna(df_fallback["_pbp_key"])
+
+        staging_df = staging_df.copy()
+        staging_df["_player_key"] = staging_df["Player"].apply(
+            lambda n: _make_player_key(str(n)) if pd.notna(n) else ""
+        )
+        key_to_pid = (
+            staging_df.dropna(subset=["PLAYER_ID"])
+            .set_index("_player_key")["PLAYER_ID"]
+            .to_dict()
+        )
+        df_fallback["PLAYER_ID"] = df_fallback["_player_key"].map(key_to_pid)
+        df_fallback = df_fallback.drop(columns=["_pbp_key", "_player_key"])
+        df_pbp.loc[needs_name_resolve, "PLAYER_ID"] = df_fallback["PLAYER_ID"]
 
     unmatched = (
         df_pbp[df_pbp["PLAYER_ID"].isna()]["Name"]
@@ -177,7 +187,6 @@ def resolve_pbp_names(
         safe = [n.encode("ascii", errors="replace").decode("ascii") for n in unmatched[:10]]
         print(f"[WARN] PBPStats: {len(unmatched)} names could not be resolved to a PLAYER_ID: {safe}")
 
-    df_pbp = df_pbp.drop(columns=["_pbp_key", "_player_key"])
     return df_pbp, [str(n) for n in unmatched]
 
 
@@ -241,7 +250,8 @@ def carry_forward_columns_from_prev(
     if key not in prev.columns:
         return report
 
-    prev_indexed = prev.set_index(key, drop=False)
+    # Deduplicate prev on PLAYER_ID before indexing (guards against corrupt prior snapshots)
+    prev_indexed = prev.drop_duplicates(subset=[key]).set_index(key, drop=False)
 
     carried = []
     not_found = []
