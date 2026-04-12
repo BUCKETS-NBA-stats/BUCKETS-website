@@ -1,0 +1,22 @@
+{
+  "generated_at_utc": "2026-04-12T09:02:34.571185+00:00",
+  "season": "2025-26",
+  "season_type": "Regular Season",
+  "raw_dir": "C:/BUCKETS/prod/assets/data/raw/2025-26/regular",
+  "raw_files": [
+    {
+      "id": "nba_tracking_shots",
+      "path": "C:/BUCKETS/prod/assets/data/raw/2025-26/regular/nba_tracking_shots.json",
+      "rows": 1,
+      "cols": 8,
+      "ok": true,
+      "error": null
+    }
+  ],
+  "ok": true,
+  "policy": {
+    "level": "league",
+    "mode": "totals",
+    "filters": "shot_type + dribble_range"
+  }
+}
