@@ -222,7 +222,7 @@ def phase2_transition(df: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, dict]:
 
     tr_avg_ppp          = player_df["pts"].sum()       / player_df["poss"].sum()
     tr_overall_tov_rate = player_df["tov_total"].sum() / player_df["poss"].sum()
-    tr_avg_plays        = player_df["scoring_plays"].mean()
+    tr_avg_plays        = (100 * player_df["scoring_plays"] / player_df["poss_played"]).mean()
     tr_ppp_ratio        = tr_avg_ppp / cfg["CTG_HC_PPP"]
 
     aggregates = {
@@ -779,7 +779,7 @@ def phase6_assemble(
          "playmaking_points_created", "scoring_plays",
          "scoring_prf_w_tov", "pts"]
     ].rename(columns={
-        "scoring_points_created":   "tr_pc",
+        "scoring_points_created":    "tr_sc_pc",
         "playmaking_points_created": "tr_pm_pc",
         "scoring_plays":             "tr_scoring_plays",
         "transition_prf":            "tr_prf",
@@ -795,7 +795,8 @@ def phase6_assemble(
     # Total (all categories)
     base["tot_prf"]   = base["ob_prf"]  + base["pt_prf"]  + base["sp_prf"]  + base["cr_prf"]  + base["tr_prf"]
     base["tot_plays"] = base["ob_plays"] + base["pt_plays"] + base["sp_plays"] + base["cr_plays"] + base["tr_plays"]
-    base["tot_pc"]    = base["ob_pc"]   + base["pt_pc"]   + base["sp_pc"]   + base["cr_pc"]   + base["tr_pc"]
+    base["tr_pc"]  = base["tr_sc_pc"] + base["tr_pm_pc"]
+    base["tot_pc"] = base["ob_pc"] + base["pt_pc"] + base["sp_pc"] + base["cr_pc"] + base["tr_pc"]
 
     # Half court (On-ball + Partner + Space + Crash)
     base["hc_prf"]   = base["ob_prf"]  + base["pt_prf"]  + base["sp_prf"]  + base["cr_prf"]
@@ -813,7 +814,7 @@ def phase6_assemble(
     all_pab    = _sum_pt1b(pt1b, _ALL_SCORING_SLUGS, "pab")
     base["sc_prf"]   = all_pts.reindex(base.index).fillna(0.0) + base["tr_pts"]
     base["sc_plays"] = all_splays.reindex(base.index).fillna(0.0) + base["tr_scoring_plays"]
-    base["sc_pc"]    = all_pab.reindex(base.index).fillna(0.0) + base["tr_pc"]
+    base["sc_pc"]    = all_pab.reindex(base.index).fillna(0.0) + base["tr_sc_pc"]
 
     # Playmaking
     base["pm_prf"]   = base["est_hc_pm_pts"] + base["est_tr_pm_pts"]
@@ -903,7 +904,7 @@ def phase6_assemble(
     cols.update(cat_cols("Off-ball: Partner", "pt_prf",   "pt_plays",  "pt_pc",   has_pt))
     cols.update(cat_cols("Off-ball: Space",   "sp_prf",   "sp_plays",  "sp_pc",   has_sp))
     cols.update(cat_cols("Off-ball: Crash",   "cr_prf",   "cr_plays",  "cr_pc",   has_cr))
-    cols.update(cat_cols("Transition",        "tr_prf",   "tr_plays",  "tr_pc",   has_tr))
+    cols.update(cat_cols("Transition",        "tr_prf",   "tr_plays",  "tr_pc",         has_tr))
     cols.update(cat_cols("Total",             "tot_prf",  "tot_plays", "tot_pc",  has_any_cat))
     # The plain "Total PC" rates are replaced by the qualified (ex. floor raising) versions;
     # remove them so only the qualified names appear in the output.

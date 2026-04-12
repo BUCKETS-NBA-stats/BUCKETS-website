@@ -1,7 +1,7 @@
 # BUCKETS Calculation Spec
 
 **Purpose:** Blueprint for the Python pipeline that transforms raw NBA data into the season CSV for the BUCKETS website.
-**Last updated:** March 2026
+**Last updated:** April 2026
 **Scope:** All calculations are per-season. League averages and sums refer to one season. Regular season only for now; playoffs later.
 
 ---
@@ -65,7 +65,7 @@ These depend on the data and are computed at specific points in the pipeline. Li
 | HC PPP w/ TOV penalty | `= CTG_HC_PPP + Lg Avg On-ball TOV rate * CTG_TOV_PENALTY` | Phase 3a |
 | TR_AVG_PPP | `= SUM(Transition PTS) / SUM(Transition Poss)` | Phase 2 |
 | TR_OVERALL_TOV_RATE | `= SUM(Transition TOV Total) / SUM(Transition Poss)` | Phase 2 |
-| TR_AVG_PLAYS | `= mean(Transition Scoring Plays)` | Phase 2 |
+| TR_AVG_PLAYS | `= mean(100 * Transition Scoring Plays / Possessions Played)` — average transition scoring plays per 100 team possessions | Phase 2 |
 | TR_PPP_RATIO | `= TR_AVG_PPP / CTG_HC_PPP` | Phase 2 |
 | PCT_AST_PTS_IN_PA | See docs/pct_ast_pts_in_pa_spec.md | Computed after: staging + tracking shots ingest |
 
@@ -161,7 +161,7 @@ First pass of Transition. Computes scoring columns and aggregates needed by Phas
 |------|---------|
 | TR_AVG_PPP | `SUM(PTS) / SUM(Poss)` |
 | TR_OVERALL_TOV_RATE | `SUM(TOV Total) / SUM(Poss)` |
-| TR_AVG_PLAYS | `mean(Scoring Plays)` |
+| TR_AVG_PLAYS | `mean(100 * Scoring Plays / Possessions Played)` — per 100 team possessions |
 | TR_PPP_RATIO | `TR_AVG_PPP / CTG_HC_PPP` |
 
 **Outputs used by Phase 3:** Scoring Plays, TOV Total, Transition Playmaking TOVs, plus tab-level aggregates.
@@ -264,7 +264,17 @@ Second pass of Transition. Adds playmaking columns and computes Points Created w
 | Playmaking PC/g | `Playmaking points created / GP` | Checksum input |
 | Checksum | `Playmaking PC/g + Scoring PC/g - PC/g` | Should be ≈ 0 |
 
-**Outputs used by Phase 6:** Transition PRF, Transition Total Plays, Points created, Scoring points created, Playmaking points created.
+**Outputs used by Phase 6:**
+
+| Phase 4 output | Internal name in Phase 6 | Used for |
+|----------------|--------------------------|---------|
+| Transition PRF | `tr_prf` | Transition PRF columns |
+| Transition Total Plays | `tr_plays` | Transition Plays columns |
+| Scoring points created | `tr_sc_pc` | Scoring aggregate (half-court PAB + `tr_sc_pc`) |
+| Playmaking points created | `tr_pm_pc` | Playmaking aggregate (HC PAB + `tr_pm_pc`) |
+| `tr_sc_pc + tr_pm_pc` | `tr_pc` | **Transition PC columns; also feeds `tot_pc`** |
+
+`tr_pc` is the true total transition PC (scoring + playmaking), parallel to how `ob_pc` combines on-ball scoring and playmaking.
 
 ---
 
@@ -347,7 +357,7 @@ Joins all phase outputs into the season CSV. Everything becomes DataFrame joins 
 | Off-ball: Partner | Roll&Pop + Handoffs | SUM(PTS) | SUM(Scoring Plays) | SUM(PAB) |
 | Off-ball: Space | Spot-Up + Off-Screen | SUM(PTS) | SUM(Scoring Plays) | SUM(PAB) |
 | Off-ball: Crash | Open Rim + Putbacks | SUM(PTS) | SUM(Scoring Plays) | SUM(PAB) |
-| Transition | Transition (Phase 4) | Transition PRF | Transition Total Plays | Points created |
+| Transition | Transition (Phase 4) | Transition PRF | Transition Total Plays | `tr_pc` = Scoring points created + Playmaking points created |
 
 **Aggregates:**
 
@@ -356,9 +366,21 @@ Joins all phase outputs into the season CSV. Everything becomes DataFrame joins 
 | Total | On-ball + Partner + Space + Crash + Transition |
 | Half court | On-ball + Partner + Space + Crash |
 | Off-ball | Partner + Space + Crash |
-| Scoring | All 11 playtypes: PTS / Scoring Plays / PAB (standard) or Scoring points created (Transition) |
-| Playmaking | PRF = Est. HC + Est. Transition playmaking points, Plays = Total playmaking plays, PC = HC Playmaking PAB + Transition Playmaking points created |
+| Scoring | All 11 playtypes: PTS / Scoring Plays / PAB (standard) or **Scoring points created only** (`tr_sc_pc`) for Transition |
+| Playmaking | PRF = Est. HC + Est. Transition playmaking points, Plays = Total playmaking plays, PC = HC Playmaking PAB + **Transition Playmaking points created** (`tr_pm_pc`) |
 | % Playmaking | Playmaking Plays / Total Plays |
+
+**Identity (holds exactly):**
+
+```
+Scoring PC + Playmaking PC + Floor raising PC = Total PC (floor raising adj.)
+```
+
+This holds because Scoring and Playmaking together cover all five category PCs (On-ball + Partner + Space + Crash + Transition), which sum to Total PC before the floor-raising adjustment:
+- Scoring PC = SUM(10 HC scoring PABs) + `tr_sc_pc`
+- Playmaking PC = `hc_playmaking_pab` + `tr_pm_pc`
+- Scoring + Playmaking = Total (ex. floor raising)
+- Adding Floor raising PC to both sides gives the adjusted identity.
 
 **Floor raising adjustments:**
 
