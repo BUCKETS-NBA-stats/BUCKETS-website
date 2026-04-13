@@ -20,7 +20,7 @@ scripts/stage/build_stage_season.py → assets/data/staging/{season}__{type}.par
 ↓
 scripts/qa/validate_stage_season.py (QA gate)
 ↓
-[PHASE 3 - NOT YET BUILT] calculations layer → assets/data/season/league-table-{year}.csv (169 cols)
+scripts/calculate/build_season.py → assets/data/season/league-table-{year}.csv (151 cols)
 ↓
 scripts/build_master.py → assets/data/league-table-combined.csv
 ↓
@@ -56,12 +56,14 @@ All data sources automated:
 Staging parquet: 438 columns covering all raw source data.
 Daily Task Scheduler job runs the full pipeline from `C:\BUCKETS\prod` at 4 AM Central.
 
-### Phase 3 — Port calculations from Sheets to code ⏳ NEXT
-- Reproduce the ~100 calculated columns (I–EC in the Google Sheet) that transform raw data into PRF, PC, rORTG, cUSG%, on-ball/off-ball splits, etc.
-- Add regression tests comparing code output vs known-good exported season CSVs
-- Once validated, this replaces the Google Sheets step entirely — staging parquet goes directly to season CSV
+### Phase 3 — Port calculations from Sheets to code ✅ COMPLETE
+- All calculated columns ported: PRF, PC, rORTG, cUSG%, on-ball/off-ball/transition splits, floor raising, scoring/playmaking decomposition
+- scripts/calculate/build_season.py replaces the Google Sheets step entirely
+- All 13 seasons (2013-14 through 2025-26) rebuilt and validated
+- Daily pipeline now runs fully end-to-end: ingest → stage → calculate → master → deploy
+- Test suite: tests/test_end_to_end.py — 1368 checks across structural, identity, rate consistency, data gating, range sanity, and master CSV (all pass)
 
-### Phase 4 — Website improvements (future)
+### Phase 4 — Website improvements ⏳ NEXT
 - Sortable/filterable stats tables
 - Player pages, team pages
 - Conditional formatting / gradients
@@ -73,12 +75,17 @@ Daily Task Scheduler job runs the full pipeline from `C:\BUCKETS\prod` at 4 AM C
 | scripts/ingest/nba_playtypes.py | NBA.com play types (11 categories) |
 | scripts/ingest/nba_pbpstats.py | PBPStats scoring + turnovers |
 | scripts/ingest/ctg_league_avgs.py | Cleaning the Glass league averages |
+| scripts/ingest/nba_tracking_shots.py | NBA.com tracking shot data |
 | scripts/stage/build_stage_season.py | Merges all sources into staging parquet |
 | scripts/qa/validate_stage_season.py | Validates staged data |
+| scripts/calculate/build_season.py | Calculates all metrics → season CSV |
+| scripts/calculate/config.py | Loads per-season config (CTG averages, constants) |
+| scripts/calculate/compute_pct_ast_pts.py | Computes pct_ast_pts_in_pa constant |
 | scripts/build_master.py | Combines all season CSVs into master |
 | scripts/build_player_aliases.py | Builds canonical name mappings |
 | scripts/local/update.ps1 | Daily pipeline orchestrator (Task Scheduler) |
 | scripts/local/create_scheduled_task.ps1 | One-time Task Scheduler setup |
+| tests/test_end_to_end.py | End-to-end validation suite (1368 checks) |
 
 ## Name Resolution
 - NBA.com data joins on PLAYER_ID (numeric)
