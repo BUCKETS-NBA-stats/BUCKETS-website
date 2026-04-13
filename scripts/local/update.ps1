@@ -17,6 +17,19 @@ function Write-Log($msg) {
   "$ts  $msg" | Tee-Object -FilePath $LogFile -Append
 }
 
+function Send-Ntfy($body) {
+  $topic = $env:BUCKETS_NTFY_TOPIC
+  if (-not $topic) {
+    Write-Log "WARN: BUCKETS_NTFY_TOPIC not set — skipping push notification."
+    return
+  }
+  try {
+    Invoke-RestMethod -Uri "https://ntfy.sh/$topic" -Method Post -Body $body | Out-Null
+  } catch {
+    Write-Log "WARN: ntfy notification failed: $($_.Exception.Message)"
+  }
+}
+
 New-Item -ItemType Directory -Force -Path $LockDir | Out-Null
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 
@@ -126,9 +139,15 @@ try {
   git push | Out-Null
 
   Write-Log "Push complete. Done."
+
+  $masterCsv = Join-Path $RepoRoot "assets\data\league-table-combined.csv"
+  $rowCount = (Get-Content $masterCsv).Count - 1
+  $dateStr = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+  Send-Ntfy "BUCKETS Pipeline OK — $dateStr CT. $rowCount rows updated."
 }
 catch {
   Write-Log "ERROR: $($_.Exception.Message)"
+  Send-Ntfy "BUCKETS Pipeline FAILED: $($_.Exception.Message)"
   exit 1
 }
 finally {
