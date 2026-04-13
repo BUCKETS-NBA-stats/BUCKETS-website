@@ -1,5 +1,5 @@
 # scripts/local/update.ps1
-# Runs: pull -> ingest -> stage -> validate -> commit+push (if changed)
+# Runs: pull -> ingest -> stage -> validate -> calculate -> test -> master -> commit+push (if changed)
 # Uses config from: config\buckets.json
 # Writes logs to: logs\update.log
 
@@ -96,6 +96,10 @@ try {
   Write-Log "Building season calculations..."
   & $VenvPython scripts/calculate/build_season.py --season $Season --season-type $SeasonType
   if ($LASTEXITCODE -ne 0) { throw "build_season failed (exit code $LASTEXITCODE)." }
+
+  Write-Log "Running end-to-end test suite..."
+  & $VenvPython tests/test_end_to_end.py
+  if ($LASTEXITCODE -ne 0) { throw "End-to-end tests failed (exit code $LASTEXITCODE). Pipeline stopped before commit." }
 
   Write-Log "Building master combined CSV..."
   & $VenvPython scripts/build_master.py
