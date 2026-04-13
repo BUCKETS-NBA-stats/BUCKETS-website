@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-12T09:02:37.091708+00:00",
+  "generated_at_utc": "2026-04-13T03:48:34.665696+00:00",
   "season": "2025-26",
   "season_type": "Regular Season",
   "staging_path": "assets/data/staging/2025-26__regular.parquet",
@@ -7,14 +7,16 @@
     {
       "source_prefix": "nba_pass__",
       "missing_player_ids": [
-        1631338
+        1641803,
+        1643060
       ],
       "carried_forward_player_ids": [],
       "not_found_in_prev_player_ids": [
-        1631338
+        1641803,
+        1643060
       ],
       "carried_forward_count": 0,
-      "missing_count": 1
+      "missing_count": 2
     },
     {
       "source_prefix": "nba_pt_",
@@ -102,6 +104,7 @@
         1641787,
         1641794,
         1641801,
+        1641803,
         1641807,
         1641809,
         1641810,
@@ -166,6 +169,7 @@
         1643024,
         1643047,
         1643052,
+        1643060,
         1643133,
         1643141,
         1643158,
@@ -259,6 +263,7 @@
         1641787,
         1641794,
         1641801,
+        1641803,
         1641807,
         1641809,
         1641810,
@@ -322,6 +327,7 @@
         1643024,
         1643047,
         1643052,
+        1643060,
         1643133,
         1643141,
         1643158,
@@ -329,7 +335,7 @@
         1643257
       ],
       "carried_forward_count": 2,
-      "missing_count": 152
+      "missing_count": 154
     },
     {
       "source_prefix": "pbp__",
@@ -377,6 +383,7 @@
         1641787,
         1641794,
         1641801,
+        1641803,
         1641807,
         1641809,
         1641810,
@@ -411,6 +418,7 @@
         1642955,
         1643024,
         1643047,
+        1643060,
         1643133,
         1643141,
         1643257
@@ -464,6 +472,7 @@
         1641787,
         1641794,
         1641801,
+        1641803,
         1641807,
         1641809,
         1641810,
@@ -495,18 +504,23 @@
         1642951,
         1643024,
         1643047,
+        1643060,
         1643133,
         1643141,
         1643257
       ],
       "carried_forward_count": 11,
-      "missing_count": 80
+      "missing_count": 82
     }
   ],
   "impacted_players": [
     {
-      "PLAYER_ID": 1631338,
-      "Player": "Mouhamadou Gueye"
+      "PLAYER_ID": 1641803,
+      "Player": "Tristen Newton"
+    },
+    {
+      "PLAYER_ID": 1643060,
+      "Player": "Hayden Gray"
     }
   ],
   "pbp_unmatched_names": [],
