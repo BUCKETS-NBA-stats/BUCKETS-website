@@ -1240,6 +1240,19 @@ def main() -> int:
         out_filename = f"league-table-20{season_year}.csv"
         out_path = os.path.join(REPO_ROOT, "assets", "data", "season", out_filename)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    # Multiply percentage columns by 100 for website display (e.g. 0.643 → 64.3)
+    pct_cols = [
+        "Total creation usage",
+        "On-ball creation usage",
+        "Off-ball creation usage",
+        "Transition creation usage",
+        "On-ball share",
+        "On-ball playmaking ratio",
+    ]
+    for col in pct_cols:
+        if col in out_df.columns:
+            out_df[col] = out_df[col] * 100
+
     # Drop ghost rows that have no player name (outer-merge artifacts with all-null data)
     before = len(out_df)
     out_df = out_df[out_df["Player"].notna() & (out_df["Player"].astype(str).str.strip() != "")].copy()
