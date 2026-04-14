@@ -22,9 +22,9 @@ TR_REG_PLAYMAKING =    0.166406246
 TR_REG_HCPCT      = -215.8731256
 
 # Floor raising regression coefficients
-FR_INTERCEPT  =   0.308596
-FR_LINEAR     =   0.116029
-FR_QUADRATIC  =  -0.00142
+FR_INTERCEPT  =   0.189572
+FR_LINEAR     =   0.227392
+FR_QUADRATIC  =  -0.003175
 FR_MIN_POSS   = 600           # Minimum possessions for baseline average
 
 

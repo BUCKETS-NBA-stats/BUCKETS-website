@@ -50,9 +50,9 @@ Season-specific values sourced from Cleaning the Glass. The numbers below are 20
 
 | Name | Value | Description |
 |------|-------|-------------|
-| FR_INTERCEPT | 0.308596 | Quadratic regression intercept |
-| FR_LINEAR | 0.116029 | Coefficient on on-ball plays |
-| FR_QUADRATIC | -0.00142 | Coefficient on on-ball plays² |
+| FR_INTERCEPT | 0.189572 | Quadratic regression intercept |
+| FR_LINEAR | 0.227392 | Coefficient on on-ball plays |
+| FR_QUADRATIC | -0.003175 | Coefficient on on-ball plays² |
 | FR_MIN_POSS | 600 | Minimum possessions for baseline average |
 
 ### Computed parameters (derived during pipeline execution)

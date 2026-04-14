@@ -607,7 +607,7 @@ def range_check(col: str, lo: float, hi: float, label: str) -> None:
 range_check("Total PC/g (floor raising adj.)",  -5,  10,  "5a Total PC/g (adj.) in [-5, 10]")
 range_check("Scoring PC/g",                     -5,   6,  "5b Scoring PC/g in [-5, 6]")
 range_check("Playmaking PC/g",                  -3,   4,  "5c Playmaking PC/g in [-3, 4]")
-range_check("Floor raising PC/g",               -1,   3,  "5d Floor raising PC/g in [-1, 3]")
+range_check("Floor raising PC/g",             -1.5,   3,  "5d Floor raising PC/g in [-1.5, 3]")
 range_check("Total creation usage",              0,  0.65, "5f Total creation usage in [0, 0.65]")
 range_check("% Playmaking",                      0,  1.0, "5g % Playmaking in [0, 1.0]")
 
